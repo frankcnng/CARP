@@ -1,0 +1,111 @@
+{
+	"openapi":	"3.1.0",
+	"info":
+	{
+		"title":	"Object model for ITMOs as per Decision 6/CMA4",
+		"version":	"v0.01"
+	},
+	"components":
+	{
+		"schemas":
+		{
+			"ITMO":
+			{
+				"type":	"object",
+				"properties":
+				{
+					"cooperativeApproach":
+					{
+						"type":		"string",
+						"$comment":	"(6CMA4 I.I.A.5) identifier of cooperative approach as published by the UNFCCC on the CARP",
+						"examples":	[ "Article 6.4" ]
+					},
+					"orginatingParty":
+					{
+						"type":		"string",
+						"$comment":	"(6CMA4 I.I.A.5) ISO 3166-1 alpha-3 identifier of the originating Party registry",
+						"examples":	[ "BEL" ]
+					},
+					"firstTransferringParty":
+					{
+						"type":		"string",
+						"$comment":	"(6CMA4 I.I.A.5) ISO 3166-1 alpha-3 identifier of the first transferring Party",
+						"examples":	[ "FRA" ]
+					},
+					"vintage":
+					{
+						"type":		"integer",
+						"minimum":	"2015",
+						"maximum":	"9999",
+						"$comment":	"(6CMA4 I.I.A.5) year in which the mitigation outcome occurred",
+						"examples":	[ 2025 ]
+					},
+					"serialFirst":
+					{
+						"type":		"string",
+						"$comment":	"(6CMA4 I.I.A.5) unique serial number of the first ITMO in the block",
+						"examples":	[ "CA0005-ART-GY-1-2021" ]
+					},
+					"serialLast":
+					{
+						"type":		"string",
+						"$comment":	"(6CMA4 I.I.A.5) unique serial number of the first ITMO in the block",
+						"examples":	[ "CA0005-ART-GY-7,144,362-2021" ]
+					},
+					"mitigationOutcomes":
+					{
+						"$comment":	"(6CMA4 I.I.A.4) reference to the mitigation outcome(s) represented by the ITMO(s). ",
+						"$comment":	"The array must contain the references to the full set of mitigation outcome documents",
+						"type":		"array",
+						"items":
+						{
+							"type":	"object",
+							"properties":
+							{
+								"reference":
+								{
+									"type":		"string",
+									"$comment":	"url to a mitigation outcome document represented by the ITMO(s)",
+									"examples":	[ "https://myregistry.be/mitigationoutcome123v2.pdf" ]
+								},
+								"hash":
+								{
+									"type":		"string",
+									"$comment":	"SHA256 hash of the referenced mitigation outcome document",
+									"examples":	[ "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" ]
+								}
+							}
+						}
+					},
+
+					"metric":
+					{
+						"type":		"string",
+						"$comment":	"GHG or non-GHG",
+						"examples":	[ "GHG" ]
+					},
+					"quantity":
+					{
+						"type":		"integer",
+						"minimum":	"1",
+						"maximum":	"999999999",
+						"$comment":	"number of tonnes of CO2 or equivalent",
+						"examples":	[ 7144362 ]
+					}
+				},
+				"required":
+				[
+					"cooperativeApproach",
+					"originatingParty",
+					"firstTransferringParty",
+        			"vintage",
+					"serialFirst",
+					"serialLast",
+					"mitigationOutcomes",
+					"metric",
+					"quantity"
+				]
+			}
+		}
+	}
+}
