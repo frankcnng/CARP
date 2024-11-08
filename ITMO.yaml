@@ -19,9 +19,10 @@ components:
         - isAuthorised
       properties:
         cooperativeApproach:
-          description: (required by Decision 6/CMA.4, annex I, para.5).  Identifier of cooperative approach as published by the UNFCCC on CARP.
+          cooperativeApproach:
+          description: <i>See decision 6/CMA.4, annex I, para.5</i><br><br>Identifier of the cooperative approach as published by the UNFCCC secretariat on the Centralized Accounting and Reporting Platform (CARP).
           type: string
-          examples: [CA0002]
+          example: "CA0002"
         orginatingParty:
           description: (required by Decision 6/CMA.4, annex I, para.5) ISO 3166-1 alpha-3 identifier of the originating Party registry.
           type: string
