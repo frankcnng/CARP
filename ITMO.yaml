@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-	title: Object model for ITMOs as per Decision 6/CMA4
+	title: Object model for ITMOs
 	version: v0.01
 components:
 	schemas:
