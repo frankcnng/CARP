@@ -1,0 +1,127 @@
+openapi: 3.1.0
+info:
+	title: Object model for ITMOs as per Decision 6/CMA4
+	version: v0.01
+components:
+	schemas:
+		ITMO:
+			type: object
+			required:
+				- cooperativeApproach
+				- originatingParty
+				- firstTransferringParty
+				- vintage
+				- serialFirst
+				- serialLast
+				- mitigationOutcomes
+				- metric
+				- quantity
+				- isAuthorised
+			properties:
+				cooperativeApproach:
+					description: (required by Decision 6/CMA.4, annex I, para.5).  Identifier of cooperative approach as published by the UNFCCC on CARP.
+					type: string
+					example: CA0002
+				orginatingParty:
+					description: (required by Decision 6/CMA.4, annex I, para.5) ISO 3166-1 alpha-3 identifier of the originating Party registry.
+					type: string
+					example: BEL
+				firstTransferringParty:
+					description: (required by Decision 6/CMA.4, annex I, para.5) ISO 3166-1 alpha-3 identifier of the first transferring Party.
+					type: string
+					example: FRA
+				vintage:
+					description: (required by Decision 6/CMA.4, annex I, para.5) year in which the mitigation outcome occurred.
+					type: integer
+					minimum: 2015
+					maximum: 9999
+					example: 2025
+				serialFirst:
+					description: (required by Decision 6/CMA.4, annex I, para.5) unique serial number of the first ITMO in the block.
+					type: string
+					example: CA0005-ART-GY-1-2021
+				serialLast:
+					description: (required by Decision 6/CMA.4, annex I, para.5) unique serial number of the last ITMO in the block.
+					# Decision 6/CMA.4, annex I, para.5 actually only requires a single unique identifier in ITMO identifier,
+					# but as we consider all ITMOs as blocks, the last identifier of the block is required.
+					type: string
+					example: CA0005-ART-GY-7,144,362-2021
+				mitigationOutcomeHashes:
+					description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.
+									This array contains the SHA256 hashes of all mitigation outcome documents for this ITMO.
+									The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(serialFirst, serialLast, SHA256)
+									that will return the URL of the MO document corresponding to the hash.
+					type: array
+					items:
+						description: SHA256 hash of a single mitigation outcome document
+						type: string
+						minItems: 1
+						example: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+				metric:
+					description: GHG or non-GHG
+					type: string
+					example: GHG
+				quantity:
+					description: number of metric tonnes of CO2 or equivalent
+					type: integer
+					minimum: 1
+					maximum: 999999999
+					example: 7144362
+				isAuthorised:
+					description: whether this A6.4ER has been authorised, thus, is an ITMO.  If it is authorised, the cooperativeApproach cannot be CA0000.
+					type: boolean
+					example: true
+				dateOfAuthorisation:
+					description: date-timestamp of the authorisation of A6.4ER, turning it into an ITMO
+					type: string
+					format: date-time
+					example: "2024-07-21T17:32:28Z"
+				authorisationID:
+					description: Authorization ID as assigned by the authorising Party, may include a link to the public evidence of authorization.
+					type: string
+					example: GUY 2024-CA1
+				authorisingParty:
+					description: ISO 3166-1 alpha-3 identifier of the authorising Party.  For native ITMOs, it will be the same as the first transferring Party.
+					type: string
+					example: GUY
+				nonGHGmetric:
+					description: the original metric if it was not non-GHGF in which the ITMO was generated as per common nomenclatures
+					type: string
+				nonGHGquantity:
+					description: the quantity, expressed in the nonGHG metric
+					type: integer
+					minimum: 1
+					maximum: 999999999
+				sectors:
+					description: Sector(s) where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.
+					type: array
+					items:
+						type: string
+				activityTypes:
+					description: Description of the mitigation activity type(s) as per common nomenclatures.
+					type: array
+					items:
+						type: string
+				labels:
+					type: array
+					maxItems: 10
+					items:
+					type: string
+				suppInfo:
+					type: string
+				lastAnyTxnDateTime:
+					type: string
+					format: date-time
+					example: "2024-07-21T17:32:28Z"
+				lastAcceptedTxnDatetime:
+					type: string
+					format: date-time
+					example: "2024-07-21T17:32:28Z"
+				modifiedDatetime:
+					type: string
+					format: date-time
+					example: "2024-07-21T17:32:28Z"
+				createdDatetime:
+					type: string
+					format: date-time
+					example: "2024-07-21T17:32:28Z"
