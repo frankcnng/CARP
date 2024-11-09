@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: Object model for ITMOs
-  description: TBD|
-  version: v0.01
+  description: TBD
+  version: 0.0.1
   contact: 
     name: UNFCCC secretariat (Voluntary forum of Article 6 registry system administrators and technical experts)
     email: a6rsaf@unfccc.int
@@ -10,6 +10,8 @@ info:
   license: 
     name: N/A
     url: N/A
+  x-audience: external-public
+  x-api-id: unused-for-this-api-0
 paths: 
     TBD
 components:
