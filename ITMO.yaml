@@ -10,9 +10,9 @@ components:
         - cooperativeApproach
         - originatingParty
         - firstTransferringParty
-        - vintage
         - serialFirst
         - serialLast
+        - vintage
         - mitigationOutcomes
         - metric
         - quantity
@@ -20,33 +20,33 @@ components:
       properties:
         cooperativeApproach:
           cooperativeApproach:
-          description: <i>See decision 6/CMA.4, annex I, para.5</i><br><br>Identifier of the cooperative approach as published by the UNFCCC secretariat on the Centralized Accounting and Reporting Platform (CARP).
+          description: <i>See decision 6/CMA.4, annex I, para.5(a)</i><br><br>Identifier of the cooperative approach as published by the UNFCCC secretariat on the Centralized Accounting and Reporting Platform (CARP).
           type: string
           example: "CA0002"
         orginatingParty:
-          description: (required by Decision 6/CMA.4, annex I, para.5) ISO 3166-1 alpha-3 identifier of the originating Party registry.
+          description: <i>See decision 6/CMA.4, annex I, para.5(b)</i><br><br>ISO 3166-1 alpha-3 identifier of the originating Party registry.
           type: string
           examples: [BEL]
         firstTransferringParty:
-          description: (required by Decision 6/CMA.4, annex I, para.5) ISO 3166-1 alpha-3 identifier of the first transferring Party.
+          description: <i>See decision 6/CMA.4, annex I, para.5(c)</i><br><br>ISO 3166-1 alpha-3 identifier of the first transferring Party.
           type: string
           examples: [FRA]
+        serialFirst:
+          description: <i>See decision 6/CMA.4, annex I, para.5(d)</i><br><br>Unique serial number of the first ITMO in the block.
+          type: string
+          examples: [CA0005-ART-GY-1-2021]
+        serialLast:
+          description: <i>See decision 6/CMA.4, annex I, para.5(d)</i><br><br>Unique serial number of the last ITMO in the block.
+          # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
+          # but as all ITMOs are considered as blocks, the last identifier of the block is required.
+          type: string
+          examples: [CA0005-ART-GY-7,144,362-2021]
         vintage:
-          description: (required by Decision 6/CMA.4, annex I, para.5) year in which the mitigation outcome occurred.
+          description: <i>See decision 6/CMA.4, annex I, para.5(e)</i><br><br>Year in which the mitigation outcome occurred.
           type: integer
           minimum: 2015
           maximum: 9999
           examples: [2025]
-        serialFirst:
-          description: (required by Decision 6/CMA.4, annex I, para.5) unique serial number of the first ITMO in the block.
-          type: string
-          examples: [CA0005-ART-GY-1-2021]
-        serialLast:
-          description: (required by Decision 6/CMA.4, annex I, para.5) unique serial number of the last ITMO in the block.
-          # Decision 6/CMA.4, annex I, para.5 actually only requires a single unique identifier in ITMO identifier,
-          # but as we consider all ITMOs as blocks, the last identifier of the block is required.
-          type: string
-          examples: [CA0005-ART-GY-7,144,362-2021]
         mitigationOutcomeHashes:
           description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.
                   This array contains the SHA256 hashes of all mitigation outcome documents for this ITMO.
