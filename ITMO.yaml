@@ -1,7 +1,17 @@
-openapi: 3.1.0
+openapi: 3.0.4
 info:
   title: Object model for ITMOs
+  description: TBD|
   version: v0.01
+  contact: 
+    name: UNFCCC secretariat (Voluntary forum of Article 6 registry system administrators and technical experts)
+    email: a6rsaf@unfccc.int
+    url: https://www.unfccc.int
+  license: 
+    name: N/A
+    url: N/A
+paths: 
+    TBD
 components:
   schemas:
     ITMO:
@@ -19,34 +29,33 @@ components:
         - isAuthorised
       properties:
         cooperativeApproach:
-          cooperativeApproach:
           description: <i>See decision 6/CMA.4, annex I, para.5(a)</i><br><br>Identifier of the cooperative approach as published by the UNFCCC secretariat on the Centralized Accounting and Reporting Platform (CARP).
           type: string
           example: "CA0002"
         orginatingParty:
           description: <i>See decision 6/CMA.4, annex I, para.5(b)</i><br><br>ISO 3166-1 alpha-3 identifier of the originating Party registry.
           type: string
-          examples: [BEL]
+          example: "BEL"
         firstTransferringParty:
           description: <i>See decision 6/CMA.4, annex I, para.5(c)</i><br><br>ISO 3166-1 alpha-3 identifier of the first transferring Party.
           type: string
-          examples: [FRA]
+          example: "FRA"
         serialFirst:
           description: <i>See decision 6/CMA.4, annex I, para.5(d)</i><br><br>Unique serial number of the first ITMO in the block.
           type: string
-          examples: [CA0005-ART-GY-1-2021]
+          example: "CA0005-ART-GY-1-2021"
         serialLast:
           description: <i>See decision 6/CMA.4, annex I, para.5(d)</i><br><br>Unique serial number of the last ITMO in the block.
           # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
           # but as all ITMOs are considered as blocks, the last identifier of the block is required.
           type: string
-          examples: [CA0005-ART-GY-7,144,362-2021]
+          example: "CA0005-ART-GY-7,144,362-2021"
         vintage:
           description: <i>See decision 6/CMA.4, annex I, para.5(e)</i><br><br>Year in which the mitigation outcome occurred.
           type: integer
           minimum: 2015
           maximum: 9999
-          examples: [2025]
+          example: 2025
         mitigationOutcomeHashes:
           description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.
                   This array contains the SHA256 hashes of all mitigation outcome documents for this ITMO.
@@ -57,34 +66,34 @@ components:
             description: SHA256 hash of a single mitigation outcome document
             type: string
             minItems: 1
-            examples: [e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855]
+            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         metric:
           description: GHG or non-GHG
           type: string
-          examples: [GHG]
+          example: "GHG"
         quantity:
           description: number of metric tonnes of CO2 or equivalent
           type: integer
           minimum: 1
           maximum: 999999999
-          examples: [7144362]
+          example: 7144362
         isAuthorised:
           description: whether this A6.4ER has been authorised, thus, is an ITMO.  If it is authorised, the cooperativeApproach cannot be CA0000.
           type: boolean
-          examples: [true, false]
+          example: true
         dateOfAuthorisation:
           description: date-timestamp of the authorisation of A6.4ER, turning it into an ITMO
           type: string
           format: date-time
-          examples: ["2024-07-21T17:32:28Z"]
+          example: "2024-07-21T17:32:28Z"
         authorisationID:
           description: Authorization ID as assigned by the authorising Party, may include a link to the public evidence of authorization.
           type: string
-          examples: [GUY 2024-CA1]
+          example: "GUY 2024-CA1"
         authorisingParty:
           description: ISO 3166-1 alpha-3 identifier of the authorising Party.  For native ITMOs, it will be the same as the first transferring Party.
           type: string
-          examples: [GUY]
+          example: "GUY"
         nonGHGmetric:
           description: the original metric if it was not non-GHGF in which the ITMO was generated as per common nomenclatures
           type: string
@@ -108,16 +117,21 @@ components:
         lastAnyTxnDateTime:
           type: string
           format: date-time
-          examples: ["2024-07-21T17:32:28Z"]
+          example: "2024-07-21T17:32:28Z"
         lastAcceptedTxnDatetime:
           type: string
           format: date-time
-          examples: ["2024-07-21T17:32:28Z"]
+          example: "2024-07-21T17:32:28Z"
         modifiedDatetime:
           type: string
           format: date-time
-          examples: ["2024-07-21T17:32:28Z"]
+          example: "2024-07-21T17:32:28Z"
         createdDatetime:
           type: string
           format: date-time
-          examples: ["2024-07-21T17:32:28Z"]
+          example: "2024-07-21T17:32:28Z"
+servers:
+  - url: TBD
+    description: Production server (uses live data !)
+  - url: TBD
+    description: Test server (uses test data)
