@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Object model for ITMOs
+  title: API for transactions with ITMOs (Work In Progress)
   description: 
      <b>Introduction</b>
      <br><br>This API is part of the communication standards for transactions with
