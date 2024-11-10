@@ -36,6 +36,7 @@ components:
         - metric
         - quantity
         - isauthorised
+        - mitigationoutcomehashes
       properties:
         cooperativeapproach:
           description: <i>See decision 6/CMA.4, annex I, para.5(a)</i><br><br>Identifier of the cooperative approach as published by the UNFCCC secretariat on the Centralized Accounting and Reporting Platform (CARP).
