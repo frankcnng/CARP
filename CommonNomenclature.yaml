@@ -15,6 +15,29 @@ info:
   x-audience: external-public
   x-api-id: unused-for-this-api-0
 paths:
+  /accountType:
+    get:
+      tags:
+        - accountType
+      operationId: getAccountType
+      description: |
+        Returns the valid values for Account Type
+        from the Common Nomenclature under Article 6.2 of the Paris Agreement
+        
+        * 1 - Issuance
+        * 10 - Internal transfer
+        * 3 - External transfer
+        * 4 - Cancellation
+        * 5 - "Use towards NDC - Referred to as Retirement"
+        * 7 - "Change of authorisation - Referred to as Carry-over"
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/accountType'
+  
   /participatingParty:
     get:
       tags:
@@ -32,6 +55,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/participatingParty'
+
   /transactionType:
     get:
       tags:
@@ -55,55 +79,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/transactionType'
-  /accountType:
+  /unitType:
     get:
       tags:
-        - accountType
-      operationId: getAccountType
+        - testUnitType
+      operationId: testUnitType
       description: |
-        Returns the valid values for Account Type
+        Returns whether a value is a valid for Unit Type
         from the Common Nomenclature under Article 6.2 of the Paris Agreement
         
-        * 1 - Issuance
-        * 10 - Internal transfer
-        * 3 - External transfer
-        * 4 - Cancellation
-        * 5 - "Use towards NDC - Referred to as Retirement"
-        * 7 - "Change of authorisation - Referred to as Carry-over"
+        * 62 - ITMO
+        * 64 - A6.4ER
+        * 65 - A6.4ER from CER
+        * 67 - MCU
+      parameters:
+        - name: value
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/unitType'
       responses:
         '200':
           description: Successful operation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/accountType'
+                $ref: '#/components/schemas/unitType'
 components:
   schemas:
-    participatingParty:
-      description: ISO-3166 3 letter code of the country
-      type: string
-    transactionType:
-      description: |
-        Transaction types under Article 6.  See also suppTransactionType regarding first transfers.
-        * 100 - Holding account.  Must be used as a destination of issuance(s),
-                  or as a source or destination of internal or external transfer,
-                  or as a source of cancellations or use
-        * 110 - Pending account
-        * 120 - Operator holding account
-        * 121 - Person holding account
-        * 230 - Voluntary cancellation account
-        * 250 - Mandatory cancellation account for OMGE
-        * 280 - Voluntary cancellation account for OMGE
-        * 270 - Use towards other purposes account
-        * 300 - Use towards NDC account
-      type: integer
-      enum:
-        - 1
-        - 10
-        - 3
-        - 4
-        - 5
-        - 7
     accountType:
       description: |
         Account types under Article 6.
@@ -129,3 +132,42 @@ components:
         - 280
         - 270
         - 300
+    participatingParty:
+      description: ISO-3166 3 letter code of the country
+      type: string
+    transactionType:
+      description: |
+        Transaction types under Article 6.  See also suppTransactionType regarding first transfers.
+        * 100 - Holding account.  Must be used as a destination of issuance(s),
+                  or as a source or destination of internal or external transfer,
+                  or as a source of cancellations or use
+        * 110 - Pending account
+        * 120 - Operator holding account
+        * 121 - Person holding account
+        * 230 - Voluntary cancellation account
+        * 250 - Mandatory cancellation account for OMGE
+        * 280 - Voluntary cancellation account for OMGE
+        * 270 - Use towards other purposes account
+        * 300 - Use towards NDC account
+      type: integer
+      enum:
+        - 1
+        - 10
+        - 3
+        - 4
+        - 5
+        - 7
+    unitType:
+      description: |
+        Unit types under Article 6.
+        * 62 - ITMO
+        * 64 - A6.4ER
+        * 65 - A6.4ER from CER
+        * 67 - MCU
+      type: integer
+      enum:
+        - 62
+        - 64
+        - 65
+        - 67
+  
