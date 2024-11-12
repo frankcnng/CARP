@@ -188,7 +188,7 @@ components:
         * 5 - "Use towards NDC - Referred to as Retirement"
         * 7 - "Change of authorisation - Referred to as Carry-over"
       type: integer
-      x-extensible-enumenum:
+      x-extensible-enum:
         - 1
         - 10
         - 3
