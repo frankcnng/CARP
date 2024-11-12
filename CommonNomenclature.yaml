@@ -1,4 +1,3 @@
-
 openapi: 3.0.3
 info:
   title: Common Nomenclature under Article 6.2 of the Paris Agreement
@@ -22,6 +21,10 @@ servers:
 tags:
   - name: accountType
     description: Manage the accountType description
+  - name: cooperativeApproach
+    description: Manage the cooperativeApproach description
+  - name: metric
+    description: Manage the metric description
   - name: participatingParty
     description: Manage the participatingParty description
   - name: transactionType
@@ -59,7 +62,69 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
-  
+  /valid-cooperative-approaches:
+    get:
+      tags:
+        - cooperativeApproach
+      operationId: validCooperativeApproaches
+      description: |
+        Cooperative approaches under Article 6.2 are currently
+        * CA0001 - Article 6.4 mechanism (between Parties to the Paris Agreement)
+        * CA0002 - Promotion of climate smart agriculture practices for sustainable rice cultivation in Ghana (between Ghana and Switzerland)
+        * CA0003 - Operation of e-buses on privately owned, scheduled public bus routes in the Bangkok Metropolitan area by Energy Absolute / Implementing Agreement to the Paris Agreement between the Kingdom of Thailand and the Swiss Confederation (between Switzerland and Thailand)
+        * CA0004 - Electrification of Vanuatu’s Inhabited Islands through Solar Power ITMO Programme (between Switzerland and Vanuatu)
+        * CA0005 - Emissions Reductions from Sustainable Management of Forests (by Guyana)
+        * CA0006 - ITMOs resulting from Paris Agreement Article 5.2: reducing emissions from deforestation and forest degradation, and the role of conservation, sustainable management of forests and enhancement of forest carbon stocks (by Suriname)
+        
+        The value "CANNNN" where "CA" is the fixed prefix, and NNNN is a four digit integer, shall be incremented by one for each additional agreed cooperative approach, and added to his common nomenclature.
+      parameters:
+        - name: value
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/cooperativeApproach'
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unitType'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+ 
+  /valid-metrics:
+    get:
+      tags:
+        - metric
+      operationId: validMetrics
+      description: |
+        The metric used to measure ITMO.
+        * GHG - ITMO is meansured in tonnes Carbon Dioxide equivalent
+        * non-GHG - ITMO is not measured in tonnes Carbon Dioxide equivalent
+      parameters:
+        - name: value
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/metric'
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/unitType'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
   /participating-party:
     get:
       tags:
@@ -120,7 +185,7 @@ paths:
         - unitType
       operationId: validUnitTypes
       description: |
-        Allows, as a parameter, a valid for Unit Type
+        Allows, as a parameter, a valid value for Unit Type
         from the Common Nomenclature under Article 6.2 of the Paris Agreement
         
         * 62 - ITMO
@@ -174,9 +239,40 @@ components:
         - 280
         - 270
         - 300
+    cooperativeApproach:
+      description: |
+        Cooperative approaches under Article 6.2 are currently
+        * CA0001 - Article 6.4 mechanism (between Parties to the Paris Agreement)
+        * CA0002 - Promotion of climate smart agriculture practices for sustainable rice cultivation in Ghana (between Ghana and Switzerland)
+        * CA0003 - Operation of e-buses on privately owned, scheduled public bus routes in the Bangkok Metropolitan area by Energy Absolute / Implementing Agreement to the Paris Agreement between the Kingdom of Thailand and the Swiss Confederation (between Switzerland and Thailand)
+        * CA0004 - Electrification of Vanuatu’s Inhabited Islands through Solar Power ITMO Programme (between Switzerland and Vanuatu)
+        * CA0005 - Emissions Reductions from Sustainable Management of Forests (by Guyana)
+        * CA0006 - ITMOs resulting from Paris Agreement Article 5.2: reducing emissions from deforestation and forest degradation, and the role of conservation, sustainable management of forests and enhancement of forest carbon stocks (by Suriname)
+        
+        The value "CANNNN" where "CA" is the fixed prefix, and NNNN is a four digit integer, shall be incremented by one for each additional agreed cooperative approach, and added to his common nomenclature.
+      type: string
+      x-extensible-enum:
+        - "CA0001"
+        - "CA0002"
+        - "CA0003"
+        - "CA0004"
+        - "CA0005"
+        - "CA0006"
+    
+    metric:
+      description: |
+        The metric used to measure ITMO.
+        * GHG - ITMO is meansured in tonnes Carbon Dioxide equivalent
+        * non-GHG - ITMO is not measured in tonnes Carbon Dioxide equivalent
+      type: string
+      x-extensible-enum:
+        - "GHG"
+        - "non-GHG"
+
     participatingParty:
       description: ISO-3166 3 letter code of the country
       type: string
+
     transactionType:
       description: |
         Transaction types under Article 6.  See also suppTransactionType regarding first transfers.
@@ -188,7 +284,7 @@ components:
         * 5 - "Use towards NDC - Referred to as Retirement"
         * 7 - "Change of authorisation - Referred to as Carry-over"
       type: integer
-      x-extensible-enum:
+      x-extensible-enumenum:
         - 1
         - 10
         - 3
@@ -260,4 +356,3 @@ components:
 
 security:
   - basicAuth: []
-  
