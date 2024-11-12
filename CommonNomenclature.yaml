@@ -138,17 +138,13 @@ components:
     transactionType:
       description: |
         Transaction types under Article 6.  See also suppTransactionType regarding first transfers.
-        * 100 - Holding account.  Must be used as a destination of issuance(s),
-                  or as a source or destination of internal or external transfer,
-                  or as a source of cancellations or use
-        * 110 - Pending account
-        * 120 - Operator holding account
-        * 121 - Person holding account
-        * 230 - Voluntary cancellation account
-        * 250 - Mandatory cancellation account for OMGE
-        * 280 - Voluntary cancellation account for OMGE
-        * 270 - Use towards other purposes account
-        * 300 - Use towards NDC account
+        See also suppTransactionType regarding first transfers.
+        * 1 - Issuance
+        * 10 - Internal transfer
+        * 3 - External transfer
+        * 4 - Cancellation
+        * 5 - "Use towards NDC - Referred to as Retirement"
+        * 7 - "Change of authorisation - Referred to as Carry-over"
       type: integer
       enum:
         - 1
