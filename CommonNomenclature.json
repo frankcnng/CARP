@@ -1,0 +1,78 @@
+{
+	"AccountType":
+	{
+		"description":	"Account Types under Article 6.",
+		"type": "integer",
+		"definedValues":
+		[
+			{
+				"value":	"100",
+				"description":	"Holding account.  Must be used as a destination of issuance(s), or as a source or destination of internal or external transfer, or as a source of cancellations or use"
+			},
+			{
+				"value":	"110",
+				"description":	"Pending account"
+			},
+			{
+				"value":	"120",
+				"description":	"Operator holding account"
+			},
+			{
+				"value":	"121",
+				"description":	"Person holding account"
+			},
+			{
+				"value":	"230",
+				"description":	"Voluntary cancellation account"
+			},
+			{
+				"value":	"250",
+				"description":	"Mandatory cancellation account for OMGE"
+			},
+			{
+				"value":	"280",
+				"description":	"Voluntary cancellation account for OMGE"
+			},
+			{
+				"value":	"270",
+				"description":	"Use towards other purposes account"
+			},
+			{
+				"value":	"300",
+				"description":	"Use towards NDC account"
+			}
+		]
+	},
+	"CooperativeApproach":
+	{
+		"description":	"Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to his common nomenclature.",
+		"type": "string",
+		"definedValues":
+		[
+			{
+				"value":	"CA0001",
+				"description":	"Article 6.4 mechanism (between Parties to the Paris Agreement)"
+			},
+			{
+				"value":	"CA0002",
+				"description":	"Promotion of climate smart agriculture practices for sustainable rice cultivation in Ghana (between Ghana and Switzerland)"
+			},
+			{
+				"value":	"CA0003",
+				"description":	"Operation of e-buses on privately owned, scheduled public bus routes in the Bangkok Metropolitan area by Energy Absolute / Implementing Agreement to the Paris Agreement between the Kingdom of Thailand and the Swiss Confederation (between Switzerland and Thailand)"
+			},
+			{
+				"value":	"CA0004",
+				"description":	"Electrification of Vanuatu’s Inhabited Islands through Solar Power ITMO Programme (between Switzerland and Vanuatu)"
+			},
+			{
+				"value":	"CA0005",
+				"description":	"Emissions Reductions from Sustainable Management of Forests (by Guyana)"
+			},
+			{
+				"value":	"CA0006",
+				"description":	"ITMOs resulting from Paris Agreement Article 5.2: reducing emissions from deforestation and forest degradation, and the role of conservation, sustainable management of forests and enhancement of forest carbon stocks (by Suriname)"
+			}
+		]
+	}
+}
