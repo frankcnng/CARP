@@ -74,5 +74,21 @@
 				"description":	"ITMOs resulting from Paris Agreement Article 5.2: reducing emissions from deforestation and forest degradation, and the role of conservation, sustainable management of forests and enhancement of forest carbon stocks (by Suriname)"
 			}
 		]
+	},
+	"Metric":
+	{
+		"description":	"The metric used to measure the ITMO",
+		"type":	"string",
+		"definedValues":
+		[
+			{
+				"value":	"GHG",
+				"description":	"ITMO is meansured in tonnes Carbon Dioxide equivalent"
+			},
+			{
+				"value":	"non-GHG",
+				"description":	"ITMO is not measured in tonnes Carbon Dioxide equivalent"
+			}
+		]
 	}
 }
