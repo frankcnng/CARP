@@ -90,5 +90,69 @@
 				"description":	"ITMO is not measured in tonnes Carbon Dioxide equivalent"
 			}
 		]
+	},
+	"TransactionType":
+	{
+		"description":	"Transaction types according to Decision 2/CMA.3, annex paragraphs 1-3 and 3/CMA.3, annex, paragraph 5",
+		"type":	"integer",
+		"definedValues":
+		[
+			{
+				"value":	"1",
+				"description":	"Issuance"
+			},
+			{
+				"value":	"10",
+				"description":	"Internal transfer"
+			},
+			{
+				"value":	"3",
+				"description":	"External transfer"
+			},
+			{
+				"value":	"4",
+				"description":	"Cancellation"
+			},
+			{
+				"value":	"5",
+				"description":	"Use towards NDC"
+			},
+			{
+				"value":	"7",
+				"description":	"Change of authorisation"
+			}
+		]
+	},
+	"UnitType":
+	{
+		"description":	"Article 6 unit types",
+		"type":	"integer",
+		"definedValues":
+		[
+			{
+				"value":	"62",
+				"description":	"ITMO"
+			},
+			{
+				"value":	"64",
+				"description":	"A6.4ER"
+			},
+			{
+				"value":	"65",
+				"description":	"A6.4ER (from CER)"
+			},
+			{
+				"value":	"67",
+				"description":	"MCU"
+			}
+		]
+	},
+	"UnitSerialNumber":
+	{
+		"description":	"Unique unit serial number is composed of three elements:\n(a) Originating registry,\n(b) Unit serial block start\n(c) Unit serial block end.\n.It is the responsibility of the originating registry (i.e., the party who issues the units), to ensure that the serial number is unique for its registry, regardless of the type of unit issued.  In other words, a new, consecutive serial number must be created by the originating registry each time it creates a new block of units."
+	},
+	"Unit":
+	{
+		"description":	"Article 6 units are composed of the following elements:\n(a) Unit Serial Number\n(b) Unit Type\n(c) Cooperative Approach\n(d) First Transferring Party\n(e) Vintage (i.e. year)\n(f) (Reference to) Mitigation Outcome(s)\n(g) Authorisation Status"
 	}
 }
