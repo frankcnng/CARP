@@ -1,7 +1,9 @@
 {
 	"AccountType":
 	{
+		"term":	"Account Type",
 		"description":	"Account Types under Article 6.",
+		"AEF fields": "",
 		"type": "integer",
 		"definedValues":
 		[
@@ -45,6 +47,7 @@
 	},
 	"CooperativeApproach":
 	{
+		"term":	"Cooperative Approach",
 		"description":	"Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to his common nomenclature.",
 		"type": "string",
 		"definedValues":
@@ -75,10 +78,36 @@
 			}
 		]
 	},
+	"FirstTransfer":
+	{
+		"term":	"First Transfer",
+		"description":	"Definition of \"first transfer\" pursuant to decision, 2/CMA.3, Annex, paragraph 2.\nTherefore defines the \"First Transfer Participating Party.\"",
+		"AEF fields":	"not directly, see description",
+		"definedValues":
+		[
+			{
+				"value":	"First international transfer",
+				"description":	"First transfer defined for ITMOs that are authorized for NDC pursuant 2 (a), Annex, 2/CMA.3. "
+			},
+			{
+				"value":	"Authorisation",
+				"description":	"EFirst transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(1) Authorisation, Annex, 2/CMA.3."
+			},
+			{
+				"value":	"Issuance",
+				"description":	"First transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(2) Issuance, Annex, 2/CMA.3."
+			},
+			{
+				"value":	"Use or Cancellation",
+				"description":	"First transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(3) Use or Cancellation, Annex, 2/CMA.3."
+			}
+		]
+	},
 	"Metric":
 	{
+		"term":	"Term",
 		"description":	"The metric used to measure the ITMO",
-		"type":	"string",
+		"type": "string",
 		"definedValues":
 		[
 			{
@@ -91,8 +120,14 @@
 			}
 		]
 	},
+	"ParticipatingParty":
+	{
+		"term":	"Participating Party",
+		"description":	"Standard codes for identifying participating parties under Article 6.2 of the Paris Agreement.\nISO-3166-1 alpha-2 or alpha-3 code of the Party's country.\nExceptionally reserved code elements, such as EU for the European Union, are also allowed.",
+	},
 	"TransactionType":
 	{
+		"term":	"Transaction Type",
 		"description":	"Transaction types according to Decision 2/CMA.3, annex paragraphs 1-3 and 3/CMA.3, annex, paragraph 5",
 		"type":	"integer",
 		"definedValues":
@@ -125,6 +160,7 @@
 	},
 	"UnitType":
 	{
+		"term":	"Unit Type",
 		"description":	"Article 6 unit types",
 		"type":	"integer",
 		"definedValues":
@@ -147,12 +183,33 @@
 			}
 		]
 	},
-	"UnitSerialNumber":
+	"UniqueIdentifier":
 	{
-		"description":	"Unique unit serial number is composed of three elements:\n(a) Originating registry,\n(b) Unit serial block start\n(c) Unit serial block end.\n.It is the responsibility of the originating registry (i.e., the party who issues the units), to ensure that the serial number is unique for its registry, regardless of the type of unit issued.  In other words, a new, consecutive serial number must be created by the originating registry each time it creates a new block of units."
+		"term":	"Unique Identifier",
+		"description":	"Unique unit serial number is composed of three elements:\n(a) First transfer Participating Party,\n(b) Unit serial block start\n(c) Unit serial block end.\n.It is the responsibility of the originating registry (i.e., the party who issues the units), to ensure that the serial number is unique for its registry, regardless of the type of unit issued.  In other words, a new, consecutive serial number must be created by the originating registry each time it creates a new, non-overlapping block of units.",
+		"type":	"object",
+		"properties":
+		{
+			"firstTransferParticipatingParty":
+			{
+				"type":	"participatingParty",
+				"description":	"Participating Party in which the authorized mitigation outcome occurred as per common nomenclatures."
+			},
+			"firstID":
+			{
+				"value":	"64",
+				"description":	"A6.4ER"
+			},
+			"lastID":
+			{
+				"value":	"65",
+				"description":	"A6.4ER (from CER)"
+			}
+		}
 	},
 	"Unit":
 	{
+		"term":	"Unit",
 		"description":	"Article 6 units are composed of the following elements:\n(a) Unit Serial Number\n(b) Unit Type\n(c) Cooperative Approach\n(d) First Transferring Party\n(e) Vintage (i.e. year)\n(f) (Reference to) Mitigation Outcome(s)\n(g) Authorisation Status"
 	}
 }
