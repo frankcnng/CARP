@@ -1,54 +1,40 @@
 {
-	"AccountType":
+	"CommonNomenclature":
 	{
-		"term":	"Account Type",
-		"description":	"Account Types under Article 6.",
-		"AEF fields": "",
-		"type": "integer",
-		"definedValues":
+		"description":	"Common list of values for specific information attributes required for the reporting of annual information in acoordance with Decision 2/CMA.3, annex, chapter IV (Reporting).\nPursuant to Decsion 2/CMA.4, Annex I, paragraph 28.\nAttributes are listed in Decsion 2/CMA.4, paragraph 17(j), Annex I, paragraph 5.",
+		"type": "string",
+		"contents":
 		[
-			{
-				"value":	"100",
-				"description":	"Holding account.  Must be used as a destination of issuance(s), or as a source or destination of internal or external transfer, or as a source of cancellations or use"
-			},
-			{
-				"value":	"110",
-				"description":	"Pending account"
-			},
-			{
-				"value":	"120",
-				"description":	"Operator holding account"
-			},
-			{
-				"value":	"121",
-				"description":	"Person holding account"
-			},
-			{
-				"value":	"230",
-				"description":	"Voluntary cancellation account"
-			},
-			{
-				"value":	"250",
-				"description":	"Mandatory cancellation account for OMGE"
-			},
-			{
-				"value":	"280",
-				"description":	"Voluntary cancellation account for OMGE"
-			},
-			{
-				"value":	"270",
-				"description":	"Use towards other purposes account"
-			},
-			{
-				"value":	"300",
-				"description":	"Use towards NDC account"
-			}
+			"Cooperative Approach",
+			"Originating Party Registry",
+			"First Serial Number",
+			"Last Serial Number",
+			"First Transferring Participating Party",
+			"Vintage",
+			"Sectors",
+			"Activity Type",
+			"Metric",
+			"Action Type",
+			"PurposeForAuthorization",
+			"Purpose",
+			"ParticipatingParty",
+			"Account Type",
+			"Unit Type"
 		]
 	},
 	"CooperativeApproach":
 	{
-		"term":	"Cooperative Approach",
+		"attribute":	"Cooperative Approach",
 		"description":	"Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to his common nomenclature.",
+		"AEF fields":
+		[
+			"Cooperative approach"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 Annex I, paragraph 5",
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
 		"type": "string",
 		"definedValues":
 		[
@@ -78,11 +64,79 @@
 			}
 		]
 	},
+	"OriginatingPartyRegistry":
+	{
+		"AEF fields":
+		[
+			"Party ITMO registry ID"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 Annex I, paragraph 5",
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"attribute":	"Originating Party Registry",
+		"description":	"ISO-3166-1 alpha-2 or alpha-3 code of participating party in which the mitigation outcomes originated.",
+		"type":	"string"
+	},
+	"FirstID":
+	{
+		"AEF fields":
+		[
+			"First ID"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 Annex I, paragraph 5",
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"attribute":	"First ID",
+		"description":	"Identifier of the first ITMO in the block, commencing with First ID, ending with Last ID.\nBlocks from the same Originating Party Registry cannot overlap.",
+		"type":	"integer"
+	},
+	"LastID":
+	{
+		"AEF fields":
+		[
+			"Last ID"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 Annex I, paragraph 5",
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"attribute":	"Last ID",
+		"description":	"Identifier of the last ITMO in the block, commencing with First ID, ending with Last ID.\nBlocks from the same Originating Party Registry cannot overlap.",
+		"type":	"integer"
+	},
+	"FirstTransferringParty":
+	{
+		"AEF fields":
+		[
+			"First transferring participating Party ID"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 Annex I, paragraph 5",
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"attribute":	"First Transferring Party",
+		"description":	"ISO-3166-1 alpha-2 or alpha-3 code of participating party registry that initiates the \"First Transfer\".",
+		"type":	"string"
+	},
 	"FirstTransfer":
 	{
-		"term":	"First Transfer",
-		"description":	"Definition of \"first transfer\" pursuant to decision, 2/CMA.3, Annex, paragraph 2.\nTherefore defines the \"First Transfer Participating Party.\"",
-		"AEF fields":	"not directly, see description",
+		"attribute":	"First Transfer",
+		"description":	"Definition of \"first transfer\" pursuant to decision, 2/CMA.3, Annex, paragraph 2.\nTherefore defines the \"First Transferring Party.\".",
+		"AEF fields":
+		[
+			"Definition of \"First transferring participating Party ID\"."
+		],
+		"requiredBy":
+		[
+			"Definition of \"First Transferring Party\"."
+		],
+		"type":	"string",
 		"definedValues":
 		[
 			{
@@ -91,7 +145,7 @@
 			},
 			{
 				"value":	"Authorisation",
-				"description":	"EFirst transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(1) Authorisation, Annex, 2/CMA.3."
+				"description":	"First transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(1) Authorisation, Annex, 2/CMA.3."
 			},
 			{
 				"value":	"Issuance",
@@ -103,10 +157,217 @@
 			}
 		]
 	},
+	"Vintage":
+	{
+		"AEF fields":
+		[
+			"Vintage"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 Annex I, paragraph 5",
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"attribute":	"Vintage",
+		"description":	"Year in which mitigation outcome occured.",
+		"type":	"integer"
+	},
+	"Sector":
+	{
+		"attribute":	"Sector",
+		"description":	"One of more sectors where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.",
+		"AEF fields":
+		[
+			"Sector(s)"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type":
+		[
+			"string" 
+		],
+		"definedValues":
+		[
+			{
+				"value":	"Agriculture",
+				"description":	"Methane reduction nitrous oxide emission reduction are some examples of initiatives aimed at the agriculture sector, sustainable fish production, etc."
+			},
+			{
+				"value":	"Building and construction",
+				"description":	"Zero-energy and passive houses, green roofs and walls for urban buildings, smart grids and building automation systems, sustainable urban drainage systems, climateadaptive urban planning."
+			},
+			{
+				"value":	"Cross-sectoral mechanisms",
+				"description":	"ITMOs that cannot be associated to a specific sector since they are the net flow of mitigation outcomes coming from a different mechanism."
+			},
+			{
+				"value":	"Energy generation",
+				"description":	"Wind farms, offshore wind power, solar farms, hydroelectric plants, geothermal heating and cooling solutions or biomass energy, etc."
+			},
+			{
+				"value":	"Forestry and land use",
+				"description":	"Mangrove restoration, seagrass plantation, urban forestry and green spaces development, peatland restoration and conservation, soil carbon enhancement, land-use planning for reduced urban sprawl."
+			},
+			{
+				"value":	"Industrial processes",
+				"description":	"Fuel switching, carbon capture and storage (CCS), green chemistry, waste gas and heat recovery."
+			},
+			{
+				"value":	"Transportation",
+				"description":	"Hydrogen fuel cell vehicles and refueling infrastructure, sustainable biofuels for aviation and shipping, electric public transit systems, active transport infrastructure (bike lanes, pedestrian zones), smart logistics and freight transport efficiency."
+			},
+			{
+				"value":	"Urban development",
+				"description":	"Vegetative cover, afforestation, permeable surfaces, green roofs, rain gardens, bioretention swales, natural and constructed wetlands, converting abandoned industrial sites into urban parks."
+			},
+			{
+				"value":	"Waste management",
+				"description":	"Methane capture from landfills, waste-to-energy projects, Advanced recycling technologies, Biogas generation from organic waste, Circular economy models for industries (sharing, repairing, recycling), and the reduction of organic waste through composting and anaerobic digestion."
+			}
+		]
+	},
+	"ActivityType":
+	{
+		"attribute":	"Activity Type",
+		"description":	"The mitigation activity type(s) from which the ITMOs were generated.",
+		"AEF fields":
+		[
+			"Activity Type(s)"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type":
+		[
+			"string" 
+		],
+		"definedValues":
+		[
+			{
+				"value":	"Afforestation",
+				"description":	"Projects that involve the afforestation of land."
+			},
+			{
+				"value":	"Agriculture",
+				"description":	"Projects aimed at reducing emissions from agricultural practices."
+			},
+			{
+				"value":	"Biogas",
+				"description":	"Projects that generate energy from biogas."
+			},
+			{
+				"value":	"Biomass Energy",
+				"description":	"Projects that generate energy from biomass resources."
+			},
+			{
+				"value":	"Cement",
+				"description":	"Projects in the cement industry aimed at reducing emissions."
+			},
+			{
+				"value":	"C02 usage",
+				"description":	"Projects that involve the usage of captured CO2."
+			},
+			{
+				"value":	"Coal bed/mine methane",
+				"description":	"Projects that capture and utilize methane from coal beds or mines."
+			},
+			{
+				"value":	"Energy distribution",
+				"description":	"Projects aimed at improving the efficiency of energy distribution."
+			},
+			{
+				"value":	"Energy Efficiency households",
+				"description":	"Projects aimed at improving energy efficiency in households."
+			},
+			{
+				"value":	"Energy Efficiency Industry",
+				"description":	"Projects aimed at improving energy efficiency in the industrial sector. "
+			},
+			{
+				"value":	"Energy Efficiency own generation",
+				"description":	"Projects aimed at improving energy efficiency in own generation facilities."
+			},
+			{
+				"value":	"Energy Efficiency service",
+				"description":	"Projects aimed at improving energy efficiency in the service sector."
+			},
+			{
+				"value":	"Energy Efficiency supply side",
+				"description":	"Projects aimed at improving energy efficiency on the supply side."
+			},
+			{
+				"value":	"Fossil fuel switch",
+				"description":	"Projects that switch from fossil fuels to cleaner energy sources."
+			},
+			{
+				"value":	"Fugitive",
+				"description":	"Projects that capture fugitive emissions from industrial processes."
+			},
+			{
+				"value":	"Geothermal",
+				"description":	"Projects that generate energy from geothermal sources."
+			},
+			{
+				"value":	"Hydro",
+				"description":	"Projects that generate electricity from hydroelectric sources."
+			},
+			{
+				"value":	"Landfill gas",
+				"description":	"Projects that capture and utilize landfill gas for energy production."
+			},
+			{
+				"value":	"Methane avoidance",
+				"description":	"Projects that avoid methane emissions through various methods."
+			},
+			{
+				"value":	"N2O",
+				"description":	"Projects that reduce emissions of nitrous oxide (N2O)."
+			},
+			{
+				"value":	"PFCs and SF6",
+				"description":	"Projects that reduce emissions of perfluorocarbons (PFCs) and sulfur hexafluoride (SF6)."
+			},
+			{
+				"value":	"Reforestation",
+				"description":	"Projects that involve the reforestation of land. "
+			},
+			{
+				"value":	"Solar",
+				"description":	"Projects that generate electricity from solar power."
+			},
+			{
+				"value":	"Tidal",
+				"description":	"Projects that generate electricity from tidal energy."
+			},
+			{
+				"value":	"Transport",
+				"description":	"Projects aimed at reducing emissions from transport."
+			},
+			{
+				"value":	"Waste",
+				"description":	"Projects aimed at reducing waste and emissions from waste management."
+			},
+			{
+				"value":	"Wind",
+				"description":	"Projects that generate electricity from wind power."
+			}
+		]
+	},
 	"Metric":
 	{
-		"term":	"Term",
+		"attribute":	"Metric",
 		"description":	"The metric used to measure the ITMO",
+		"AEF fields":
+		[
+			"Metric"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
 		"type": "string",
 		"definedValues":
 		[
@@ -120,48 +381,169 @@
 			}
 		]
 	},
-	"ParticipatingParty":
+	"ActionType":
 	{
-		"term":	"Participating Party",
-		"description":	"Standard codes for identifying participating parties under Article 6.2 of the Paris Agreement.\nISO-3166-1 alpha-2 or alpha-3 code of the Party's country.\nExceptionally reserved code elements, such as EU for the European Union, are also allowed.",
-	},
-	"TransactionType":
-	{
-		"term":	"Transaction Type",
-		"description":	"Transaction types according to Decision 2/CMA.3, annex paragraphs 1-3 and 3/CMA.3, annex, paragraph 5",
-		"type":	"integer",
+		"attribute":	"Action Type",
+		"description":	"Actions to be reported by Partipating Parties, pursuant Decision 2/CMA.3, Annex, paragraph 20(a), paragraph 29.",
+		"AEF fields":
+		[
+			"Action type"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)",
+			"Decision 2/CMA.3, Annex, paragraph 20(a), paragraph 29."
+		],
+		"type":	"string",
 		"definedValues":
 		[
 			{
-				"value":	"1",
-				"description":	"Issuance"
+				"value":	"Authorization",
+				"description":	"Used when reporting the authorization of an ITMO."
 			},
 			{
-				"value":	"10",
-				"description":	"Internal transfer"
+				"value":	"First transfer",
+				"description":	"Used when reporting the international transfer of an ITMO."
 			},
 			{
-				"value":	"3",
-				"description":	"External transfer"
+				"value":	"Transfer",
+				"description":	"Used when reporting the international transfer of an ITMO."
 			},
 			{
-				"value":	"4",
-				"description":	"Cancellation"
+				"value":	"Acquisition",
+				"description":	"Used when reporting the international acquisition of an ITMO."
 			},
 			{
-				"value":	"5",
-				"description":	"Use towards NDC"
+				"value":	"Use",
+				"description":	"Used when reporting the use of an ITMO."
 			},
 			{
-				"value":	"7",
-				"description":	"Change of authorisation"
+				"value":	"Cancellation",
+				"description":	"Used when reporting the cancellation of an ITMO."
+			},
+			{
+				"value":	"Voluntary Cancellation",
+				"description":	"Used when reporting the cancellation of an ITMO."
 			}
 		]
 	},
+	"PurposeForAuthorization":
+	{
+		"attribute":	"Purpose for Authorization",
+		"description":	"Purpose for authorization of ITMOs",
+		"AEF fields":
+		[
+			"Purposes for authorization"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type":	"string",
+		"definedValues":
+		[
+			{
+				"value":	"NDC",
+				"description":	"ITMOs that are authorized to be used towards NDC achievement."
+			},
+			{
+				"value":	"OIMP",
+				"description":	"ITMOs that are authorized to be used for cancelled for other international mitigation purposes."
+			},
+			{
+				"value":	"NDC and OIMP",
+				"description":	"ITMOs that are authorized to be used towards NDC achievement;\nand be used or cancelled for other international mitigation purposes."
+			}
+		]
+	},
+	"Purpose":
+	{
+		"attribute":	"Purpose",
+		"description":	"Purpose for which ITMO has been used towards IMP or cancelled for OP.\nOnly applicable to action types \"Use\" and \"Cancellation\".",
+		"AEF fields":
+		[
+			"Purposes for which ITMO has been used towards or cancelled for OIMP"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type":	"string"
+	},
+
+	"ParticipatingParty":
+	{
+		"attribute":	"Participating Party",
+		"AEF fields":
+		[
+			"First transferring participating Party ID",
+			"Party ITMO registry ID",
+			"Transferring participating Party ID",
+			"Acquiring participating Party ID",
+			"Using/cancelling participating Party ID",
+			"Using/cancelling authorized entity ID"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"attribute":	"First Transferring Party",
+		"description":	"Standard codes for identifying participating parties under Article 6.2 of the Paris Agreement.\nISO-3166-1 alpha-2 or alpha-3 code of the Party's country.\nExceptionally reserved code elements, such as EU for the European Union, are also allowed.",
+		"type":	"string"
+	},
+
+	"AccountType":
+	{
+		"attribute":	"Account Type",
+		"description":	"Minimum Account Types supported by the mechanism registry, under Article 6.4, Decision 7.CMA.4, Annex I - paragraph 32",
+		"AEF fields": "not applicable",
+		"type": "integer",
+		"definedValues":
+		[
+			{
+				"value":	"100",
+				"description":	"Pending.\nAccount type to which all A6.4ERs or CERs shall be issued."
+			},
+			{
+				"value":	"110",
+				"description":	"Holding.\nAccount Type which may acquire A6.4ERs or CERs tracked in the mechanism registry."
+			},
+			{
+				"value":	"120",
+				"description":	"Share of Proceeds of Adaptation.\nAccount type which receives A4.6ERs in accordance with paragraph 58 of the RMPs."
+			},
+			{
+				"value":	"130",
+				"description":	"Mandatory cancellation for OMGE.\nAccount type for mandatory cancellation of A6.4ERs for OMGE in accordance with paragraph 59 of the RMPs."
+			},
+			{
+				"value":	"140",
+				"description":	"Voluntary cancellation for OMGE.\nAccount type for voluntary cancellation of A6.4ERs for OMGE in accordance with paragraph 70 of the RMPs."
+			},
+			{
+				"value":	"150",
+				"description":	"Retirement.\nAccount type for retirement of A6.4ERs and CERs."
+			},
+			{
+				"value":	"160",
+				"description":	"Cancellation for OIMP.\nAccount type for cancellation of A6.4ERs for OIMP."
+			},
+			{
+				"value":	"170",
+				"description":	"Voluntary cancellation for other purposes.\nAccount type for voluntary cancellation of A6.4ERs for other purposes."
+			},
+			{
+				"value":	"180",
+				"description":	"Administrative cancellation.\nAccount type for administrative cancellation of A6.4ERs and CERs tracked in the mechanism registry for corrective actions and other purposes, as necessary."
+			}
+		]
+	},
+
 	"UnitType":
 	{
-		"term":	"Unit Type",
+		"attribute":	"Unit Type",
 		"description":	"Article 6 unit types",
+		"AEF fields": "not applicable",
 		"type":	"integer",
 		"definedValues":
 		[
@@ -182,34 +564,5 @@
 				"description":	"MCU"
 			}
 		]
-	},
-	"UniqueIdentifier":
-	{
-		"term":	"Unique Identifier",
-		"description":	"Unique unit serial number is composed of three elements:\n(a) First transfer Participating Party,\n(b) Unit serial block start\n(c) Unit serial block end.\n.It is the responsibility of the originating registry (i.e., the party who issues the units), to ensure that the serial number is unique for its registry, regardless of the type of unit issued.  In other words, a new, consecutive serial number must be created by the originating registry each time it creates a new, non-overlapping block of units.",
-		"type":	"object",
-		"properties":
-		{
-			"firstTransferParticipatingParty":
-			{
-				"type":	"participatingParty",
-				"description":	"Participating Party in which the authorized mitigation outcome occurred as per common nomenclatures."
-			},
-			"firstID":
-			{
-				"value":	"64",
-				"description":	"A6.4ER"
-			},
-			"lastID":
-			{
-				"value":	"65",
-				"description":	"A6.4ER (from CER)"
-			}
-		}
-	},
-	"Unit":
-	{
-		"term":	"Unit",
-		"description":	"Article 6 units are composed of the following elements:\n(a) Unit Serial Number\n(b) Unit Type\n(c) Cooperative Approach\n(d) First Transferring Party\n(e) Vintage (i.e. year)\n(f) (Reference to) Mitigation Outcome(s)\n(g) Authorisation Status"
 	}
 }
