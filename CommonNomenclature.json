@@ -5,21 +5,29 @@
 		"type": "string",
 		"contents":
 		[
-			"Cooperative Approach",
-			"Originating Party Registry",
-			"First Serial Number",
-			"Last Serial Number",
-			"First Transferring Participating Party",
+			"CooperativeApproach",
+			"OriginatingPartyRegistry",
+			"FirstID",
+			"LastID",
+			"FirstTransferringParty",
 			"Vintage",
 			"Sectors",
 			"Activity Type",
 			"Metric",
-			"Action Type",
+
+			"GWPValues",
+			"Non-GHGMetric",
+			"QuantityCO2",
+			"QuantityNon-GHG",
+
+			"ActionType",
 			"PurposeForAuthorization",
 			"Purpose",
+
+			"FirstTransfer",
 			"ParticipatingParty",
-			"Account Type",
-			"Unit Type"
+			"AccountType",
+			"UnitType"
 		]
 	},
 	"CooperativeApproach":
@@ -62,7 +70,8 @@
 				"value":	"CA0006",
 				"description":	"ITMOs resulting from Paris Agreement Article 5.2: reducing emissions from deforestation and forest degradation, and the role of conservation, sustainable management of forests and enhancement of forest carbon stocks (by Suriname)"
 			}
-		]
+		],
+		"required":	"true"
 	},
 	"OriginatingPartyRegistry":
 	{
@@ -76,8 +85,9 @@
 			"Decision 6/CMA.4 paragraph 17 (j)"
 		],
 		"attribute":	"Originating Party Registry",
-		"description":	"ISO-3166-1 alpha-2 or alpha-3 code of participating party in which the mitigation outcomes originated.",
-		"type":	"string"
+		"description":	"ISO-3166-1 alpha-3 code of the participating Party in which the mitigation outcomes originated.",
+		"type":	"string",
+		"required":	"true"
 	},
 	"FirstID":
 	{
@@ -92,7 +102,10 @@
 		],
 		"attribute":	"First ID",
 		"description":	"Identifier of the first ITMO in the block, commencing with First ID, ending with Last ID.\nBlocks from the same Originating Party Registry cannot overlap.",
-		"type":	"integer"
+		"type":	"integer",
+		"minimum":	"1",
+		"maximum":	"999999999",
+		"required":	"true"
 	},
 	"LastID":
 	{
@@ -107,13 +120,16 @@
 		],
 		"attribute":	"Last ID",
 		"description":	"Identifier of the last ITMO in the block, commencing with First ID, ending with Last ID.\nBlocks from the same Originating Party Registry cannot overlap.",
-		"type":	"integer"
+		"type":	"integer",
+		"minimum":	"1",
+		"maximum":	"999999999",
+		"required":	"true"
 	},
 	"FirstTransferringParty":
 	{
 		"AEF fields":
 		[
-			"First transferring participating Party ID"
+			"First transferring participating Party ID.\nNote that ITMO may exist before first transfer, thus this field is optional."
 		],
 		"requiredBy":
 		[
@@ -121,8 +137,9 @@
 			"Decision 6/CMA.4 paragraph 17 (j)"
 		],
 		"attribute":	"First Transferring Party",
-		"description":	"ISO-3166-1 alpha-2 or alpha-3 code of participating party registry that initiates the \"First Transfer\".",
-		"type":	"string"
+		"description":	"ISO-3166-1 alpha-3 code of participating party registry that initiates the \"First Transfer\".",
+		"type":	"string",
+		"required":	"false"
 	},
 	"FirstTransfer":
 	{
@@ -140,22 +157,27 @@
 		"definedValues":
 		[
 			{
+				"code":	"1",
 				"value":	"First international transfer",
 				"description":	"First transfer defined for ITMOs that are authorized for NDC pursuant 2 (a), Annex, 2/CMA.3. "
 			},
 			{
+				"code":	"2",
 				"value":	"Authorisation",
 				"description":	"First transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(1) Authorisation, Annex, 2/CMA.3."
 			},
 			{
+				"code":	"3",
 				"value":	"Issuance",
 				"description":	"First transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(2) Issuance, Annex, 2/CMA.3."
 			},
 			{
+				"code":	"4",
 				"value":	"Use or Cancellation",
 				"description":	"First transfer defined for ITMOs that are authorized for OIMP pursuant 2 (b)(3) Use or Cancellation, Annex, 2/CMA.3."
 			}
-		]
+		],
+		"required":	"false"
 	},
 	"Vintage":
 	{
@@ -170,7 +192,10 @@
 		],
 		"attribute":	"Vintage",
 		"description":	"Year in which mitigation outcome occured.",
-		"type":	"integer"
+		"type":	"integer",
+		"minimum":	"2021",
+		"maximum":	"9999",
+		"required":	"true"
 	},
 	"Sector":
 	{
@@ -191,42 +216,52 @@
 		"definedValues":
 		[
 			{
+				"code":	"1",
 				"value":	"Agriculture",
 				"description":	"Methane reduction nitrous oxide emission reduction are some examples of initiatives aimed at the agriculture sector, sustainable fish production, etc."
 			},
 			{
+				"code":	"2",
 				"value":	"Building and construction",
 				"description":	"Zero-energy and passive houses, green roofs and walls for urban buildings, smart grids and building automation systems, sustainable urban drainage systems, climateadaptive urban planning."
 			},
 			{
+				"code":	"3",
 				"value":	"Cross-sectoral mechanisms",
 				"description":	"ITMOs that cannot be associated to a specific sector since they are the net flow of mitigation outcomes coming from a different mechanism."
 			},
 			{
+				"code":	"4",
 				"value":	"Energy generation",
 				"description":	"Wind farms, offshore wind power, solar farms, hydroelectric plants, geothermal heating and cooling solutions or biomass energy, etc."
 			},
 			{
+				"code":	"5",
 				"value":	"Forestry and land use",
 				"description":	"Mangrove restoration, seagrass plantation, urban forestry and green spaces development, peatland restoration and conservation, soil carbon enhancement, land-use planning for reduced urban sprawl."
 			},
 			{
+				"code":	"6",
 				"value":	"Industrial processes",
 				"description":	"Fuel switching, carbon capture and storage (CCS), green chemistry, waste gas and heat recovery."
 			},
 			{
+				"code":	"7",
 				"value":	"Transportation",
 				"description":	"Hydrogen fuel cell vehicles and refueling infrastructure, sustainable biofuels for aviation and shipping, electric public transit systems, active transport infrastructure (bike lanes, pedestrian zones), smart logistics and freight transport efficiency."
 			},
 			{
+				"code":	"8",
 				"value":	"Urban development",
 				"description":	"Vegetative cover, afforestation, permeable surfaces, green roofs, rain gardens, bioretention swales, natural and constructed wetlands, converting abandoned industrial sites into urban parks."
 			},
 			{
+				"code":	"9",
 				"value":	"Waste management",
 				"description":	"Methane capture from landfills, waste-to-energy projects, Advanced recycling technologies, Biogas generation from organic waste, Circular economy models for industries (sharing, repairing, recycling), and the reduction of organic waste through composting and anaerobic digestion."
 			}
-		]
+		],
+		"required":	"true"
 	},
 	"ActivityType":
 	{
@@ -247,114 +282,142 @@
 		"definedValues":
 		[
 			{
+				"code":	"1",
 				"value":	"Afforestation",
 				"description":	"Projects that involve the afforestation of land."
 			},
 			{
+				"code":	"2",
 				"value":	"Agriculture",
 				"description":	"Projects aimed at reducing emissions from agricultural practices."
 			},
 			{
+				"code":	"3",
 				"value":	"Biogas",
 				"description":	"Projects that generate energy from biogas."
 			},
 			{
+				"code":	"4",
 				"value":	"Biomass Energy",
 				"description":	"Projects that generate energy from biomass resources."
 			},
 			{
+				"code":	"5",
 				"value":	"Cement",
 				"description":	"Projects in the cement industry aimed at reducing emissions."
 			},
 			{
+				"code":	"6",
 				"value":	"C02 usage",
 				"description":	"Projects that involve the usage of captured CO2."
 			},
 			{
+				"code":	"7",
 				"value":	"Coal bed/mine methane",
 				"description":	"Projects that capture and utilize methane from coal beds or mines."
 			},
 			{
+				"code":	"8",
 				"value":	"Energy distribution",
 				"description":	"Projects aimed at improving the efficiency of energy distribution."
 			},
 			{
+				"code":	"9",
 				"value":	"Energy Efficiency households",
 				"description":	"Projects aimed at improving energy efficiency in households."
 			},
 			{
+				"code":	"10",
 				"value":	"Energy Efficiency Industry",
 				"description":	"Projects aimed at improving energy efficiency in the industrial sector. "
 			},
 			{
+				"code":	"11",
 				"value":	"Energy Efficiency own generation",
 				"description":	"Projects aimed at improving energy efficiency in own generation facilities."
 			},
 			{
+				"code":	"12",
 				"value":	"Energy Efficiency service",
 				"description":	"Projects aimed at improving energy efficiency in the service sector."
 			},
 			{
+				"code":	"13",
 				"value":	"Energy Efficiency supply side",
 				"description":	"Projects aimed at improving energy efficiency on the supply side."
 			},
 			{
+				"code":	"14",
 				"value":	"Fossil fuel switch",
 				"description":	"Projects that switch from fossil fuels to cleaner energy sources."
 			},
 			{
+				"code":	"15",
 				"value":	"Fugitive",
 				"description":	"Projects that capture fugitive emissions from industrial processes."
 			},
 			{
+				"code":	"16",
 				"value":	"Geothermal",
 				"description":	"Projects that generate energy from geothermal sources."
 			},
 			{
+				"code":	"17",
 				"value":	"Hydro",
 				"description":	"Projects that generate electricity from hydroelectric sources."
 			},
 			{
+				"code":	"8",
 				"value":	"Landfill gas",
 				"description":	"Projects that capture and utilize landfill gas for energy production."
 			},
 			{
+				"code":	"19",
 				"value":	"Methane avoidance",
 				"description":	"Projects that avoid methane emissions through various methods."
 			},
 			{
+				"code":	"20",
 				"value":	"N2O",
 				"description":	"Projects that reduce emissions of nitrous oxide (N2O)."
 			},
 			{
+				"code":	"21",
 				"value":	"PFCs and SF6",
 				"description":	"Projects that reduce emissions of perfluorocarbons (PFCs) and sulfur hexafluoride (SF6)."
 			},
 			{
+				"code":	"22",
 				"value":	"Reforestation",
 				"description":	"Projects that involve the reforestation of land. "
 			},
 			{
+				"code":	"23",
 				"value":	"Solar",
 				"description":	"Projects that generate electricity from solar power."
 			},
 			{
+				"code":	"24",
 				"value":	"Tidal",
 				"description":	"Projects that generate electricity from tidal energy."
 			},
 			{
+				"code":	"25",
 				"value":	"Transport",
 				"description":	"Projects aimed at reducing emissions from transport."
 			},
 			{
+				"code":	"26",
 				"value":	"Waste",
 				"description":	"Projects aimed at reducing waste and emissions from waste management."
 			},
 			{
+				"code":	"25",
 				"value":	"Wind",
 				"description":	"Projects that generate electricity from wind power."
 			}
-		]
+		],
+		"required":	"true"
 	},
 	"Metric":
 	{
@@ -372,14 +435,84 @@
 		"definedValues":
 		[
 			{
+				"code":	"1",
 				"value":	"GHG",
 				"description":	"ITMO is meansured in tonnes Carbon Dioxide equivalent"
 			},
 			{
+				"code":	"2",
 				"value":	"non-GHG",
 				"description":	"ITMO is not measured in tonnes Carbon Dioxide equivalent"
 			}
-		]
+		],
+		"required":	"true"
+	},
+	"GWPValues":
+	{
+		"attribute":	"GWP Values",
+		"description":	"If the mitigation outcome involves a non-CO2 greenhouse gas(es), the global warming potential (GWP) value(s) applied, consistent with the relevant CMA decisions (e.g.,'100-year values from 5th assessment report by the IPCC').",
+		"AEF fields":
+		[
+			"Applicable GWP value(s)"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type":
+		[
+			"string" 
+		],
+		"required":	"false"
+	},
+	"Non-GHGMetric":
+	{
+		"attribute":	"Non-GHGMetric",
+		"description":	"Type of non-GHG metric applied (e.g., ‘megawatt hours of renewable electricity generation’). This field should be reported as ‘Not applicable’ (NA) if the ITMOs are in a GHG metric.",
+		"AEF fields":
+		[
+			"Applicable GWP value(s)"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type": "string",
+		"required":	"false"
+	},
+	"QuantityCO2":
+	{
+		"attribute":	"Quantity CO2",
+		"description":	"Quantity of ITMOs in tons of CO2 equivalent.",
+		"AEF fields":
+		[
+			"Quantity (t CO2 eq)"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type": "integer",
+		"minimum": "1",
+		"maximum": "999999999",
+		"required":	"true"
+	},
+	"QuantityNon-GHG":
+	{
+		"attribute":	"Quantity non-GHG",
+		"description":	"Quantity of ITMOs in the respective non-GHG metric. This field should be reported as ‘Not applicable’ (NA) if the ITMOs are in a GHG metric.",
+		"AEF fields":
+		[
+			"Quantity (in non-GHG metric)"
+		],
+		"requiredBy":
+		[
+			"Decision 6/CMA.4 paragraph 17 (j)"
+		],
+		"type": "integer",
+		"minimum": "1",
+		"maximum": "999999999",
+		"required":	"false"
 	},
 	"ActionType":
 	{
@@ -398,34 +531,42 @@
 		"definedValues":
 		[
 			{
+				"code":	"1",
 				"value":	"Authorization",
 				"description":	"Used when reporting the authorization of an ITMO."
 			},
 			{
+				"code":	"2",
 				"value":	"First transfer",
 				"description":	"Used when reporting the international transfer of an ITMO."
 			},
 			{
+				"code":	"3",
 				"value":	"Transfer",
 				"description":	"Used when reporting the international transfer of an ITMO."
 			},
 			{
+				"code":	"4",
 				"value":	"Acquisition",
 				"description":	"Used when reporting the international acquisition of an ITMO."
 			},
 			{
+				"code":	"5",
 				"value":	"Use",
 				"description":	"Used when reporting the use of an ITMO."
 			},
 			{
+				"code":	"6",
 				"value":	"Cancellation",
 				"description":	"Used when reporting the cancellation of an ITMO."
 			},
 			{
+				"code":	"7",
 				"value":	"Voluntary Cancellation",
 				"description":	"Used when reporting the cancellation of an ITMO."
 			}
-		]
+		],
+		"required":	"true"
 	},
 	"PurposeForAuthorization":
 	{
@@ -443,18 +584,42 @@
 		"definedValues":
 		[
 			{
+				"code":	"1",
 				"value":	"NDC",
-				"description":	"ITMOs that are authorized to be used towards NDC achievement."
+				"description":	"ITMOs that are authorized to be used towards NDC (nationally determined contribution) achievement."
 			},
 			{
+				"code":	"2",
 				"value":	"OIMP",
-				"description":	"ITMOs that are authorized to be used for cancelled for other international mitigation purposes."
+				"description":	"ITMOs that are authorized to be used for cancelled for OIMP (other international mitigation purposes)."
 			},
 			{
+				"code":	"3",
+				"value":	"IMP",
+				"description":	"ITMOs that are authorized to be used for cancelled for IMP (international mitigation purposes)."
+			},
+			{
+				"code":	"4",
+				"value":	"OP",
+				"description":	"ITMOs that are authorized to be used for cancelled for OP (other purposes)."
+			},
+			{
+				"code":	"5",
 				"value":	"NDC and OIMP",
-				"description":	"ITMOs that are authorized to be used towards NDC achievement;\nand be used or cancelled for other international mitigation purposes."
+				"description":	"ITMOs that are authorized to be used towards NDC (nationally determined contribution) achievement;\nand be used or cancelled for OIMP (other international mitigation purposes)."
+			},
+			{
+				"code":	"6",
+				"value":	"NDC and IMP",
+				"description":	"ITMOs that are authorized to be used towards NDC (nationally determined contribution) achievement;\nand be used or cancelled for IMP (international mitigation purposes)."
+			},
+			{
+				"code":	"7",
+				"value":	"NDC and OP",
+				"description":	"ITMOs that are authorized to be used towards NDC (nationally determined contribution) achievement;\nand be used or cancelled for OP (other purposes)."
 			}
-		]
+		],
+		"required":	"true"
 	},
 	"Purpose":
 	{
@@ -468,7 +633,8 @@
 		[
 			"Decision 6/CMA.4 paragraph 17 (j)"
 		],
-		"type":	"string"
+		"type":	"string",
+		"required":	"false"
 	},
 
 	"ParticipatingParty":
@@ -487,9 +653,9 @@
 		[
 			"Decision 6/CMA.4 paragraph 17 (j)"
 		],
-		"attribute":	"First Transferring Party",
-		"description":	"Standard codes for identifying participating parties under Article 6.2 of the Paris Agreement.\nISO-3166-1 alpha-2 or alpha-3 code of the Party's country.\nExceptionally reserved code elements, such as EU for the European Union, are also allowed.",
-		"type":	"string"
+		"description":	"Standard codes for identifying participating parties under Article 6.2 of the Paris Agreement.\nISO-3166-1 alpha-3 code of the Party's country.\nExceptionally reserved code elements, such as EUE for the European Union, are also allowed.",
+		"type":	"string",
+		"required":	"false"
 	},
 
 	"AccountType":
@@ -502,43 +668,43 @@
 		[
 			{
 				"value":	"100",
-				"description":	"Pending.\nAccount type to which all A6.4ERs or CERs shall be issued."
-			},
-			{
-				"value":	"110",
 				"description":	"Holding.\nAccount Type which may acquire A6.4ERs or CERs tracked in the mechanism registry."
 			},
 			{
-				"value":	"120",
-				"description":	"Share of Proceeds of Adaptation.\nAccount type which receives A4.6ERs in accordance with paragraph 58 of the RMPs."
+				"value":	"110",
+				"description":	"Pending.\nAccount type to which all A6.4ERs or CERs shall be issued."
 			},
 			{
-				"value":	"130",
-				"description":	"Mandatory cancellation for OMGE.\nAccount type for mandatory cancellation of A6.4ERs for OMGE in accordance with paragraph 59 of the RMPs."
-			},
-			{
-				"value":	"140",
-				"description":	"Voluntary cancellation for OMGE.\nAccount type for voluntary cancellation of A6.4ERs for OMGE in accordance with paragraph 70 of the RMPs."
-			},
-			{
-				"value":	"150",
+				"value":	"200",
 				"description":	"Retirement.\nAccount type for retirement of A6.4ERs and CERs."
 			},
 			{
-				"value":	"160",
-				"description":	"Cancellation for OIMP.\nAccount type for cancellation of A6.4ERs for OIMP."
+				"value":	"300",
+				"description":	"Share of Proceeds of Adaptation.\nAccount type which receives A4.6ERs in accordance with paragraph 58 of the RMPs."
 			},
 			{
-				"value":	"170",
+				"value":	"400",
 				"description":	"Voluntary cancellation for other purposes.\nAccount type for voluntary cancellation of A6.4ERs for other purposes."
 			},
 			{
-				"value":	"180",
+				"value":	"410",
+				"description":	"Mandatory cancellation for OMGE.\nAccount type for mandatory cancellation of A6.4ERs for OMGE in accordance with paragraph 59 of the RMPs."
+			},
+			{
+				"value":	"420",
+				"description":	"Voluntary cancellation for OMGE.\nAccount type for voluntary cancellation of A6.4ERs for OMGE in accordance with paragraph 70 of the RMPs."
+			},
+			{
+				"value":	"430",
+				"description":	"Cancellation for OIMP.\nAccount type for cancellation of A6.4ERs for OIMP."
+			},
+			{
+				"value":	"440",
 				"description":	"Administrative cancellation.\nAccount type for administrative cancellation of A6.4ERs and CERs tracked in the mechanism registry for corrective actions and other purposes, as necessary."
 			}
-		]
+		],
+		"required":	"false"
 	},
-
 	"UnitType":
 	{
 		"attribute":	"Unit Type",
@@ -563,6 +729,7 @@
 				"value":	"67",
 				"description":	"MCU"
 			}
-		]
+		],
+		"required":	"false"
 	}
 }
