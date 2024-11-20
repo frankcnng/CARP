@@ -1,7 +1,7 @@
 {
 	"CommonNomenclature":
 	{
-		"description":	"Common list of values for specific information attributes required for the reporting of annual information in acoordance with Decision 2/CMA.3, annex, chapter IV (Reporting).\nPursuant to Decsion 2/CMA.4, Annex I, paragraph 28.\nAttributes are listed in Decsion 2/CMA.4, paragraph 17(j), Annex I, paragraph 5.",
+		"description":	"Common list of values for specific information attributes required for the reporting of annual information in acoordance with Decision 2/CMA.3, annex, chapter IV (Reporting).\nPursuant to Decision 6/CMA.4, Annex I, paragraph 28.\nAttributes are listed in Decsion 6/CMA.4, paragraph 17(j), Annex I, paragraph 5.",
 		"type": "string",
 		"contents":
 		[
