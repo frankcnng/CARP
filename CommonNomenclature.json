@@ -1,7 +1,7 @@
 {
 	"CommonNomenclature":
 	{
-		"description":	"Common list of values for specific information attributes required for the reporting of annual information in acoordance with Decision 2/CMA.3, annex, chapter IV (Reporting).\nPursuant to Decision 6/CMA.4, Annex I, paragraph 28.\nAttributes are listed in Decsion 6/CMA.4, paragraph 17(j), Annex I, paragraph 5.",
+		"description":	"Common list of values for specific information attributes required for the reporting of annual information in accordance with decision 2/CMA.3, annex, chapter IV (Reporting).\nPursuant to decision 6/CMA.4, Annex I, paragraph 28.\nAttributes are listed in decision 6/CMA.4, paragraph 17(j), Annex I, paragraph 5.\nThis nomenclature also includes attributes that are not in the AEF, but are required by tracking registries established under Article 6.",
 		"type": "string",
 		"contents":
 		[
@@ -14,12 +14,11 @@
 			"Sectors",
 			"Activity Type",
 			"Metric",
-
 			"GWPValues",
 			"Non-GHGMetric",
 			"QuantityCO2",
 			"QuantityNon-GHG",
-
+			"MitigationType",
 			"ActionType",
 			"PurposeForAuthorization",
 			"Purpose",
@@ -33,7 +32,7 @@
 	"CooperativeApproach":
 	{
 		"attribute":	"Cooperative Approach",
-		"description":	"Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to his common nomenclature.",
+		"description":	"Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.",
 		"AEF fields":
 		[
 			"Cooperative approach"
@@ -197,10 +196,10 @@
 		"maximum":	"9999",
 		"required":	"true"
 	},
-	"Sector":
+	"Sectors":
 	{
-		"attribute":	"Sector",
-		"description":	"One of more sectors where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.",
+		"attribute":	"Sectors",
+		"description":	"One or more sectors where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.",
 		"AEF fields":
 		[
 			"Sector(s)"
@@ -437,7 +436,7 @@
 			{
 				"code":	"1",
 				"value":	"GHG",
-				"description":	"ITMO is meansured in tonnes Carbon Dioxide equivalent"
+				"description":	"ITMO is measured in tonnes Carbon Dioxide equivalent"
 			},
 			{
 				"code":	"2",
@@ -483,7 +482,7 @@
 	"QuantityCO2":
 	{
 		"attribute":	"Quantity CO2",
-		"description":	"Quantity of ITMOs in tons of CO2 equivalent.",
+		"description":	"Quantity of ITMOs in metric tons of CO2 equivalent.",
 		"AEF fields":
 		[
 			"Quantity (t CO2 eq)"
@@ -513,6 +512,21 @@
 		"minimum": "1",
 		"maximum": "999999999",
 		"required":	"false"
+	},
+	"MitigationType":
+	{
+		"attribute":	"Mitigation type",
+		"description":	"\"Emission reductions\" or \"Removals\".",
+		"AEF fields":
+		[
+			"Mitigation type"
+		],
+		"requiredBy":
+		[
+			"6.2/CMA15, Annex II, Table 3"
+		],
+		"type": "string",
+		"required":	"true"
 	},
 	"ActionType":
 	{
