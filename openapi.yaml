@@ -1,4 +1,3 @@
-
 openapi: 3.0.3
 info:
   title: API for transactions with ITMOs (Work In Progress)
@@ -64,8 +63,8 @@ components:
         - activityTypes
         - metric
         - quantityCO2
-        - isAuthorised
-        - mitigationoutcomehashes
+        - mitigationType
+        - authorisationID
       properties:
         cooperativeApproach:
           description: Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
@@ -87,6 +86,10 @@ components:
           type: integer
           format: int32
           example: 7144
+        partyITMORegistry:
+          description: ISO-3166-1 alpha-3 code of participating party registry currently owns the ITMO(s).
+          type: string
+          example: "FRA"
         firstTransferringParty:
           description: ISO-3166-1 alpha-3 code of participating party registry that initiates the \"First Transfer\".
             Refer to common nomenclalture for definition of \"First Transfer\".
@@ -112,13 +115,13 @@ components:
             example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         sectors:
           description: One or more sectors where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.
-            Refer to common nomenclalture for recognised values for \"sectors\".
+            Refer to common nomenclature for recognised values for \"sectors\".
           type: array
           items:
             type: string
         activitytypes:
           description: The mitigation activity type(s) from which the ITMOs were generated.
-            Refer to common nomenclalture for recognised values for \"activityTypes\".
+            Refer to common nomenclature for recognised values for \"activityTypes\".
           type: array
           items:
             type: string
@@ -138,7 +141,7 @@ components:
           description: If the mitigation outcome involves a non-CO2 greenhouse gas(es), the global warming potential (GWP) value(s) applied, consistent with the relevant CMA decisions (e.g.,\'100-year values from 5th assessment report by the IPCC\').
           type: string          
         non-GHGMetric:
-          description: Quantity of ITMOs in the respective non-GHG metric. This field should be reported as \‘Not applicable\’ (NA) if the ITMOs are in a GHG metric.
+          description: Type of non-GHG metric applied (e.g., ‘megawatt hours of renewable electricity generation’). This field should be reported as \‘Not applicable\’ (NA) if the ITMOs are in a GHG metric.
           type: string
         quantityNon-GHG:
           description: Quantity of ITMOs in the respective non-GHG metric. This field should be reported as ‘Not applicable’ (NA) if the ITMOs are in a GHG metric.
@@ -146,7 +149,10 @@ components:
           format: int32
           minimum: 1
           maximum: 999999999
-
+        mitigationType:
+          description: “Emission reductions” or “Removals”
+          type: string
+          example: Emissions reduction
         isAuthorised:
           description: whether this A6.4ER has been authorised, thus, is an ITMO.  If it is authorised, the cooperativeApproach cannot be CA0000.
           type: boolean
@@ -189,7 +195,7 @@ components:
           format: date-time
           example: "2024-07-21T17:32:28Z"
         modifiedDateTime:
-          description:  Date-timestamp of last modification of the ITMO(s) property.
+          description:  Date-timestamp of last modification of any of the ITMO(s) elements.
             Kept in ITMO instead of relying on hosting system to survive migration across hosting solutions.
           type: string
           format: date-time
