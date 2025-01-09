@@ -1,0 +1,19 @@
+name: Run Spectral on push
+
+on:
+  - push
+
+jobs:
+  build:
+    name: Run Spectral
+    runs-on: ubuntu-latest
+    container:
+      image: stoplight/spectral:latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: spectral lint openapi.yaml --ruleset .spectral.yaml --format github-actions
+
+      - uses: actions/checkout@v4
+        with:
+          repository: 'baloise-incubator/spectral-ruleset'
+      - run: spectral lint openapi.yaml --ruleset .spectral.yml --format github-actions
