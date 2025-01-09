@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: API for transactions with ITMOs (Work In Progress)
+  title: API for International Registry Interoperability (Work In Progress)
   description: 
      <b>Introduction</b>
      <br><br>This API is part of the communication standards for transactions with
@@ -24,6 +24,20 @@ servers:
     description: Production server (uses live data !)
   - url: TBD
     description: Test server (uses test data)
+tags:
+  - name: Status
+    description: Manage the status of the API / server
+  - name: Registry
+    description: Manage Participating Party Registry Sections, including its contact details.
+  - name: Account
+    description: Manage the account(s) of Participating Party Registry Sections
+  - name: Action
+    description: Manage actions of Participating Party Registry Sections
+  - name: ITMO
+    description: Manage ITMOs of the caller registry
+  - name: Export
+    description: Manage exports of information of the caller registry
+
 paths: 
 
   /status:
@@ -47,8 +61,774 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
 
+  /registry/{regID}:
+    get:
+      tags: Registry
+      operationId: getRegistry
+      summary: Retrieve the details of the participating Party registry section
+      description: Retrieve the details of the participating Party registry section corresponding to regID.
+        To keep coding compact, in code, "registry" will be used instead of "participatingPartyRegistrySection" 
+      parameters:
+        - name: regID
+          in: path
+          description: Identifier of the registry corresponding to the participating Party registry section
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registry'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+    put:
+      tags:
+        - Registry
+      operationId: createRegistry
+      summary: Create a new participating Party registry section
+      description: Create a new participating Party registry section with an identifier of regID
+        If a registry with the same registry identifier already exists, the operation will be unsuccessful.
+      parameters:
+        - name: regID
+          in: path
+          description: The registry identifier of the new participating Party registry section
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      requestBody:
+        description: The registry contact list of this registry.
+          Array must contain at least two Contacts.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                schema:
+                  $ref: '#/components/schemas/Contact'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/RegistrySection'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+    post:
+      tags:
+        - Registry
+      operationId: resetTestRegistry
+      summary:
+        Reset a test registry - this operation is not available in any production environment
+      description:
+        For use in test environments to reset and clean up test registries.
+        Removes all holdings of the registry identified by regID,
+        including all ITMOs issued by the registry located in other registries,
+        all transactions to/from the registry and all accounts in the registry.
+        This operation not available in production environment.
+      parameters:
+        - name: regID
+          in: path
+          description: The registry identifier of the participating Party registry section to be reset
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      requestBody:
+        description: The registry contact list of this registry.
+          Array must contain at least two Contacts.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                schema:
+                  $ref: '#/components/schemas/Contact'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Registry'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+  /registry/{regID}/insertContact:
+    post:
+      tags:
+        - Registry
+      operationId: insertContact
+      summary:
+        Insert a contact to a registry's list of contacts
+      description:
+        Insert a contact to a registry.
+        The new contact is inserted in the position specified in the contact's order property - current contacts are pushed down.
+        If there are already 10 contacts in the list, the operation fails.
+        If there is already a contact with the same email address or the same phone number in the list, the operation fails.
+      parameters:
+        - name: regID
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      requestBody:
+        description: The contact to be inserted.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contact'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Registry'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+  /registry/{regID}/removeContact/{email}:
+    post:
+      tags:
+        - Registry
+      operationId: removeContact
+      summary:
+        Remove the contact with the corresponding email address from a registry's list of contacts
+      description:
+        Remove a contact from a registry.
+        Current contacts behind the one to be removed are moved up in order.
+        If there are less than 2 existing contacts, the operation fails.
+        If there is no current contact with the provided email adddress, the operation fails.
+      parameters:
+        - name: regID
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+        - name: email
+          in: path
+          description: The email address of the contact to be removed.
+          required: true
+          schema:
+            type: string
+            example: jhalleux@unfccc.int
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Registry'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+  /registry/{regID}/insertAccount:
+    post:
+      tags:
+        - Registry
+      operationId: insertAccount
+      summary:
+        Insert an account to a registry's list of accounts
+      description:
+        Insert an account into a registry.
+        If an account with the same account number already exists in the registry, the operation fails.
+      parameters:
+        - name: regID
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      requestBody:
+        description: The account to be inserted.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Registry'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+  /registry/{regID}/removeAccount:
+    post:
+      tags:
+        - Registry
+      operationId: removeAccount
+      summary:
+        Remove an account to a registry's list of accounts
+      description:
+        Remove an account from a registry.
+        Only empty accounts may be removed - if the account currently holds ITMOs, the operation fails.
+        If no account with the provided account exists in the registry, the operation fails.
+      parameters:
+        - name: regID
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+        - name: accountID
+          in: path
+          description: The accountID of the contact to be removed.
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 999999999
+            example: 7564
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Registry'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+  /actions:
+    get:
+      tags:
+        - Action
+      operationId: getActions
+      summary: Retrieve a list of actions
+
+        Transactions are returned in descending order of their most recent status update (ie most recent transactions are first).
+
+        The offset and limit parameters allow paginating through a long list of transactions.
+
+        The account parameter allows selecting transactions to/from a specific account
+
+        The status parameter allows filtering by status.
+
+        The from and to parameters allow filtering by date-time.
+      description: Retrieve a list of transactions
+
+        Transactions are returned in descending order of their most recent status update (ie most recent transactions are first).
+
+        The offset and limit parameters allow paginating through a long list of transactions.
+
+        The account parameter allows selecting transactions to/from a specific account
+
+        The status parameter allows filtering by status.
+
+        The from and to parameters allow filtering by date-time.
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 999999999
+          description: The number of items to skip before starting to collect the transactions
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+          description: The number of transactions to return
+        - in: query
+          name: account
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 999999999
+            example: 7564
+          description: The account identifier
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
+            description: Allows to filter by transaction status
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+            description: The minimum date-time of transactions to return
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+            description: The maximum date-time of transactions to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    itmos:
+                      type: array
+                      maxItems: 100
+                      items:
+                        $ref: '#/components/schemas/Transaction'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+    post:
+      tags:
+        - Action
+      operationId: proposeAction
+      summary: Propose a transaction.
+      description: Propose a transaction.
+      requestBody:
+        description: The proposed transaction
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Action'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Action'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+  /action/{fromregistry}/{id}:
+    put:
+      tags:
+        - Action
+      operationId: finalizeTransaction
+      summary: Accept, reject or cancel a transaction
+      description: Accept, reject or cancel a transaction
+      parameters:
+        - name: fromregistry
+          in: path
+          description: The registry code which proposed the transaction
+          required: true
+          schema:
+            type: string
+            example: "BEL"
+        - name: id
+          in: path
+          description: The transaction identifier
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 999999999
+            example: 87349
+      requestBody:
+        description: The transaction to finalize.
+          Only the recipient can accept or reject a transaction.
+          Only the proposer can cancel a transaction.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  format: enum[ACCEPTED, REJECTED, CANCELLED]
+                  example: REJECTED
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Transaction'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+  /transactions/last:
+    get:
+      tags:
+        - Transaction
+      operationId: getLastTransaction
+      summary: Retrieve the last proposed transaction.  Useful to create the next transaction identifier.
+      description: Retrieve the last proposed transaction.  Useful to create the next transaction identifier.
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Transaction'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+
 components:
   schemas:
+
+    Registry:
+      type: object
+      required:
+        - id
+        - contacts
+      properties:
+        id:
+          type: string
+          pattern: '^[A-Z]{3}\d{2}$'
+          description: Identifier of the registry corresponding to the Participating Party Registry
+          example: DEU00
+        contacts:
+          type: array
+          maxItems: 10
+          description: The list of contacts for the registry.
+            The order attribute determines the order of presentation of the contacts, and must start with 1, 2, 3 ... , without gaps and sorted ascendingly
+            At least two contacts must be provided (primary and alternate), with order 1 and 2 respectively
+          items:
+            $ref: "#/components/schemas/Contact"
+        accounts:
+          type: array
+          description: The list of accounts used by this registry
+          items:
+            $ref: "#/components/schemas/Account"
+        lastmodifieddatetime:
+          type: string
+          format: date-time
+          description: The date and time of the most recent change to the registry transactions, accounts or holdings.  This is used to set the cut-off date during the export.
+          example: "2026-07-21T17:22:28Z"
+        creationdatetime:
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+
+    Account:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 999999999
+          example: 7564
+        accountType:
+          type: integer
+          minimum: 100
+          maximum: 999
+        labels:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            example: "My favorite account"
+        suppinfo:
+          type: string
+          example: "Find a reasonably good example..."
+        lastmodifieddatetime:
+          type: string
+          format: date-time
+          description: The date and time of the last transaction proposed from this account, or accepted/rejected/cancelled with this account as recipient
+          example: "2024-07-21T17:32:28Z"
+        creationdatetime:
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+
+    Contact:
+      type: object
+      required:
+        - givenNames
+        - familyName
+        - email
+        - phone
+        - role
+        - order
+      properties:
+        familyName:
+          type: string
+          example: "Halleux"
+        givenNames:
+          type: string
+          example: "Jean-Francois"
+        email:
+          type: string
+          example: "jhalleux@unfccc.int"
+        phone:
+          type: string
+          example: "00498151809"
+        role:
+          type: string
+          example: "Alternate registry administrator"
+        order:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 10
+          example: 3
+
+
+    Action:
+      type: object
+      description: A transaction consists in the transfer of at least one ITMO from one account to another account, in the same or in a different registry.
+        An Issuance/creation transaction must specify the same origin and destination account.  All other transaction must specify different origin and destination accounts.
+      required:
+        - fromregistry
+        - id
+        - fromaccount
+        - toregistry
+        - toaccount
+        - itmos
+      properties:
+        fromregistry:
+          type: string
+          description: Important note. When a transaction is proposed, this must be the caller registry.
+          example: "BEL"
+        id:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 999999999
+          example: 5869444
+        fromaccount:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 999999999
+          example: 7564
+        toregistry:
+          type: string
+          example: "FRA"
+        toaccount:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 999999999
+          example: 38444
+        itmos:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            properties:
+              cooperativeapproach:
+                type: string
+                example: "Article 6.4"
+              firsttransferringparty:
+                type: string
+                example: "BEL"
+              vintage:
+                type: integer
+                format: int32
+                minimum: 2015
+                maximum: 9999
+                example: 2025
+              isrepresentedasblock:
+                type: boolean
+                example: true
+              serialfirst:
+                type: integer
+                format: int32
+                minimum: 1
+                maximum: 999999999
+                description: either a serial number, or the start of a block
+                example: 123456
+              serialsecond:
+                type: integer
+                format: int32
+                minimum: 1
+                maximum: 999999999
+                description: when an ITMO is represented as a serial number, this keeps track of its parent when/if it is split.  Otherwise, this is the end of the block.
+                example: 89542
+              amount:
+                type: integer
+                format: int32
+                minimum: 1
+                maximum: 999999999
+                example: 150000
+        status:
+          type: string
+          enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
+          example: ACCEPTED
+        statusdatetime:
+          type: string
+          format: dateTime
+          example: "2024-07-21T17:32:28Z"
+        labels:
+          type: array
+          maxItems: 10
+          items:
+            type: string
+            example: "My favorite transaction"
+        suppinfo:
+          type: string
+          example: "Find a good example of suppl. information ..."
+        lastmodifieddatetime:
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+        creationdatetime: # The date time of the PROPOSED status is always here...
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+  
+
     ITMO:
       type: object
       required:
