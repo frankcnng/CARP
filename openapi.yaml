@@ -500,28 +500,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
 
-    post:
+  /action/{regID}/propose:
+    put:
       tags:
         - Action
       operationId: proposeAction
-      summary: Propose a transaction.
-      description: Propose a transaction.
+      summary: Propose a new action, from the registry identified by regID
+        If the proposed action is valid, it will be enqueued on the pending actions queue, avalable for appropriate registries to pick up.
+        An actionId is returned by the operation, so regitries can check and augment the status of an action.
+      description: Propose a new action, from the registry identified by regID
+        If the proposed action is valid, it will be enqueued on the pending actions queue, avalable for appropriate registries to pick up.
+        An actionId is returned by the operation, so regitries can check and augment the status of an action.
+
+        If the proposed action is not valid, the operation will fail.
+        Parameters also include the ITMOs involved in the action.
+        These will be locked for the duration of the action.
+      parameters:
+        - name: regID
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
       requestBody:
-        description: The proposed transaction
+        description: The proposed action.
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Action'
-        required: true
+
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                allOf:
-                - $ref: '#/components/schemas/Action'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                type: integer
         '400':
           description: Unsuccessful operation
           content:
@@ -766,47 +783,8 @@ components:
           minimum: 1
           maximum: 999999999
           example: 38444
-        itmos:
-          type: array
-          maxItems: 100
-          items:
-            type: object
-            properties:
-              cooperativeapproach:
-                type: string
-                example: "Article 6.4"
-              firsttransferringparty:
-                type: string
-                example: "BEL"
-              vintage:
-                type: integer
-                format: int32
-                minimum: 2015
-                maximum: 9999
-                example: 2025
-              isrepresentedasblock:
-                type: boolean
-                example: true
-              serialfirst:
-                type: integer
-                format: int32
-                minimum: 1
-                maximum: 999999999
-                description: either a serial number, or the start of a block
-                example: 123456
-              serialsecond:
-                type: integer
-                format: int32
-                minimum: 1
-                maximum: 999999999
-                description: when an ITMO is represented as a serial number, this keeps track of its parent when/if it is split.  Otherwise, this is the end of the block.
-                example: 89542
-              amount:
-                type: integer
-                format: int32
-                minimum: 1
-                maximum: 999999999
-                example: 150000
+        itmo:
+          $ref: '#/components/schemas/ITMO'  
         status:
           type: string
           enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
