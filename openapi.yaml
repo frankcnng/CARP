@@ -1009,6 +1009,7 @@ components:
             A short, summary of the problem type. Written in english and readable
             for engineers (usually not suited for non technical stakeholders and
             not localized); example: Service Unavailable
+          maxLength: 32
         status:
           type: integer
           format: int32
@@ -1032,7 +1033,7 @@ components:
             An absolute URI that identifies the specific occurrence of the problem.
             It may or may not yield further information if dereferenced.
     
-	Errors:
+    Errors:
       type: object
       properties:
         errors:
@@ -1053,7 +1054,7 @@ components:
                 type: string
                 maxLength: 1024
                 example: "Unexpected error"
-
+              
   securitySchemes:
 
     basicAuth:
