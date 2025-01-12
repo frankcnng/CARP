@@ -40,26 +40,47 @@ tags:
 
 paths: 
 
-  /status:
+  /serverStatus:
     get:
       tags:
         - Status
-      operationId: getStatus
-      summary: Retrieve the status of the server
-      description: Retrieve the status of the server
+      operationId: getServerStatus
+      summary: Get the current server status and date/time
+      description: Get the current server status and date/time
       responses:
         '200':
-          description: Successful operation.
+          description: Successful operation
           content:
-            application/problem+json: # According to recommended practice, 200 returns a problem json with positive code for /status
+            application/json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                type: object
+                additionalProperties: false
+                properties:
+                  status:
+                    type: string
+                    enum: [Operational, Non-Operational, Action Proposals Disallowed]
+                    description: >
+                      The operational status of the server:
+                      * Operational: all operations are allowed
+                      * Non-Operational: no operations are allowed
+                      * Action Proposals Disallowed: all operations are allowed, except Action Proposals
+                    example: Operational
+                  timestamp:
+                    type: string
+                    format: date-time
+                    minLength: 20
+                    maxLength: 20
+                    description: Date/time as defined in RFC 3339, section 5.6
+                    example: 2027-07-21T17:32:28Z
+              example:
+                status: Non-Operational
+                timestamp: 2026-07-21T17:32:28Z
         default:
           description: Unexpected error
           content:
-            application/problem+json:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
 
   /registry/{regID}:
     get:
@@ -1010,6 +1031,29 @@ components:
           description: |
             An absolute URI that identifies the specific occurrence of the problem.
             It may or may not yield further information if dereferenced.
+    
+	Errors:
+      type: object
+      properties:
+        errors:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            properties:
+              severity:
+                type: string
+                enum: [ERROR, WARNING]
+                example: ERROR
+              code:
+                type: integer
+                format: int32
+                example: 5678
+              message:
+                type: string
+                maxLength: 1024
+                example: "Unexpected error"
+
   securitySchemes:
 
     basicAuth:
