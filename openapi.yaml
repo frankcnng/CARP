@@ -1005,7 +1005,7 @@ components:
         actionType:
           type: integer
           description: The action type code. See Common Nomenclatures for action type codes, and their corresponding values and descriptions.
-          example: 1 (meaning Authorization)
+          example: 1
         itmos:
           $ref: '#/components/schemas/ITMO'  
         status:
