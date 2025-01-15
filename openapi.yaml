@@ -1039,7 +1039,6 @@ components:
             The account id must be unique across a registry.
           type: integer
           format: int32
-          description: The id of the account.  
           minimum: 1
           maximum: 999999999
           example: 7564
