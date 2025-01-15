@@ -8,7 +8,7 @@ info:
      <br><br>Participating Parties opting to apply the guidance referred to in 
      decision 6/CMA.4, annex I, chapter I.B are expected to adhere to this API when they interoperate.
      <br><br><b>Current status</b>
-     <br><br>This API is currently limited to schema definitions for ITMOs.
+     <br><br>This API is currently in development.
   version: 0.0.1
   contact: 
     name: UNFCCC secretariat (Voluntary forum of Article 6 registry system administrators and technical experts)
@@ -82,16 +82,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /registry/{regID}:
+  /registry/{regId}:
     get:
       tags: 
         - Registry
       operationId: getRegistry
       summary: Retrieve the details of the participating Party registry section
-      description: Retrieve the details of the participating Party registry section corresponding to regID.
+      description: Retrieve the details of the participating Party registry section corresponding to regId.
         To keep coding compact, in code, "registry" will be used instead of "participatingPartyRegistrySection" 
       parameters:
-        - name: regID
+        - name: regId
           in: path
           description: Identifier of the registry corresponding to the participating Party registry section
           required: true
@@ -123,10 +123,10 @@ paths:
         - Registry
       operationId: createRegistry
       summary: Create a new participating Party registry section
-      description: Create a new participating Party registry section with an identifier of regID
+      description: Create a new participating Party registry section with an identifier of regId
         If a registry with the same registry identifier already exists, the operation will be unsuccessful.
       parameters:
-        - name: regID
+        - name: regId
           in: path
           description: The registry identifier of the new participating Party registry section
           required: true
@@ -176,12 +176,12 @@ paths:
         Reset a test registry - this operation is not available in any production environment
       description:
         For use in test environments to reset and clean up test registries.
-        Removes all holdings of the registry identified by regID,
+        Removes all holdings of the registry identified by regId,
         including all ITMOs issued by the registry located in other registries,
         all transactions to/from the registry and all accounts in the registry.
         This operation not available in production environment.
       parameters:
-        - name: regID
+        - name: regId
           in: path
           description: The registry identifier of the participating Party registry section to be reset
           required: true
@@ -224,7 +224,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
 
-  /registry/{regID}/insertContact:
+  /registry/{regId}/insertContact:
     post:
       tags:
         - Registry
@@ -237,7 +237,7 @@ paths:
         If there are already 10 contacts in the list, the operation fails.
         If there is already a contact with the same email address or the same phone number in the list, the operation fails.
       parameters:
-        - name: regID
+        - name: regId
           in: path
           description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
           required: true
@@ -273,7 +273,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
-  /registry/{regID}/removeContact/{email}:
+  /registry/{regId}/removeContact/{email}:
     post:
       tags:
         - Registry
@@ -286,7 +286,7 @@ paths:
         If there are less than 2 existing contacts, the operation fails.
         If there is no current contact with the provided email adddress, the operation fails.
       parameters:
-        - name: regID
+        - name: regId
           in: path
           description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
           required: true
@@ -323,7 +323,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
 
-  /registry/{regID}/insertAccount:
+  /registry/{regId}/insertAccount:
     post:
       tags:
         - Registry
@@ -334,7 +334,7 @@ paths:
         Insert an account into a registry.
         If an account with the same account number already exists in the registry, the operation fails.
       parameters:
-        - name: regID
+        - name: regId
           in: path
           description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
           required: true
@@ -370,7 +370,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
-  /registry/{regID}/removeAccount/{accountID}:
+  /registry/{regId}/removeAccount/{accountID}:
     post:
       tags:
         - Registry
@@ -382,7 +382,7 @@ paths:
         Only empty accounts may be removed - if the account currently holds ITMOs, the operation fails.
         If no account with the provided account exists in the registry, the operation fails.
       parameters:
-        - name: regID
+        - name: regId
           in: path
           description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
           required: true
@@ -422,77 +422,87 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
 
-  /actions:
+
+  /action/{regId}/propose:
+    put:
+      tags:
+        - Action
+      operationId: proposeAction
+      summary: Propose a new action, from the registry identified by regId
+        If the proposed action is valid, it will be added to the pending actions list, avalable for appropriate registries to process.
+        An actionId is returned by the operation, so regitries can check and augment the status of an action.
+      description: Propose a new action, from the registry identified by regId
+        If the proposed action is valid, it will be added to the pending actions list, avalable for appropriate registries to process.
+        An actionId is returned by the operation, so regitries can check and augment the status of an action.
+
+        If the proposed action is not valid, the operation will fail.
+        The incoming payload is the proposedAction, that also include the ITMOs involved in the action.
+        These will be locked for the duration of the action.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      requestBody:
+        description: The proposed action.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProposedAction'
+
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+  /action/{regId}/{actionId}:
     get:
       tags:
         - Action
-      operationId: getActions
-      summary: Retrieve a list of actions
-
-        Transactions are returned in descending order of their most recent status update (ie most recent transactions are first).
-
-        The offset and limit parameters allow paginating through a long list of transactions.
-
-        The account parameter allows selecting transactions to/from a specific account
-
-        The status parameter allows filtering by status.
-
-        The from and to parameters allow filtering by date-time.
-      description: Retrieve a list of transactions
-
-        Transactions are returned in descending order of their most recent status update (ie most recent transactions are first).
-
-        The offset and limit parameters allow paginating through a long list of transactions.
-
-        The account parameter allows selecting transactions to/from a specific account
-
-        The status parameter allows filtering by status.
-
-        The from and to parameters allow filtering by date-time.
+      operationId: getAction
+      summary: Retrieve the action corresponding to actionId
+      description: Retrieve the action corresonding to actionId.
+        The calling registry must have a registry id corresponding to regId,
+        and only only when regId is the fromRegistry or toRegistry will the action be returned.
       parameters:
-        - in: query
-          name: offset
+        - name: regId
+          in: path
+          description: The identifier of the registry for which actions are to be retrieved.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+        - name: actionId
+          in: path
+          description: The action identifier
+          required: true
           schema:
             type: integer
-            format: int32
-            minimum: 0
-            maximum: 999999999
-          description: The number of items to skip before starting to collect the transactions
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
+            format: uint32
             minimum: 1
-            maximum: 100
-          description: The number of transactions to return
-        - in: query
-          name: account
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 999999999
-            example: 7564
-          description: The account identifier
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
-            description: Allows to filter by transaction status
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-            description: The minimum date-time of transactions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-            description: The maximum date-time of transactions to return
+            maximum: 4294967295
+            example: 87349
       responses:
         '200':
           description: Successful operation
@@ -520,88 +530,34 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
-
-  /action/{regID}/propose:
-    put:
+    post:
       tags:
         - Action
-      operationId: proposeAction
-      summary: Propose a new action, from the registry identified by regID
-        If the proposed action is valid, it will be enqueued on the pending actions queue, avalable for appropriate registries to pick up.
-        An actionId is returned by the operation, so regitries can check and augment the status of an action.
-      description: Propose a new action, from the registry identified by regID
-        If the proposed action is valid, it will be enqueued on the pending actions queue, avalable for appropriate registries to pick up.
-        An actionId is returned by the operation, so regitries can check and augment the status of an action.
-
-        If the proposed action is not valid, the operation will fail.
-        Parameters also include the ITMOs involved in the action.
-        These will be locked for the duration of the action.
+      operationId: processAction
+      summary: Accept, reject or cancel an action
+      description: Accept, reject or cancel an action
       parameters:
-        - name: regID
+        - name: regId
           in: path
-          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
-          required: true
-          schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
-      requestBody:
-        description: The proposed action.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Action'
-
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
-        default:
-          description: Unexpected error
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
-
-  /action/{fromregistry}/{id}:
-    put:
-      tags:
-        - Action
-      operationId: finalizeTransaction
-      summary: Accept, reject or cancel a transaction
-      description: Accept, reject or cancel a transaction
-      parameters:
-        - name: fromregistry
-          in: path
-          description: The registry code which proposed the transaction
+          description: The identifier of the registry attempting to process the action.
           required: true
           schema:
             type: string
             example: "BEL"
-        - name: id
+        - name: actionId
           in: path
-          description: The transaction identifier
+          description: The action identifier
           required: true
           schema:
             type: integer
-            format: int32
+            format: uint32
             minimum: 1
-            maximum: 999999999
+            maximum: 4294967295
             example: 87349
       requestBody:
-        description: The transaction to finalize.
-          Only the recipient can accept or reject a transaction.
-          Only the proposer can cancel a transaction.
+        description: The action to process.
+          Only the recipient can accept or reject an action.
+          Only the proposer can cancel an action.
         content:
           application/json:
             schema:
@@ -632,11 +588,140 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/ErrorOrWarningResponse'
+  
+  
+  /action/{regId}/pendingActions:
+    get:
+      tags:
+        - Action
+      operationId: getPendingActions
+      summary: Retrieve the actions that are pending processing for the registry identified by regId
+      description: Retrieve the actions that are pending processing for the registry identified by regId.
+        This is the API that is expected to be normally used by registries to process transactions.
+        The similar API, getSelectedActions(), returns actions with other statuses, used for management or testing.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry for which actions are to be retrieved.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    itmos:
+                      type: array
+                      maxItems: 100
+                      items:
+                        $ref: '#/components/schemas/Action'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
+  /action/{regId}/selectedActions:
+    get:
+      tags:
+        - Action
+      operationId: getSelectedActions
+      summary: Retrieve the transactions for the registry identified by regId and other parameters
+      description: Retrieve the transactions for the registry identified by regId and other parameters.
+        Actions where the registry is both the from registry and the to registry will be retrieved.
+        This API is for management and testing, as it is more complicated than getPendingActions()
+      parameters:
+        - name: regId
+          description: The identifier of the registry for which actions are to be retrieved.
+            Actions where the registry is both the from registry and the to registry will be retrieved.
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 999999999
+          description: The number of items to skip before starting to collect the transactions
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+          description: The number of transactions to return
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
+          description: Allows to filter by transaction status
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: The minimum date-time of transactions to return
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: The maximum date-time of transactions to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    itmos:
+                      type: array
+                      maxItems: 100
+                      items:
+                        $ref: '#/components/schemas/Action'
+                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ErrorOrWarningResponse'
+
 
   /actions/last:
     get:
       tags:
-        - Transaction
+        - Action
       operationId: getLastTransaction
       summary: Retrieve the last proposed transaction.  Useful to create the next transaction identifier.
       description: Retrieve the last proposed transaction.  Useful to create the next transaction identifier.
@@ -769,42 +854,60 @@ components:
 
     Action:
       type: object
-      description: A transaction consists in the transfer of at least one ITMO from one account to another account, in the same or in a different registry.
-        An Issuance/creation transaction must specify the same origin and destination account.  All other transaction must specify different origin and destination accounts.
+      description: An ProposedAction that has been validated by the hub, and given an actionId (see ProposedAction)
       required:
-        - fromregistry
-        - id
-        - fromaccount
-        - toregistry
-        - toaccount
+        - actionId
+        - proposedAction
+      properties:
+        actionId:
+          type: integer
+          format: uint32
+          description: Identifier for the action.  Action identifiers are unique across the international registry ecosystem.
+          minimum: 0
+          maximum: 4294967295
+          example: 5869444
+        proposedAction:
+          $ref: '#/components/schemas/ProposedAction'
+
+    ProposedAction:
+      type: object
+      description: An proposed action to be performed on a block of ITMOs.
+        A registry proposes an action to the hub.  Once the hub validates the proposedAction, it is given an actionId (see Action schema).
+        An action consists in the transfer of at least one ITMO from one account to another account, in the same or in a different registry.
+        An authorisation/issuance/creation action must specify the same origin and destination account.
+        All other transaction must specify different origin and destination accounts.
+      required:
+        - fromRegistry
+        - fromAccount
+        - toRegistry
+        - toAccount
+        - actionType
         - itmos
       properties:
-        fromregistry:
+        fromRegistry:
           type: string
           description: Important note. When a transaction is proposed, this must be the caller registry.
           example: "BEL"
-        id:
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 999999999
-          example: 5869444
-        fromaccount:
+        fromAccount:
           type: integer
           format: int32
           minimum: 1
           maximum: 999999999
           example: 7564
-        toregistry:
+        toRegistry:
           type: string
           example: "FRA"
-        toaccount:
+        toAccount:
           type: integer
           format: int32
           minimum: 1
           maximum: 999999999
           example: 38444
-        itmo:
+        actionType:
+          type: integer
+          description: The action type code. See Common Nomenclatures for action type codes, and their corresponding values and descriptions.
+          example: 1
+        itmos:
           $ref: '#/components/schemas/ITMO'  
         status:
           type: string
