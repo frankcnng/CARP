@@ -1,7 +1,7 @@
 @startuml ActionSequence
 
 skinparam style strictuml
-skinparam dpi 600
+skinparam dpi 300
 
 participant "Sending\nregistry" as Sender
 
