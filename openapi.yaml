@@ -111,13 +111,13 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
     put:
       tags:
         - Registry
@@ -155,19 +155,19 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/Registry'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
     post:
       tags:
         - Registry
@@ -210,19 +210,19 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/Registry'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
 
   /registry/{regId}/insertContact:
     post:
@@ -260,19 +260,19 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/Registry'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
   /registry/{regId}/removeContact/{email}:
     post:
       tags:
@@ -309,19 +309,19 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/Registry'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
 
   /registry/{regId}/insertAccount:
     post:
@@ -357,19 +357,19 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/Registry'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
   /registry/{regId}/removeAccount/{accountID}:
     post:
       tags:
@@ -408,19 +408,19 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/Registry'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
 
 
   /action/{regId}/propose:
@@ -467,13 +467,13 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
 
   /action/{regId}/{actionId}:
     get:
@@ -517,19 +517,19 @@ paths:
                       maxItems: 100
                       items:
                         $ref: '#/components/schemas/Action'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
     post:
       tags:
         - Action
@@ -575,19 +575,19 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/Action'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
   
   
   /action/{regId}/pendingActions:
@@ -622,19 +622,19 @@ paths:
                       maxItems: 100
                       items:
                         $ref: '#/components/schemas/Action'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
 
   /action/{regId}/selectedActions:
     get:
@@ -703,49 +703,19 @@ paths:
                       maxItems: 100
                       items:
                         $ref: '#/components/schemas/Action'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
+                - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
-
-
-  /actions/last:
-    get:
-      tags:
-        - Action
-      operationId: getLastTransaction
-      summary: Retrieve the last proposed transaction.  Useful to create the next transaction identifier.
-      description: Retrieve the last proposed transaction.  Useful to create the next transaction identifier.
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                allOf:
-                - $ref: '#/components/schemas/Action'
-                - $ref: '#/components/schemas/ErrorOrWarningResponse'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
-        default:
-          description: Unexpected error
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/ErrorOrWarningResponse'
+                $ref: '#/components/schemas/Errors'
 
 
 components:
@@ -793,6 +763,7 @@ components:
         id:
           type: integer
           format: int32
+          description: The id of the account.  The account id must be unique across a registry.
           minimum: 1
           maximum: 999999999
           example: 7564
@@ -1063,6 +1034,15 @@ components:
 #          format: date-time
 #          example: "2024-07-21T17:32:28Z"
 #
+        accountId:
+          description: the identifier of the account currently holding the ITMOs.
+            The account id must be unique across a registry.
+          type: integer
+          format: int32
+          description: The id of the account.  
+          minimum: 1
+          maximum: 999999999
+          example: 7564
         suppInfo:
           description: Any supplementary information the current owning Party may need to attach to the ITMOs
             This should be an append only property.
@@ -1094,47 +1074,6 @@ components:
           format: date-time
           example: "2024-07-21T17:32:28Z"
 
-    ErrorOrWarningResponse: # Problem JSON / RFC 7XXX compatible error. See https://opensource.zalando.com/restful-api-guidelines/models/problem-1.0.1.yaml
-      type: object
-      properties:
-        type:
-          type: string
-          format: uri
-          description: |
-            An absolute URI that identifies the problem type.  When dereferenced,
-            it SHOULD provide human-readable documentation for the problem type
-            (e.g., using HTML).
-          default: 'about:blank'
-          example: 'https://zalando.github.io/problem/constraint-violation'
-        title:
-          type: string
-          description: |
-            A short, summary of the problem type. Written in english and readable
-            for engineers (usually not suited for non technical stakeholders and
-            not localized); example: Service Unavailable
-          maxLength: 32
-        status:
-          type: integer
-          format: int32
-          description: |
-            The HTTP status code generated by the origin server for this occurrence
-            of the problem.
-          minimum: 100
-          maximum: 600
-          exclusiveMaximum: true
-          example: 503
-        detail:
-          type: string
-          description: |
-            A human readable explanation specific to this occurrence of the
-            problem.
-          example: Connection to database timed out
-        instance:
-          type: string
-          format: uri
-          description: |
-            An absolute URI that identifies the specific occurrence of the problem.
-            It may or may not yield further information if dereferenced.
     
     Errors:
       type: object
