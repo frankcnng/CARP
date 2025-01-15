@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    name: Run Spectral
+    name: Run Spectral and renders PlantUML files
     runs-on: ubuntu-latest
     container:
       image: stoplight/spectral:latest
@@ -17,3 +17,8 @@ jobs:
         with:
           repository: 'baloise-incubator/spectral-ruleset'
       - run: spectral lint openapi.yaml --ruleset .spectral.yml --format github-actions
+
+      - uses: grassedge/generate-plantuml-action@master
+        with:
+          path: diagrams
+          message: "Render PlantUML files"
