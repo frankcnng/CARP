@@ -1,0 +1,59 @@
+@startuml
+
+title ITMO Lifecycle \n
+
+start
+
+partition ITMOs do not yet exist {
+    
+    :CoopApproach/MitOutcome Authorized;
+    
+    note left
+        * FTP Registry has been created in International Registry
+        * Cooperative Approach or Mitigation Outcome authorised by FTP
+        * FTP Registry sends authorisation to International Registry
+        * Note that there are no ITMOs involved in authorizations
+        * Authorizations involve the quantity of GHG offset
+    end note
+    
+    :Insert Acccounts into Registry;
+    
+    note left
+        * Use International Registry InsertAccount API
+            to insert accounts into registry
+    end note
+    
+    }
+
+partition ITMOs exist in Party registry {
+    
+    :ITMOs created by FTP Registry;
+    
+    note left
+        * ITMOs created internally in FTP Registry
+    end note
+    
+    :First Transfer of ITMOs;
+    
+    note left
+        * This is an internal transfer Action proposal to the International Registry
+    end note
+    
+}
+
+partition ITMOs exist in International Registry {
+    
+    repeat
+    
+        fork
+            : Use or Cancel ITMOs;
+            stop
+        fork again
+            :Transfer ITMOs;
+        end fork
+        
+    repeat while ()
+    
+}
+
+@enduml
