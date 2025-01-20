@@ -101,7 +101,7 @@ paths:
             example: DEU00
       responses:
         '200':
-          description: Successful operation.
+          description: Successful operation
           content:
             application/json:
               schema:
@@ -118,6 +118,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Errors'
+				
     put:
       tags:
         - Registry
