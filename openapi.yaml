@@ -118,7 +118,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Errors'
-				
+
     put:
       tags:
         - Registry
