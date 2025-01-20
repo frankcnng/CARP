@@ -1,4 +1,4 @@
-name: Run linters and build artifacts on push
+name: Run linters and build artifacts
 
 on:
   - push
