@@ -6,14 +6,35 @@ start
 
 partition ITMOs do not yet exist {
     
-    :CoopApproach/MitOutcome Authorized;
+    :Cooperative Approach Authorized;
+      note left
+        decision 2 CMA.3, annex, para 18(g)
+        * participating Party authorizes Cooperative Approach
+      end note
+  
+    :Party registers Cooperative Approach authorization;
+      note left
+        decision 2 CMA.3, annex, para 18
+        * Party submits initial report to register authorization
+        * One or more combinations of authorizations of
+            Coooperative Approach,
+            ITMOs relating to the Cooperative Approach, and
+            Entities (participating Parties?)
+      end note
+  
+    :Secretariat (issuing authority) assigns Authorization ID
+    Secretariat registers Cooperative Approach
+    in CARP and Common Nomenclatures;
+      note left
+        * Authorization ID must be assigned by secretariat to ensure uniqueness
+        * Secretariat will also register authorized objects in International Registry
+      end note
+    
+    :Party registers ITMO;
     
     note left
-        * FTP Registry has been created in International Registry
-        * Cooperative Approach or Mitigation Outcome authorised by FTP
-        * FTP Registry sends authorisation to International Registry
-        * Note that there are no ITMOs involved in authorizations
-        * Authorizations involve the quantity of GHG offset
+        * If not previously registered with Cooperative Approach
+
     end note
     
     :Insert Acccounts into Registry;
