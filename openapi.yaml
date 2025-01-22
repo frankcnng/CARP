@@ -323,6 +323,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /registry/{regId}/getAccounts:
+    get:
+      tags:
+        - Registry
+      operationId: getAccounts
+      summary:
+        Return an array of accounts belonging to the registry with identifier regId
+      description:
+        Return an array of accounts belonging to the registry with identifier regId.
+        If not accounts belong to a registry, returns an empty array.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    itmos:
+                      type: array
+                      maxItems: 1000
+                      items:
+                        $ref: '#/components/schemas/Account'
+                - $ref: '#/components/schemas/Errors'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
   /registry/{regId}/insertAccount:
     post:
       tags:
@@ -740,11 +787,6 @@ components:
             At least two contacts must be provided (primary and alternate), with order 1 and 2 respectively
           items:
             $ref: "#/components/schemas/Contact"
-        accounts:
-          type: array
-          description: The list of accounts used by this registry
-          items:
-            $ref: "#/components/schemas/Account"
         lastmodifieddatetime:
           type: string
           format: date-time
@@ -771,6 +813,11 @@ components:
           type: integer
           minimum: 100
           maximum: 999
+        registryId:
+          type: string
+          pattern: '^[A-Z]{3}\d{2}$'
+          description: Identifier of the registry that owns this account.
+          example: DEU00  
         labels:
           type: array
           maxItems: 10
@@ -906,6 +953,13 @@ components:
           format: date-time
           example: "2024-07-21T17:32:28Z"
   
+    Notification:
+      type: object
+      required:
+        - registryId
+        - notificationType
+
+
 
     ITMO:
       type: object
