@@ -52,6 +52,9 @@ partition ITMOs do not yet exist in International Registry {
       with International Registry;
         note left
         * Use //registerITMO// API
+        * This registers the ITMOs for Interoperability
+            with International Registry
+            and other like-minded registries
         * Registry must provide account ID for ITMO(s)
           * If account does not exists, it will be created
         * ITMOs will be created in the International Registry
