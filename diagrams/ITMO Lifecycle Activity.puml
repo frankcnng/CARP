@@ -4,7 +4,7 @@ title ITMO Lifecycle \n
 
 start
 
-partition ITMOs do not yet exist {
+partition ITMOs do not yet exist in International Registry {
     
     :Cooperative Approach Authorized;
       note left
@@ -12,7 +12,9 @@ partition ITMOs do not yet exist {
         * participating Party authorizes Cooperative Approach
       end note
   
-    :Party registers Cooperative Approach authorization;
+    :Party registers
+    Cooperative Approach authorization
+    with Secretariat;
       note left
         decision 2 CMA.3, annex, para 18
         * Party submits initial report to register authorization
@@ -22,58 +24,61 @@ partition ITMOs do not yet exist {
             Entities (participating Parties?)
       end note
   
-    :Secretariat (issuing authority) assigns Authorization ID
+    :Secretariat (issuing authority)
+    assigns Authorization ID.
     Secretariat registers Cooperative Approach
     in CARP and Common Nomenclatures;
       note left
-        * Authorization ID must be assigned by secretariat to ensure uniqueness
-        * Secretariat will also register authorized objects in International Registry
+        * Authorization ID must be assigned
+            by secretariat to ensure uniqueness
+        * Secretariat will also register 
+            authorized objects in International Registry
       end note
     
-    :Party registers ITMO;
+    :Party registers 
+    ITMO(s) authorization
+    with Secretariat;
     
     note left
-        * If not previously registered with Cooperative Approach
-
+        * If not already registered with 
+          Cooperative Approach authorization 
+          registration
     end note
+  
+    if (Party opts for Interoperability) then (yes)
+  
+      :Party registry
+      registers ITMOs
+      with International Registry;
+        note left
+        * Use //registerITMO// API
+        * Registry must provide account ID for ITMO(s)
+          * If account does not exists, it will be created
+        * ITMOs will be created in the International Registry
+        * unique ITMOID will be returned to registry
+          * registryID-serialFirst-serialLast
+        end note
+      
+    else (no)
+      stop
     
-    :Insert Acccounts into Registry;
-    
-    note left
-        * Use International Registry InsertAccount API
-            to insert accounts into registry
-    end note
-    
-    }
-
-partition ITMOs exist in Party registry {
-    
-    :ITMOs created by FTP Registry;
-    
-    note left
-        * ITMOs created internally in FTP Registry
-    end note
-    
-    :First Transfer of ITMOs;
-    
-    note left
-        * This is an internal transfer Action proposal to the International Registry
-    end note
-    
+  endif
 }
 
 partition ITMOs exist in International Registry {
     
-    repeat
+  while () is (Other ITMO operations)
+  
+    :Other operations on ITMOs;
+      note left
+      * Other operations on ITMOs
+          such as internal/external transfer, update, ...
+      end note
     
-        fork
-            : Use or Cancel ITMOs;
-            stop
-        fork again
-            :Transfer ITMOs;
-        end fork
-        
-    repeat while ()
+  endwhile (Use or Cancel ITMOs)
+    :Use or Cancel ITMOs;
+    stop
+
     
 }
 
