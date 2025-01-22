@@ -168,6 +168,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Errors'
+
     post:
       tags:
         - Registry
@@ -175,11 +176,11 @@ paths:
       summary:
         Reset a test registry - this operation is not available in any production environment
       description:
-        For use in test environments to reset and clean up test registries.
+        For use in test environment(s) to reset and clean up test registries.
         Removes all holdings of the registry identified by regId,
-        including all ITMOs issued by the registry located in other registries,
-        all transactions to/from the registry and all accounts in the registry.
-        This operation not available in production environment.
+        including all ITMOs issued by the registry located in other test registries,
+        all transactions to/from the test registry and all accounts in the test registry.
+        This operation not available in the production environment.
       parameters:
         - name: regId
           in: path
@@ -200,6 +201,8 @@ paths:
               properties:
                 contacts:
                   type: array
+                  minItems: 2
+                  maxItems: 10
                   items:
                     $ref: '#/components/schemas/Contact'
       responses:
@@ -208,19 +211,17 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                - $ref: '#/components/schemas/Registry'
-                - $ref: '#/components/schemas/Errors'
+                $ref: '#/components/schemas/Registry'
         '400':
           description: Unsuccessful operation
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
 
