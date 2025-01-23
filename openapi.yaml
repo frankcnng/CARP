@@ -424,8 +424,105 @@ paths:
                 $ref: '#/components/schemas/Errors'
 
 
-  /action/{regId}/propose:
+  /action/{regId}/registerCooperativeApproachAuth:
     put:
+      tags:
+        - Action
+      operationId: registerCooperativeApproachAuth
+      summary: Register authorised cooperative approach, from the registry identified by regId.
+      description: Register authorised cooperative approach, from the registry identified by regId.
+        This may be performed by the secretariat when it registers the CA with the CARP.
+        This enables the CAs and ITMOs for interoperability.
+        This will create the CooperativeApproachAuthorisation and the CooperativeApproach within the International Registry.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      requestBody:
+        description: The cooperative approach authorisation to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CooperativeApproachAuthorization'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+
+  /action/{regId}/registerITMOs:
+    put:
+      tags:
+        - Action
+      operationId: registerITMOs
+      summary: Register authorised ITMOs, from the registry identified by regId.
+      description: Register authorised ITMOs, from the registry identified by regId.
+        This enables ITMOs for interoperability by registering the ITMO's unique identifier and accountId.
+        If the accountId does not exist in the registry, the account is added to the registry.
+        If the ITMOs's unique identifier (Party Id, serialFist, serialLast) overlaps with another ITMO block,
+        the operation fails.
+        If the ITMO's cooperative approach is not found, or is not yet authorised, the operation fails.
+        If the ITMO's details contradict those provided when the ITMO or its Cooperative Approach were authorised, the operation fails.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          required: true
+          schema:
+            type: string
+            pattern: '^[A-Z]{3}\d{2}$'
+            example: DEU00
+      requestBody:
+        description: The ITMOs to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ITMO'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+
+  /action/{regId}/propose:
+    post:
       tags:
         - Action
       operationId: proposeAction
@@ -906,7 +1003,162 @@ components:
           type: string
           format: date-time
           example: "2024-07-21T17:32:28Z"
-  
+
+    CooperativeApproachAuthorization:
+      type: object
+      required:
+        - authorisationID
+        - authorisationDate
+        - authorisationVersion
+        - authorisingPartyID
+        - cooperativeApproachID
+        - metric
+        - sectors
+        - activityTypes
+        - purpose
+      properties:
+        authorisationID:
+          description: Authorization ID as assigned by the Party reporting the authorisation.
+          type: string
+          example: "GUY 2024-CA1"
+        authorisationDate:
+          description: Datestamp of the authorisation of the cooperative approach.
+            A cooperative approach may be authorised multiple times.  Only the latest is valid.
+          type: string
+          format: date
+          example: "2024-07-21"
+        authorisationVersion:
+          description: Version of the authorisation of the cooperative approach.  The latest version is valid.
+          type: string
+          example: "1.0"
+        cooperativeApproachId:
+          description: Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
+          type: string
+          example: "CA0002"
+        quantityCO2:
+          description: Quantity of ITMOs in metric tons of CO2 equivalent.
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 999999999
+          example: 7144362
+        metric:
+          description: The metric used to measure the ITMO.
+            As defined in the common nomenclature - recognised values are \"GHG\" and \"non-GHG\".
+          type: string
+          example: "GHG"
+        gwpValues:
+          description: If the mitigation outcome involves a non-CO2 greenhouse gas(es), the global warming potential (GWP) value(s) applied, consistent with the relevant CMA decisions (e.g.,\'100-year values from 5th assessment report by the IPCC\').
+          type: string          
+        non-GHGMetric:
+          description: Type of non-GHG metric applied (e.g., ‘megawatt hours of renewable electricity generation’). This field should be reported as \‘Not applicable\’ (NA) if the ITMOs are in a GHG metric.
+          type: string
+        sectors:
+          description: One or more sectors where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.
+            Refer to common nomenclature for recognised values for \"sectors\".
+          type: array
+          items:
+            type: string
+        activitytypes:
+          description: The mitigation activity type(s) from which the ITMOs were generated.
+            Refer to common nomenclature for recognised values for \"activityTypes\".
+          type: array
+          items:
+            type: string
+        purposeForAuthorisation:
+          description: Purpose for authorisation as described by Decision 6/CMA.4 para 17 (j)
+            Refer to common nomenclatures for code lookup.
+          type: integer
+          minimum: 1
+          maximum: 7
+          example: 1
+        authorisedPartyIDs:
+          description: Parties may authorise MOs for use by any Party.
+            Where specific Parties are specifiec, the unique identifier of the Parties are recorded here.
+          type: array
+          items:
+            type: string
+        authorisedEntityIDs:
+          description: Unique identifier of entities that are authrorised as per common nomenclatures, if applicable.
+          type: array
+          items:
+            type: string
+        authorisedOIMPs:
+          description: Only applicable if the authorization is for OIMP.
+            This field specifies the other international mitigation purpose (OIMP) authorised for this cooperative approaches
+          type: array
+          items:
+            type: string
+        firstTransferDefnForOIMP:
+          description: Only for authorisations for use toward OIMP.
+            Specifies the first transfer definition used by the Pary pursuant to decision 2/CMA.3, annex, para. 2(b).
+            Refer to common nomenclatures for code lookup.
+          type: integer
+          minimum: 2
+          maximum: 4
+          example: 2
+        cooperativeApproachStartDate:
+          description: optionally provided start date of cooperativeApproach
+          type: string
+          format: date
+          example: "2024-07-21"
+        cooperativeApproachEndDate:
+          description: optionally provided end date of cooperativeApproach
+          type: string
+          format: date
+          example: "2027-07-21"
+        termsAndConditions:
+          description: optionally provided terms and conditions for this authorisation
+          type: array
+          items:
+            type: string
+        mitigationOutcomeDocHashes:
+          description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.
+                  This array contains the SHA256 hashes of all mitigation outcome documents for this ITMO.
+                  The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(originatingPartyRegistry, firstID, lastID, SHA256)
+                  that will return the URL of the MO document corresponding to the hash.
+          type: array
+          items:
+            description: SHA256 hash of a single mitigation outcome document
+            type: string
+            minItems: 1
+            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        additionalInfo:
+          description: Any additional information the Party submitted with the authorisation.
+          type: array
+          items:
+            type: string
+            maxLength:  255
+
+    CooperativeApproach:
+      type: object
+      required:
+        - cooperativeApproachId
+        - authorisationID
+        - authorisationDate
+        - authorisationVersion
+        - metric
+        - sectors
+        - activityTypes
+      properties:
+        cooperativeApproachId:
+          description: Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
+          type: string
+          example: "CA0002"
+        authorisationID:
+          description: Authorization ID as assigned by the Party reporting the authorisation.
+          type: string
+          example: "GUY 2024-CA1"
+        authorisationDate:
+          description: Datestamp of the authorisation of the cooperative approach.
+            A cooperative approach may be authorised multiple times.  Only the latest is valid.
+          type: string
+          format: date
+          example: "2024-07-21"
+        authorisationVersion:
+          description: Version of the authorisation of the cooperative approach.  The latest version is valid.
+          type: string
+          example: "1.0"
 
     ITMO:
       type: object
@@ -925,7 +1177,7 @@ components:
         - mitigationType
         - authorisationID
       properties:
-        cooperativeApproach:
+        cooperativeApproachID:
           description: Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
           type: string
           example: "CA0002"
@@ -1074,7 +1326,6 @@ components:
           format: date-time
           example: "2024-07-21T17:32:28Z"
 
-    
     Errors:
       type: object
       properties:
