@@ -59,24 +59,29 @@ partition ITMOs do not yet exist in International Registry {
     if (Party opts for Interoperability) then (yes)
   
       |Interoperating Party|
-      :Party registry
-      registers ITMOs
-      with International Registry;
+      :Party issues ITMOs;
         note left
-        * Use //registerITMO// API
-        * This registers the ITMOs for Interoperability
-            with International Registry
-            and other like-minded registries
+        * Use //proposeAction// API
+        * Action is Issuance
+        * This registers the ITMOs for
+            interoperability with
+            International Registry and
+            other like-minded registries
         * Registry must provide account ID for ITMO(s)
-          * If account does not exists, it will be created
-        * ITMOs will be created in the International Registry
+          * If account does not exists,
+            it will be created
+        * ITMOs will be created in
+          the International Registry
         * unique ITMOID will be returned to registry
           * registryID-serialFirst-serialLast
         end note
       |International Registry|
-      :Validate and register ITMOs;
+      :Validate Issuance
+      and provide ITMO ID;
 
       |Interoperating Party|
+      :Finalize Issuance
+      and record ITMO ID;
     else (no)
       |Participating Party|
       stop
@@ -86,28 +91,29 @@ partition ITMOs do not yet exist in International Registry {
 
 |Interoperating Party|
 partition ITMOs exist in International Registry {
-    
-  while () is (Other ITMO operations)
+
+  while (Propose Use or Cancel action) is (no)
   
-    :Initiate other operations on ITMOs;
+    :Propose other
+    actions on ITMOs;
       note left
-      * Other operations on ITMOs
-          such as internal/external transfer, update, ...
+      * Other actions such as
+        transfers, updates, ...
       end note
     |International Registry|
-    :Validate and facilitate operations;
+    :Validate and facilitate
+    other actions;
     |Interoperating Party|
-    :Finalise other operations on ITMOs;
-  endwhile (Use or Cancel ITMOs)
-    :Initiate Use or Cancel ITMOs;
+    :Finalise other
+    actions on ITMOs;
+  endwhile (yes)
     |International Registry|
     :Validate and facilitate
-    Use or Cancel ITMOs;
+    Use or Cancel action;
     |Interoperating Party|
-    :Finalise Use or Cancel ITMOs;
+    :Finalise Use or
+    Cancel actions;
     stop
-
-    
 }
 
 @enduml
