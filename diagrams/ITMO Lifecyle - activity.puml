@@ -1,0 +1,113 @@
+@startuml
+
+title ITMO Lifecycle \n
+|Participating Party|
+
+start
+
+partition ITMOs do not yet exist in International Registry {
+    
+    :Cooperative Approach Authorized;
+      note left
+        decision 2 CMA.3, annex, para 18(g)
+        * participating Party authorizes Cooperative Approach
+      end note
+  
+    :Party registers
+    Cooperative Approach authorization
+    with Secretariat;
+      note left
+        decision 2 CMA.3, annex, para 18
+        * Party submits initial report to register authorization
+        * One or more combinations of authorizations of
+            Coooperative Approach,
+            ITMOs relating to the Cooperative Approach, and
+            Entities (participating Parties?)
+      end note
+    |Secretariat|
+    :Secretariat (issuing authority)
+    assigns Authorization ID.
+    Secretariat registers Cooperative Approach
+    in CARP and Common Nomenclatures;
+      note left
+        * Authorization ID must be assigned
+            by secretariat to ensure uniqueness
+        * Secretariat will also register 
+            authorized objects in International Registry
+      end note
+    |Participating Party|
+    :Party registers 
+    ITMO(s) authorization
+    with Secretariat;
+      note left
+          * If not already registered with 
+            Cooperative Approach authorization 
+            registration
+      end note
+
+    |Secretariat|
+    :Secretariat registers ITMOs authorization
+    in CARP and International Registry;
+      note left
+        * Authorization ID must be assigned
+            by secretariat to ensure uniqueness
+        * Secretariat will also register 
+            authorized objects in International Registry
+      end note
+
+    |Participating Party|
+    if (Party opts for Interoperability) then (yes)
+  
+      |Interoperating Party|
+      :Party registry
+      registers ITMOs
+      with International Registry;
+        note left
+        * Use //registerITMO// API
+        * This registers the ITMOs for Interoperability
+            with International Registry
+            and other like-minded registries
+        * Registry must provide account ID for ITMO(s)
+          * If account does not exists, it will be created
+        * ITMOs will be created in the International Registry
+        * unique ITMOID will be returned to registry
+          * registryID-serialFirst-serialLast
+        end note
+      |International Registry|
+      :Validate and register ITMOs;
+
+      |Interoperating Party|
+    else (no)
+      |Participating Party|
+      stop
+    
+  endif
+}
+
+|Interoperating Party|
+partition ITMOs exist in International Registry {
+    
+  while () is (Other ITMO operations)
+  
+    :Initiate other operations on ITMOs;
+      note left
+      * Other operations on ITMOs
+          such as internal/external transfer, update, ...
+      end note
+    |International Registry|
+    :Validate and facilitate operations;
+    |Interoperating Party|
+    :Finalise other operations on ITMOs;
+  endwhile (Use or Cancel ITMOs)
+    :Initiate Use or Cancel ITMOs;
+    |International Registry|
+    :Validate and facilitate
+    Use or Cancel ITMOs;
+    |Interoperating Party|
+    :Finalise Use or Cancel ITMOs;
+    stop
+
+    
+}
+
+@enduml

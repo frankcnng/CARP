@@ -1,0 +1,26 @@
+@startuml
+
+skinparam dpi 300
+
+skinparam monochrome true
+skinparam shadowing true
+
+hide footbox
+skinparam sequenceMessageAlign center
+
+participant "First transferring Party\nRegistry" as s
+participant "Interoperability\nHub" as h
+participant "Registry holding \nafftected blocks" as r1
+participant "Registry holding \nafftected blocks" as r2
+participant "Registry not holding\nafftected blocks" as r3
+
+s->h: Announce modification\nof ITMOs attributes
+h->h: Identify registries\nholding affected blocks
+
+h->r1: Announce modification\nof ITMOs attributes 
+h->r2: Announce modification of ITMOs attributes
+
+r1->h: Modification of\nITMOs attributes
+r2->h: Modification of ITMOs attributes
+
+@enduml

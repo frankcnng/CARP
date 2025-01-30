@@ -1,0 +1,27 @@
+@startuml AEF Export flow
+
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+
+hide footbox
+skinparam sequenceMessageAlign center
+
+participant "Registry" as r
+participant "Interoperability Hub" as h
+
+r -> h: POST /AEFExport?start=t1&end=t2
+h -->> r: AEF Export Identifier (OK)
+
+loop Until AEF Export File available
+    r->r: Wait 60 seconds
+    r -> h: GET /AEFExport?id=<Export Identifier>
+    opt Export file not yet available
+      h -->> r: Not Available (OK)
+    end
+    opt Export file has been generated
+      h -->> r: AEF ExportFile (OK)
+    end
+end
+
+@enduml

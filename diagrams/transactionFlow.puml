@@ -1,0 +1,38 @@
+@startuml
+
+skinparam dpi 300
+scale 0.20
+skinparam monochrome true
+skinparam shadowing true
+skinparam defaultFontName Times New Roman
+skinparam defaultFontSize 10
+
+hide footbox
+skinparam sequenceMessageAlign center
+
+participant "Sending Registry" as s
+participant "Interoperability Hub" as h
+participant "Receiving Registry" as r
+
+s->h: Proposed
+h->h: Validate
+  
+alt Hub validation OK
+  h->r: Validated
+  alt Receiving registry accept the transaction
+    r->h: Accepted
+    h->s: Accepted
+    s->h: Completed
+  end
+  alt Receiving registry reject the transaction
+    r->h: Rejected
+    h->s: Rejected
+    s->h: Terminated
+  end
+end
+
+alt Hub validation NOK
+  h->s: Invalidated
+  s->h: Terminated
+end
+@enduml

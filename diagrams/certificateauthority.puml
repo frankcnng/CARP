@@ -1,0 +1,22 @@
+@startuml Certificate Authority
+
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+skinparam defaultTextAlignment center
+
+node "International Registry" {
+component "Registry Section 1" as rs2
+component "Registry Section 2" as rs1
+component "Registry Section 3" as rs3
+component "Registry Section ..." as rsn
+
+component "Interoperability Hub" as h {
+    component "Certificate Authority" as ca
+    component "API Keys Management Tool" as ak
+}
+
+}
+
+@enduml
+

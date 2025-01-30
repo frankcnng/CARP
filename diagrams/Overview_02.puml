@@ -1,0 +1,48 @@
+@startuml Overview_02
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+skinparam defaultTextAlignment center
+
+node "Centralized accounting and reporting platform" {
+component "Submission portal" as sp
+component "Article 6 database" as db
+
+component "International Registry" {
+component "**Interoperability Hub**\n---\nApplies guidance" as h
+
+component "**Registry Section 1**\n---\nApplies guidance" as rs1
+component "**Registry Section 2**\n---\nApplies guidance" as rs2
+
+rs1 <--> h 
+rs2 <--> h 
+}
+
+
+}
+
+file "AEF" as aef2
+file "AEF" as aef3
+file "AEF" as aef5
+
+
+node "**Registry 1**\n---\nApplies guidance" as r1
+node "**Registry 2**\n---\nApplies guidance" as r2
+node "**Registry 3**\n---\nDoes not apply guidance" as r3
+node "**Article 6.4 Registry**\n---\nMay apply guidance" as a6r
+
+a6r <-up-> h #line.dotted
+r1 <-up-> h
+r2 <-up-> h
+sp <-down-> db #line.dotted
+
+r2 -down-> aef2 
+r3 -down-> aef3 
+rs2 -up-> aef5
+
+
+aef2 -up-> sp #line.dotted
+aef3 -down-> sp #line.dotted
+aef5 -down-> sp #line.dotted
+
+@enduml

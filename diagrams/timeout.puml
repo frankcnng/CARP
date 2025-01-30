@@ -1,0 +1,23 @@
+@startuml TimeOut Sequence Diagram
+
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+
+skinparam sequenceMessageAlign center
+hide footbox
+
+participant "Interoperability\nHub" as h
+participant "Registry with\nongoing tx > 24 hrs" as r1
+participant "Registry with\nongoing tx > 24 hrs" as r2
+participant "Registry **without**\nongoing tx > 24 hrs" as r
+
+loop Every 60 seconds
+  h -> h: Identify all ongoing transactions > 24 hrs
+  loop For each identified transaction
+    h -> r1 : terminate(txid, "Timed Out")
+    h -> r2 : terminate(txid, "Timed Out")
+  end
+end
+
+@enduml

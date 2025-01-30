@@ -1,0 +1,21 @@
+@startuml TimeOut Sequence Diagram
+
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+
+skinparam sequenceMessageAlign center
+hide footbox
+
+participant "Registry" as r
+participant "Interoperability hub" as h
+
+r -> h: Request reverting of transaction
+h <--> r: Manual review of the case
+opt Reversal is deemed feasible
+    h -> r: provideRevertingId(revertingId)
+    r -> r: Revert transaction
+    r -> h: terminate(txid,revertingId,"Reverted")
+end
+
+@enduml

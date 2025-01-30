@@ -1,0 +1,31 @@
+@startuml
+
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+
+hide footbox
+
+participant "Sending registry" as s
+participant "Interoperability hub" as h
+participant "Receiving registry" as r
+
+s -> h: Proposal
+h -> r: Proposal
+
+group Message replay by a registry (example)
+  r -x h: Acceptance (1)
+  r -x h: Acceptance (2)
+  r -> h: Acceptance (3)
+  h -> s: Acceptance
+end
+
+group Message replay by the hub (example)
+  r -x h: Acceptance
+  h -> h: Acceptance
+  h -> s: Acceptance
+end
+
+s -> h: Completion
+
+@enduml
