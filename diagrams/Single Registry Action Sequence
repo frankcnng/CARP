@@ -1,0 +1,35 @@
+@startuml Single Registry Action
+
+title Single Registry Action
+
+skinparam style strictuml
+
+participant "Sending\nregistry" as Sender
+
+participant "Interoperability" as Hub
+
+Sender -> Hub : proposeAction(actionProposal)
+
+Hub -> Hub++: lockITMOs(actionProposal)
+Hub -> Hub: validateProposal(actionProposal)
+Hub -> Hub--: createNextAction(actionProposal):Action
+note right: actionStatus == Validated
+
+Sender -> Hub : getPendingActions():Actions
+
+Sender -> Sender++: processPendingActions(actions)
+
+Sender -> Sender: processAction(action)
+activate Sender
+Sender -> Sender: processActionWarnings(action)
+Sender -> Sender: unlockITMOs(action)
+Sender -> Hub++: processAction(actionId, actionStatus)
+note right: actionStatus == Accepted
+deactivate Sender
+deactivate Sender
+Hub -> Hub: validateProcessAction(actionId, actionStatus)
+Hub -> Hub: processAction(actionId, actionStatus)
+note right: actionStatus == Completed
+Hub -> Hub--: unlockITMOs(actionId)
+
+@enduml
