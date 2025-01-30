@@ -1,0 +1,7 @@
+@startuml
+start
+:Download template;
+:Fill out template;
+:Provide template to the UNFCCC secretariat;
+stop
+@enduml

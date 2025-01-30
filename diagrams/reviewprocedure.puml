@@ -1,0 +1,30 @@
+@startuml Review_Procedure
+
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+skinparam defaultTextAlignment center
+skinparam defaultFontName Times New Roman
+skinparam defaultFontSize 10
+
+hide footbox
+skinparam sequenceMessageAlign center
+
+start
+repeat;
+    :(Refined) Modification proposal;
+repeat while (Further elaboration needed) is (Yes) not (No)
+if (Minor modification?) then (Yes)
+else (No)
+  repeat;
+    :Consultations with the change management working group;
+  repeat while (Additional consultations needed?) is (Yes) not (No)
+  if (Approved?) then (Yes)
+    else (No)
+        stop
+    endif
+endif
+:Update common nomenclatures;
+:Inform participating Parties;
+stop
+@enduml
