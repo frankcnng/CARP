@@ -5,19 +5,22 @@ title Single Registry Action
 skinparam style strictuml
 
 participant "Sending\nregistry" as Sender
+participant "Interoperability\nHub" as Hub
 
-participant "Interoperability" as Hub
-
+activate Sender
+Sender -> Sender: lockITMOs(iTMOID)
 Sender -> Hub : proposeAction(actionProposal)
+deactivate Sender
 
 Hub -> Hub++: lockITMOs(actionProposal)
 Hub -> Hub: validateProposal(actionProposal)
 Hub -> Hub--: createNextAction(actionProposal):Action
 note right: actionStatus == Validated
 
+activate Sender
 Sender -> Hub : getPendingActions():Actions
 
-Sender -> Sender++: processPendingActions(actions)
+Sender -> Sender: processPendingActions(actions)
 
 Sender -> Sender: processAction(action)
 activate Sender
