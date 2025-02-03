@@ -1,7 +1,7 @@
 {
 	"CommonNomenclature":
 	{
-		"description":	"Common list of values for specific information attributes required for the reporting of annual information in accordance with decision 2/CMA.3, annex, chapter IV (Reporting).\nPursuant to decision 6/CMA.4, Annex I, paragraph 28.\nAttributes are listed in decision 6/CMA.4, paragraph 17(j), Annex I, paragraph 5.\nThis nomenclature also includes attributes that are not in the AEF, but are required by tracking registries established under Article 6.",
+		"description": "Common list of values for specific information attributes required for the reporting of annual information in accordance with decision 2/CMA.3, annex, chapter IV (Reporting).\nPursuant to decision 6/CMA.4, Annex I, paragraph 28.\nAttributes are listed in decision 6/CMA.4, paragraph 17(j), Annex I, paragraph 5.\nThis nomenclature also includes attributes that are not in the AEF, but are required by tracking registries established under Article 6.",
 		"type": "string",
 		"contents":
 		[
@@ -12,7 +12,7 @@
 			"FirstTransferringParty",
 			"Vintage",
 			"Sectors",
-			"Activity Type",
+			"ActivityType",
 			"Metric",
 			"GWPValues",
 			"Non-GHGMetric",
@@ -22,7 +22,6 @@
 			"ActionType",
 			"PurposeForAuthorization",
 			"Purpose",
-
 			"FirstTransfer",
 			"ParticipatingParty",
 			"AccountType",
@@ -678,6 +677,10 @@
 		"description":	"Minimum Account Types supported by the mechanism registry, under Article 6.4, Decision 7.CMA.4, Annex I - paragraph 32",
 		"AEF fields": "not applicable",
 		"type": "integer",
+		"requiredBy":
+		[
+			"TBD"
+		],
 		"definedValues":
 		[
 			{
@@ -724,6 +727,10 @@
 		"attribute":	"Unit Type",
 		"description":	"Article 6 unit types",
 		"AEF fields": "not applicable",
+		"requiredBy":
+		[
+			"TBD"
+		],
 		"type":	"integer",
 		"definedValues":
 		[
