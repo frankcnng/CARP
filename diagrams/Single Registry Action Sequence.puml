@@ -1,4 +1,4 @@
-@startuml Single Registry Action
+@startuml Single Registry Action Sequence
 
 title Single Registry Action
 
@@ -8,7 +8,12 @@ participant "Sending\nregistry" as Sender
 participant "Interoperability\nHub" as Hub
 
 activate Sender
-Sender -> Sender: lockITMOs(iTMOID)
+[-> Sender: ActionProposal input\n- ITMO Quantity\n- Destination registry and account\n- Any other relevant ITMO attribute
+Sender -> Sender: prepareActionProposal(ActionProposal input):ActionProposal
+activate Sender
+Sender -> Sender: selectAndSplitITMOs(ActionProposal input):ITMO[]
+Sender -> Sender: lockITMOs(actionProposal)
+deactivate Sender
 Sender -> Hub : proposeAction(actionProposal)
 note right: actionStatus == Proposed
 deactivate Sender
@@ -17,13 +22,12 @@ Hub -> Hub++: lockITMOs(actionProposal)
 
 alt Valid actionProposal
 
-  Hub -> Hub: validateProposal(actionProposal)
+  Hub -> Hub: validateProposeAction(actionProposal)
   Hub -> Hub--: createNextAction(actionProposal):Action
   note right: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
   
   activate Sender
   Sender -> Hub : getPendingActions():Actions
-  
   Sender -> Sender: processPendingActions(actions)
   activate Sender
   Sender -> Sender: processActionStatusAndWarnings(action)
@@ -87,6 +91,5 @@ alt Invalid actionProposal
     Hub -> Hub--: unlockITMOs(actionId)
 
 end
-
 
 @enduml
