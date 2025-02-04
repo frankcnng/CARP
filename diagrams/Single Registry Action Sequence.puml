@@ -10,29 +10,83 @@ participant "Interoperability\nHub" as Hub
 activate Sender
 Sender -> Sender: lockITMOs(iTMOID)
 Sender -> Hub : proposeAction(actionProposal)
+note right: actionStatus == Proposed
 deactivate Sender
 
 Hub -> Hub++: lockITMOs(actionProposal)
-Hub -> Hub: validateProposal(actionProposal)
-Hub -> Hub--: createNextAction(actionProposal):Action
-note right: actionStatus == Validated
 
-activate Sender
-Sender -> Hub : getPendingActions():Actions
+alt Valid actionProposal
 
-Sender -> Sender: processPendingActions(actions)
+  Hub -> Hub: validateProposal(actionProposal)
+  Hub -> Hub--: createNextAction(actionProposal):Action
+  note right: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
+  
+  activate Sender
+  Sender -> Hub : getPendingActions():Actions
+  
+  Sender -> Sender: processPendingActions(actions)
+  activate Sender
+  Sender -> Sender: processActionStatusAndWarnings(action)
+  note right: actionStatus == Validated
+  Sender -> Sender: processAction(action)
+  Sender -> Sender: unlockITMOs(action)
 
-Sender -> Sender: processAction(action)
-activate Sender
-Sender -> Sender: processActionWarnings(action)
-Sender -> Sender: unlockITMOs(action)
-Sender -> Hub++: processAction(actionId, actionStatus)
-note right: actionStatus == Accepted
-deactivate Sender
-deactivate Sender
-Hub -> Hub: validateProcessAction(actionId, actionStatus)
-Hub -> Hub: processAction(actionId, actionStatus)
-note right: actionStatus == Completed
-Hub -> Hub--: unlockITMOs(actionId)
+  alt No warnings or Registry proceeds despite warnings
+
+    Sender -> Hub++: processAction(actionId, actionStatus)
+    note right: actionStatus == Accepted
+    deactivate Sender
+    deactivate Sender
+    Hub -> Hub: validateProcessAction(actionId, actionStatus)
+    Hub -> Hub: processAction(actionId, actionStatus)
+    note right: actionStatus == Completed
+    Hub -> Hub--: unlockITMOs(actionId)
+  
+  end
+  
+  alt Registry does not proceed
+
+    activate Sender
+    activate Sender
+    Sender -> Hub++: processAction(actionId, actionStatus)
+    note right: actionStatus == Terminated
+    deactivate Sender
+    deactivate Sender
+    Hub -> Hub: validateProcessAction(actionId, actionStatus)
+    Hub -> Hub: processAction(actionId, actionStatus)
+    note right: actionStatus == Terminated
+    Hub -> Hub--: unlockITMOs(actionId)
+  
+  end
+end
+
+alt Invalid actionProposal
+
+  Hub -> Hub: validateProposal(actionProposal)
+  Hub -> Hub--: createNextAction(actionProposal):Action
+  note right: actionStatus == Invalidated\n\n(includes reason proposal\nis invalid\nlogged in Action)
+  
+  activate Sender
+  Sender -> Hub : getPendingActions():Actions
+  
+  Sender -> Sender: processPendingActions(actions)
+  activate Sender
+  Sender -> Sender: processActionStatusAndWarnings(action)
+  note right: actionStatus == Invalidated
+
+  Sender -> Sender: processAction(action)
+  Sender -> Sender: unlockITMOs(action)
+  
+    Sender -> Hub++: processAction(actionId, actionStatus)
+    note right: actionStatus == Terminated
+    deactivate Sender
+    deactivate Sender
+    Hub -> Hub: validateProcessAction(actionId, actionStatus)
+    Hub -> Hub: processAction(actionId, actionStatus)
+    note right: actionStatus == Terminated
+    Hub -> Hub--: unlockITMOs(actionId)
+
+end
+
 
 @enduml
