@@ -1,0 +1,101 @@
+@startuml Two Registry Action - Valid Proposal
+
+title Two Registry Action - Valid Proposal
+
+skinparam style strictuml
+
+participant "Sending\nregistry" as Sender
+participant "Interoperability\nHub" as Hub
+participant "Receiving\nregistry" as Receiver
+
+activate Sender
+Sender -> Sender: lockITMOs(iTMOID)
+Sender -> Hub : proposeAction(actionProposal)
+note right: actionStatus == Proposed
+deactivate Sender
+
+Hub -> Hub++: lockITMOs(actionProposal)
+
+Hub -> Hub: validateProposal(actionProposal)
+Hub -> Hub--: createNextAction(actionProposal):Action
+note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
+
+activate Receiver
+Receiver -> Hub : getPendingActions():Actions
+
+Receiver -> Receiver: processPendingActions(actions)
+activate Receiver
+Receiver -> Receiver: processActionStatusAndWarnings(action)
+note left: actionStatus == Validated
+Receiver -> Receiver: processAction(action)
+
+
+
+alt No warnings or Receiving Registry proceeds despite warnings
+
+  Receiver -> Hub++: processAction(actionId, actionStatus)
+  deactivate Receiver
+  deactivate Receiver
+  note right: actionStatus == Accepted
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note left: actionStatus == Accepted
+  deactivate Hub
+
+  activate Sender
+  Sender -> Hub++ : getPendingActions():Actions
+  deactivate Hub
+  
+  Sender -> Sender: processPendingActions(actions)
+  activate Sender
+  Sender -> Sender: processActionStatusAndWarnings(action)
+  note right: actionStatus == Validated
+  Sender -> Sender: processAction(action)
+  Sender -> Sender: unlockITMOs(action)
+
+  Sender -> Hub++: processAction(actionId, actionStatus)
+  note right: actionStatus == Accepted
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note right: actionStatus == Completed
+  Hub -> Hub--: unlockITMOs(actionId)
+
+end
+
+alt Receiving Registry does not proceed
+
+  activate Receiver
+  activate Receiver
+  Receiver -> Hub++: processAction(actionId, actionStatus)
+  note right: actionStatus == Rejected
+  deactivate Receiver
+  deactivate Receiver
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note right: actionStatus == Rejected
+
+  activate Sender
+  Sender -> Hub : getPendingActions():Actions
+  
+  Sender -> Sender: processPendingActions(actions)
+  activate Sender
+  Sender -> Sender: processActionStatusAndWarnings(action)
+  note right: actionStatus == Rejected
+
+  Sender -> Sender: processAction(action)
+  Sender -> Sender: unlockITMOs(action)
+
+  Sender -> Hub++: processAction(actionId, actionStatus)
+  note right: actionStatus == Terminated
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note right: actionStatus == Terminated
+  Hub -> Hub--: unlockITMOs(actionId)
+
+end
+
+@enduml
