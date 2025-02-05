@@ -1,6 +1,6 @@
-@startuml All Actions - Invalid Proposal
+@startuml actionProposal_Invalid_Sequence
 
-title All Actions - Invalid Proposal
+title Action Proposal - Invalid Proposal
 
 skinparam style strictuml
 
