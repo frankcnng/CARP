@@ -1,0 +1,44 @@
+@startuml All Actions - Invalid Proposal
+
+title All Actions - Invalid Proposal
+
+skinparam style strictuml
+
+participant "Sending\nregistry" as Sender
+participant "Interoperability\nHub" as Hub
+
+activate Sender
+Sender -> Sender: lockITMOs(iTMOID)
+Sender -> Hub++ : proposeAction(actionProposal)
+note right: actionStatus == Proposed
+deactivate Sender
+deactivate Hub
+
+  Hub -> Hub++: lockITMOs(actionProposal)
+  Hub -> Hub: validateProposal(actionProposal)
+  Hub -> Hub--: createNextAction(actionProposal)
+  note right: actionStatus == Invalidated\n\n(includes reason proposal\nis invalid,\nlogged in Action)
+  
+  activate Sender
+  Sender -> Hub++ : getPendingActions():Actions
+  Sender <-- Hub: //actions//
+  deactivate Hub
+  
+  Sender -> Sender: processPendingActions(actions)
+  activate Sender
+  Sender -> Sender: processActionStatusAndWarnings(action)
+  note right: actionStatus == Invalidated
+
+  Sender -> Sender: processAction(action)
+  Sender -> Sender: unlockITMOs(action)
+  
+    Sender -> Hub++: processAction(actionId, actionStatus)
+    note right: actionStatus == Terminated
+    deactivate Sender
+    deactivate Sender
+    Hub -> Hub: validateProcessAction(actionId, actionStatus)
+    Hub -> Hub: processAction(actionId, actionStatus)
+    note right: actionStatus == Terminated
+    Hub -> Hub--: unlockITMOs(actionId)
+
+@enduml
