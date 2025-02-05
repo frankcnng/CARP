@@ -1,6 +1,6 @@
-@startuml Single Registry Action - Valid Proposal
+@startuml actionProposal_Valid_SingleReg_Sequence
 
-title Single Registry Action - Valid Proposal
+title Action Proposal - Valid - Single Registry
 
 skinparam style strictuml
 
