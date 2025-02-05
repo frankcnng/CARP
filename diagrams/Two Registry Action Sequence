@@ -10,18 +10,20 @@ participant "Receiving\nregistry" as Receiver
 
 activate Sender
 Sender -> Sender: lockITMOs(iTMOID)
-Sender -> Hub : proposeAction(actionProposal)
+Sender -> Hub++ : proposeAction(actionProposal)
 note right: actionStatus == Proposed
+deactivate Hub
 deactivate Sender
 
 Hub -> Hub++: lockITMOs(actionProposal)
-
 Hub -> Hub: validateProposal(actionProposal)
-Hub -> Hub--: createNextAction(actionProposal):Action
+Hub -> Hub--: createNextAction(actionProposal)
 note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
 
 activate Receiver
-Receiver -> Hub : getPendingActions():Actions
+Receiver -> Hub++: getPendingActions()
+Receiver <-- Hub: //actions//
+deactivate Hub
 
 Receiver -> Receiver: processPendingActions(actions)
 activate Receiver
@@ -43,7 +45,8 @@ alt No warnings or Receiving Registry proceeds despite warnings
   deactivate Hub
 
   activate Sender
-  Sender -> Hub++ : getPendingActions():Actions
+  Sender -> Hub++ : getPendingActions()
+  Sender <-- Hub : //actions//
   deactivate Hub
   
   Sender -> Sender: processPendingActions(actions)
@@ -74,10 +77,13 @@ alt Receiving Registry does not proceed
   deactivate Receiver
   Hub -> Hub: validateProcessAction(actionId, actionStatus)
   Hub -> Hub: processAction(actionId, actionStatus)
-  note right: actionStatus == Rejected
+  note left: actionStatus == Rejected
+  deactivate Hub
 
   activate Sender
-  Sender -> Hub : getPendingActions():Actions
+  Sender -> Hub++ : getPendingActions()
+  Sender <-- Hub: //actions//
+  deactivate Hub
   
   Sender -> Sender: processPendingActions(actions)
   activate Sender
