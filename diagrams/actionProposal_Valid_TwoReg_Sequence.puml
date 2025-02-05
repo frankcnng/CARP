@@ -1,6 +1,6 @@
-@startuml Two Registry Action - Valid Proposal
+@startuml actionProposal_Valie_TwoReg_Sequence
 
-title Two Registry Action - Valid Proposal
+title Action Proposal - Valid Proposal - Two Registries
 
 skinparam style strictuml
 
@@ -30,8 +30,6 @@ activate Receiver
 Receiver -> Receiver: processActionStatusAndWarnings(action)
 note left: actionStatus == Validated
 Receiver -> Receiver: processAction(action)
-
-
 
 alt No warnings or Receiving Registry proceeds despite warnings
 
