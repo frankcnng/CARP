@@ -13,22 +13,26 @@ Sender -> Sender: selectAndSplitITMOs(actionProposal)
 note right: select ITMOs from multiple blocks\nor split ITMOs into smaller blocks\nto match quantity in //actionProposal//
 
 Sender -> Sender: lockITMOs(iTMOIDs[])
+note right: iTMOIDs[] from //selectAndSplitITMOs()//
+
 Sender -> Hub++ : proposeAction(actionProposal)
 note right: actionStatus == Proposed
-deactivate Hub
 deactivate Sender
+deactivate Hub
 
-Hub -> Hub++: lockITMOs(actionProposal)
+Hub -> Hub++: lockITMOs(iTMOIDs[])
 Hub -> Hub: validateProposal(actionProposal)
 Hub -> Hub--: createNextAction(actionProposal)
 note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
 
 activate Receiver
 Receiver -> Hub++: getPendingActions()
-Receiver <-- Hub: //actions//
+  note right: Registry polls the Hub\nfor pending Actions
+  
+Receiver <-- Hub: //actions[]//
 deactivate Hub
 
-Receiver -> Receiver: processPendingActions(actions)
+Receiver -> Receiver: processPendingActions(actions[])
 activate Receiver
 Receiver -> Receiver: processActionStatusAndWarnings(action)
 note left: actionStatus == Validated
@@ -47,15 +51,15 @@ alt No warnings or Receiving Registry proceeds despite warnings
 
   activate Sender
   Sender -> Hub++ : getPendingActions()
-  Sender <-- Hub : //actions//
+  Sender <-- Hub : //actions[]//
   deactivate Hub
   
-  Sender -> Sender: processPendingActions(actions)
+  Sender -> Sender: processPendingActions(actions[])
   activate Sender
   Sender -> Sender: processActionStatusAndWarnings(action)
   note right: actionStatus == Validated
   Sender -> Sender: processAction(action)
-  Sender -> Sender: unlockITMOs(action)
+  Sender -> Sender: unlockITMOs(iTMOIDs[])
 
   Sender -> Hub++: processAction(actionId, actionStatus)
   note right: actionStatus == Accepted
@@ -64,7 +68,7 @@ alt No warnings or Receiving Registry proceeds despite warnings
   Hub -> Hub: validateProcessAction(actionId, actionStatus)
   Hub -> Hub: processAction(actionId, actionStatus)
   note right: actionStatus == Completed
-  Hub -> Hub--: unlockITMOs(actionId)
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
 
 end
 
@@ -83,16 +87,16 @@ alt Receiving Registry does not proceed
 
   activate Sender
   Sender -> Hub++ : getPendingActions()
-  Sender <-- Hub: //actions//
+  Sender <-- Hub: //actions[]//
   deactivate Hub
   
-  Sender -> Sender: processPendingActions(actions)
+  Sender -> Sender: processPendingActions(actions[])
   activate Sender
   Sender -> Sender: processActionStatusAndWarnings(action)
   note right: actionStatus == Rejected
 
   Sender -> Sender: processAction(action)
-  Sender -> Sender: unlockITMOs(action)
+  Sender -> Sender: unlockITMOs(iTMOIDs[])
 
   Sender -> Hub++: processAction(actionId, actionStatus)
   note right: actionStatus == Terminated
@@ -101,7 +105,7 @@ alt Receiving Registry does not proceed
   Hub -> Hub: validateProcessAction(actionId, actionStatus)
   Hub -> Hub: processAction(actionId, actionStatus)
   note right: actionStatus == Terminated
-  Hub -> Hub--: unlockITMOs(actionId)
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
 
 end
 
