@@ -24,7 +24,7 @@ deactivate Hub
   
   activate Sender
   Sender -> Hub++ : getPendingActions():Actions
-  Sender <-- Hub: //actions//
+  Sender <-- Hub: actions[]
   deactivate Hub
   
   Sender -> Sender: processPendingActions(actions)
