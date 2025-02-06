@@ -17,13 +17,13 @@ note right: actionStatus == Proposed
 deactivate Sender
 deactivate Hub
 
-Hub -> Hub++: lockITMOs(actionProposal)
+Hub -> Hub++: lockITMOs(iTMOIDs[])
 Hub -> Hub: validateProposal(actionProposal)
 Hub -> Hub--: createNextAction(actionProposal)
 note right: actionStatus == Invalidated\n\n(includes reason proposal\nis invalid,\nlogged in Action)
 
 activate Sender
-Sender -> Hub++ : getPendingActions():Actions
+Sender -> Hub++ : getPendingActions()
 note right: Registry polls the Hub\nfor pending Actions
 
 Sender <-- Hub: actions[]
@@ -35,7 +35,7 @@ Sender -> Sender: processActionStatusAndWarnings(action)
 note right: actionStatus == Invalidated
 
 Sender -> Sender: processAction(action)
-Sender -> Sender: unlockITMOs(action)
+Sender -> Sender: unlockITMOs(iTMOIDs[])
 
 Sender -> Hub++: processAction(actionId, actionStatus)
 note right: actionStatus == Terminated
@@ -44,6 +44,6 @@ deactivate Sender
 Hub -> Hub: validateProcessAction(actionId, actionStatus)
 Hub -> Hub: processAction(actionId, actionStatus)
 note right: actionStatus == Terminated
-Hub -> Hub--: unlockITMOs(actionId)
+Hub -> Hub--: unlockITMOs(iTMOIDs[])
 
 @enduml
