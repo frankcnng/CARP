@@ -9,7 +9,10 @@ participant "Interoperability\nHub" as Hub
 participant "Receiving\nregistry" as Receiver
 
 activate Sender
-Sender -> Sender: lockITMOs(iTMOID)
+Sender -> Sender: selectAndSplitITMOs(actionProposal)
+note right: select ITMOs from multiple blocks\nor split ITMOs into smaller blocks\nto match quantity in //actionProposal//
+
+Sender -> Sender: lockITMOs(iTMOIDs[])
 Sender -> Hub++ : proposeAction(actionProposal)
 note right: actionStatus == Proposed
 deactivate Hub
