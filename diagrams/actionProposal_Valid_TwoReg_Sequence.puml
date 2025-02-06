@@ -62,7 +62,7 @@ alt No warnings or Receiving Registry proceeds despite warnings
   Sender -> Sender: unlockITMOs(iTMOIDs[])
 
   Sender -> Hub++: processAction(actionId, actionStatus)
-  note right: actionStatus == Accepted
+  note right: actionStatus == Completed
   deactivate Sender
   deactivate Sender
   Hub -> Hub: validateProcessAction(actionId, actionStatus)
