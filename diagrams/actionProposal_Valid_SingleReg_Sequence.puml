@@ -1,6 +1,6 @@
 @startuml actionProposal_Valid_SingleReg_Sequence
 
-title Action Proposal - Valid Proposal - Single Registry
+title Action Proposal - Valid Proposal - Single Registr y
 
 skinparam style strictuml
 
