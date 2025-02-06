@@ -1,6 +1,6 @@
-@startuml actionProposal_Valid_SingleReg_Sequence
+@startuml Single Registry Action - Valid Proposal
 
-title Action Proposal - Valid Proposal - Single Registry
+title Single Registry Action - Valid Proposal
 
 skinparam style strictuml
 
@@ -8,28 +8,33 @@ participant "Sending\nregistry" as Sender
 participant "Interoperability\nHub" as Hub
 
 activate Sender
-Sender -> Sender: lockITMOs(iTMOID)
+Sender -> Sender: selectAndSplitITMOs(actionProposal)
+note right: select ITMOs from multiple blocks\nor split ITMOs into smaller blocks\nto match quantity in //actionProposal//
+
+Sender -> Sender: lockITMOs(iTMOIDs[])
+
 Sender -> Hub++ : proposeAction(actionProposal)
 note right: actionStatus == Proposed
 deactivate Hub
 deactivate Sender
 
-Hub -> Hub++: lockITMOs(actionProposal)
+Hub -> Hub++: lockITMOs(iTMOIDs[])
+note right: //iTMOIDs[]// extracted from //actionProposal//
 
 Hub -> Hub: validateProposal(actionProposal)
-Hub -> Hub--: createNextAction(actionProposal):Action
+Hub -> Hub--: createNextAction(actionProposal)
 note right: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
 
 activate Sender
 Sender -> Hub++ : getPendingActions()
-Sender <-- Hub--: //actions//
+Sender <-- Hub--: //actions[]//
 
-Sender -> Sender: processPendingActions(actions)
+Sender -> Sender: processPendingActions(actions[])
 activate Sender
 Sender -> Sender: processActionStatusAndWarnings(action)
 note right: actionStatus == Validated
 Sender -> Sender: processAction(action)
-Sender -> Sender: unlockITMOs(action)
+Sender -> Sender: unlockITMOs(iTMOIDs[])
 
 alt No warnings or Registry proceeds despite warnings
 
@@ -40,7 +45,7 @@ alt No warnings or Registry proceeds despite warnings
   Hub -> Hub: validateProcessAction(actionId, actionStatus)
   Hub -> Hub: processAction(actionId, actionStatus)
   note right: actionStatus == Completed
-  Hub -> Hub--: unlockITMOs(actionId)
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
 
 end
 
@@ -55,7 +60,7 @@ alt Registry does not proceed
   Hub -> Hub: validateProcessAction(actionId, actionStatus)
   Hub -> Hub: processAction(actionId, actionStatus)
   note right: actionStatus == Terminated
-  Hub -> Hub--: unlockITMOs(actionId)
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
 
 end
 
