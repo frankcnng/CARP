@@ -1,4 +1,3 @@
-
 openapi: 3.0.3
 info:
   title: API for International Registry Interoperability (Work In Progress)
@@ -16,7 +15,7 @@ info:
     email: a6rsaf@unfccc.int
     url: https://www.unfccc.int
   license: 
-    name: N/A
+    name: License not applicable
     url: N/A
   x-audience: external-public
   x-api-id: unused-for-this-api-0
@@ -98,6 +97,8 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 5
+            maxLength: 5
             pattern: '^[A-Z]{3}\d{2}$'
             example: DEU00
       responses:
@@ -110,13 +111,13 @@ paths:
         '400':
           description: Unsuccessful operation
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
     put:
@@ -124,8 +125,9 @@ paths:
         - Registry
       operationId: createRegistry
       summary: Create a new participating Party registry section
-      description: Create a new participating Party registry section with an identifier of regId
-        If a registry with the same registry identifier already exists, the operation will be unsuccessful.
+      description: Create a new participating Party registry section with an identifier of regId.<br><br>
+        If a registry with the same registry identifier already exists, the operation will be unsuccessful.<br><br>
+        The caller of this operation must be participating Party responsible for the registry section, as determined by the authentication mechaism, ie, the apiKey must be assigned to the relevant Party.
       parameters:
         - name: regId
           in: path
@@ -133,11 +135,13 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 5
+            maxLength: 5
             pattern: '^[A-Z]{3}\d{2}$'
             example: DEU00
       requestBody:
-        description: The registry contact list of this registry.
-          Array must contain at least two Contacts.
+        description: The registry contact list of this registry.<br><br>
+          The contact list array must contain at least two Contacts.
         required: true
         content:
           application/json:
@@ -146,6 +150,8 @@ paths:
               properties:
                 contacts:
                   type: array
+                  minItems: 2
+                  maxItems: 10
                   items:
                     $ref: '#/components/schemas/Contact'
       responses:
@@ -160,13 +166,13 @@ paths:
         '400':
           description: Unsuccessful operation
           content:
-            application/problem+json:
+            application/problem:
               schema:
                 $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
-            application/problem+json:
+            application/problem:
               schema:
                 $ref: '#/components/schemas/Errors'
 
@@ -177,10 +183,10 @@ paths:
       summary:
         Reset a test registry - this operation is not available in any production environment
       description:
-        For use in test environment(s) to reset and clean up test registries.
-        Removes all holdings of the registry identified by regId,
+        For use in test environment(s) to reset and clean up test registries.<br><br>
+        Removes all holdings, transactions, accounts, ... of the registry identified by regId,
         including all ITMOs issued by the registry located in other test registries,
-        all transactions to/from the test registry and all accounts in the test registry.
+        all transactions to/from the test registry and all accounts in the test registry.<br><br>
         This operation not available in the production environment.
       parameters:
         - name: regId
@@ -189,6 +195,8 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 5
+            maxLength: 5
             pattern: '^[A-Z]{3}\d{2}$'
             example: DEU00
       requestBody:
