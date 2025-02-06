@@ -27,7 +27,7 @@ note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
 
 activate Receiver
 Receiver -> Hub++: getPendingActions()
-  note right: Registry polls the Hub\nfor pending Actions
+note right: Registry polls the Hub\nfor pending Actions
   
 Receiver <-- Hub: //actions[]//
 deactivate Hub
