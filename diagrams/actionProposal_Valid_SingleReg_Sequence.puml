@@ -27,6 +27,7 @@ note right: actionStatus == Validated\n\n(may include warnings\nlogged in Action
 activate Sender
 Sender -> Hub++ : getPendingActions()
 Sender <-- Hub--: //actions[]//
+note right: Registry polls the Hub\nfor pending Actions
 
 Sender -> Sender: processPendingActions(actions[])
 activate Sender
