@@ -336,20 +336,22 @@ paths:
   /registry/{regId}/getAccounts:
     get:
       tags:
-        - Registry
+        - Account
       operationId: getAccounts
       summary:
         Return an array of accounts belonging to the registry with identifier regId
       description:
-        Return an array of accounts belonging to the registry with identifier regId.
-        If not accounts belong to a registry, returns an empty array.
+        Return an array of accounts belonging to the registry with identifier regId.<br><br>
+        If a registry doesn't have any accounts defined, returns an empty array.
       parameters:
         - name: regId
           in: path
-          description: The registry identifier of the participating Party registry section in which the contact is to be inserted.
+          description: The registry identifier of the participating Party registry section for which accounts are to be returned.
           required: true
           schema:
             type: string
+            minLength: 5
+            maxLength: 5
             pattern: '^[A-Z]{3}\d{2}$'
             example: DEU00
       responses:
@@ -363,32 +365,32 @@ paths:
                   properties:
                     itmos:
                       type: array
-                      maxItems: 1000
+                      maxItems: 5000
                       items:
                         $ref: '#/components/schemas/Account'
                 - $ref: '#/components/schemas/Errors'
         '400':
           description: Unsuccessful operation
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
 
   /registry/{regId}/insertAccount:
     post:
       tags:
-        - Registry
+        - Account
       operationId: insertAccount
       summary:
         Insert an account to a registry's list of accounts
       description:
-        Insert an account into a registry.
+        Insert an account into a registry.<br><br>
         If an account with the same account number already exists in the registry, the operation fails.
       parameters:
         - name: regId
@@ -397,6 +399,8 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 5
+            maxLength: 5
             pattern: '^[A-Z]{3}\d{2}$'
             example: DEU00
       requestBody:
@@ -427,16 +431,17 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Errors'
+
   /registry/{regId}/removeAccount/{accountID}:
     post:
       tags:
-        - Registry
+        - Account
       operationId: removeAccount
       summary:
-        Remove an account to a registry's list of accounts
+        Remove an account from a registry
       description:
-        Remove an account from a registry.
-        Only empty accounts may be removed - if the account currently holds ITMOs, the operation fails.
+        Remove an account from a registry.<br><br>
+        Only empty accounts may be removed - if the account currently holds ITMOs, the operation fails.<br>
         If no account with the provided account exists in the registry, the operation fails.
       parameters:
         - name: regId
@@ -445,11 +450,13 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 5
+            maxLength: 5
             pattern: '^[A-Z]{3}\d{2}$'
             example: DEU00
         - name: accountID
           in: path
-          description: The accountID of the contact to be removed.
+          description: The accountID to be removed.
           required: true
           schema:
             type: integer
@@ -469,16 +476,15 @@ paths:
         '400':
           description: Unsuccessful operation
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
         default:
           description: Unexpected error
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
-
 
   /action/{regId}/registerCooperativeApproachAuth:
     post:
