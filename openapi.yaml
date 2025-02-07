@@ -120,7 +120,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
-    put:
+    post:
       tags:
         - Registry
       operationId: createRegistry
@@ -481,7 +481,7 @@ paths:
 
 
   /action/{regId}/registerCooperativeApproachAuth:
-    put:
+    post:
       tags:
         - Action
       operationId: registerCooperativeApproachAuth
@@ -528,7 +528,7 @@ paths:
 
 
   /action/{regId}/registerITMOs:
-    put:
+    post:
       tags:
         - Action
       operationId: registerITMOs
