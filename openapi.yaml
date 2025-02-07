@@ -120,7 +120,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
-    post:
+    put:
       tags:
         - Registry
       operationId: createRegistry
