@@ -515,7 +515,7 @@
 	"MitigationType":
 	{
 		"attribute":	"Mitigation type",
-		"description":	"\"Emission reductions\" or \"Removals\".",
+		"description":	"\"Emission reductions\", \"Removals\", \"Emission reductions and removals\".",
 		"AEF fields":
 		[
 			"Mitigation type"
@@ -525,6 +525,21 @@
 			"6.2/CMA15, Annex II, Table 3"
 		],
 		"type": "string",
+		"definedValues":
+		[
+			{
+				"code":	"1",
+				"value":	"Emission reductions"
+			},
+			{
+				"code":	"2",
+				"value":	"Removals"
+			},
+			{
+				"code":	"3",
+				"value":	"Emission reductions and removals"
+			}
+		],
 		"required":	"true"
 	},
 	"ActionType":
