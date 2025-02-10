@@ -529,15 +529,18 @@
 		[
 			{
 				"code":	"1",
-				"value":	"Emission reductions"
+				"value":	"Emission reductions",
+				"description":	"Emission reductions only"
 			},
 			{
 				"code":	"2",
-				"value":	"Removals"
+				"value":	"Removals",
+				"description":	"Removals only"
 			},
 			{
 				"code":	"3",
-				"value":	"Emission reductions and removals"
+				"value":	"Emission reductions and removals",
+				"description":	"Both emission reductions and removals"
 			}
 		],
 		"required":	"true"
