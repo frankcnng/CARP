@@ -435,7 +435,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /registry/{regId}/removeAccount/{accountID}:
+  /registry/{regId}/removeAccount/{accountId}:
     post:
       tags:
         - Account
@@ -455,9 +455,9 @@ paths:
             type: string
             pattern: '^[A-Z]{3}\d{2}$'
             example: DEU00
-        - name: accountID
+        - name: accountId
           in: path
-          description: The accountID to be removed.
+          description: The accountId to be removed.
           required: true
           schema:
             type: integer
@@ -890,16 +890,14 @@ components:
         - contacts
       properties:
         id:
-          type: string
-          pattern: '^[A-Z]{3}\d{2}$'
-          description: Identifier of the registry corresponding to the Participating Party Registry
-          example: DEU00
+          $ref: "#/components/schemas/RegistryId"
         contacts:
           type: array
           maxItems: 10
           description: The list of contacts for the registry.
-            The order attribute determines the order of presentation of the contacts, and must start with 1, 2, 3 ... , without gaps and sorted ascendingly
-            At least two contacts must be provided (primary and alternate), with order 1 and 2 respectively
+            The order attribute determines the order of presentation of the contacts,<br><br>
+            and must start with 1, 2, 3 ... , without gaps and sorted ascendingly.<br><br>
+            At least two contacts must be provided (primary and alternate), with order 1 and 2 respectively.
           items:
             $ref: "#/components/schemas/Contact"
         accounts:
@@ -916,6 +914,14 @@ components:
           type: string
           format: date-time
           example: "2024-07-21T17:32:28Z"
+
+    RegistryId:
+      type: string
+      pattern: '^[A-Z]{3}\d{2}$'
+      description: Identifier a participating Party registry.<br><br>
+        Consisting of the ISO-3166-1 alpha-3 code of the participating Party as per common nomenclatures,<br><br>
+        and two digit registry serial number.
+      example: "DEU00"
 
     Account:
       type: object
@@ -945,7 +951,8 @@ components:
         lastmodifieddatetime:
           type: string
           format: date-time
-          description: The date and time of the last transaction proposed from this account, or accepted/rejected/cancelled with this account as recipient
+          description: The date and time of the last transaction proposed from this account,<br><br>
+            or accepted/rejected/cancelled with this account as recipient
           example: "2024-07-21T17:32:28Z"
         creationdatetime:
           type: string
@@ -984,7 +991,6 @@ components:
           maximum: 10
           example: 3
 
-
     Action:
       type: object
       description: An ProposedAction that has been validated by the hub, and given an actionId (see ProposedAction)
@@ -1018,9 +1024,8 @@ components:
         - itmos
       properties:
         fromRegistry:
-          type: string
           description: Important note. When a transaction is proposed, this must be the caller registry.
-          example: "BEL"
+          $ref: "#/components/schemas/RegistryId"
         fromAccount:
           type: integer
           format: int32
@@ -1028,8 +1033,8 @@ components:
           maximum: 999999999
           example: 7564
         toRegistry:
-          type: string
-          example: "FRA"
+          description: If action is a transfer, the receiving registry.
+          $ref: "#/components/schemas/RegistryId"
         toAccount:
           type: integer
           format: int32
@@ -1068,21 +1073,23 @@ components:
           format: date-time
           example: "2024-07-21T17:32:28Z"
 
-    CooperativeApproachAuthorization:
+    Authorization:
       type: object
+      description: Abstract superclass for authorisations
       required:
-        - authorisationID
+        - authorizingPartyId
+        - authorisationId
         - authorisationDate
-        - authorisationVersion
-        - authorisingPartyID
-        - cooperativeApproachID
-        - metric
-        - sectors
-        - activityTypes
-        - purpose
+        - version
+        - lastChangeDate
+        - startDate
+        - endDate
+        - isAuthorizationForCA
+        - isAuthorizationForITMOs
+        - isAuthorizationForEntities
       properties:
-        authorisationID:
-          description: Authorization ID as assigned by the Party reporting the authorisation.
+        authorisationId:
+          description: Authorization Id as assigned by the Party reporting the authorisation.
           type: string
           example: "GUY 2024-CA1"
         authorisationDate:
@@ -1091,102 +1098,78 @@ components:
           type: string
           format: date
           example: "2024-07-21"
-        authorisationVersion:
+        version:
           description: Version of the authorisation of the cooperative approach.  The latest version is valid.
           type: string
           example: "1.0"
-        cooperativeApproachId:
-          description: Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
-          type: string
-          example: "CA0002"
-        quantityCO2:
-          description: Quantity of ITMOs in metric tons of CO2 equivalent.
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 999999999
-          example: 7144362
-        metric:
-          description: The metric used to measure the ITMO.
-            As defined in the common nomenclature - recognised values are \"GHG\" and \"non-GHG\".
-          type: string
-          example: "GHG"
-        gwpValues:
-          description: If the mitigation outcome involves a non-CO2 greenhouse gas(es), the global warming potential (GWP) value(s) applied, consistent with the relevant CMA decisions (e.g.,\'100-year values from 5th assessment report by the IPCC\').
-          type: string          
-        non-GHGMetric:
-          description: Type of non-GHG metric applied (e.g., ‘megawatt hours of renewable electricity generation’). This field should be reported as \‘Not applicable\’ (NA) if the ITMOs are in a GHG metric.
-          type: string
-        sectors:
-          description: One or more sectors where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.
-            Refer to common nomenclature for recognised values for \"sectors\".
-          type: array
-          items:
-            type: string
-        activitytypes:
-          description: The mitigation activity type(s) from which the ITMOs were generated.
-            Refer to common nomenclature for recognised values for \"activityTypes\".
-          type: array
-          items:
-            type: string
-        purposeForAuthorisation:
-          description: Purpose for authorisation as described by Decision 6/CMA.4 para 17 (j)
-            Refer to common nomenclatures for code lookup.
-          type: integer
-          minimum: 1
-          maximum: 7
-          example: 1
-        authorisedPartyIDs:
-          description: Parties may authorise MOs for use by any Party.
-            Where specific Parties are specifiec, the unique identifier of the Parties are recorded here.
-          type: array
-          items:
-            type: string
-        authorisedEntityIDs:
-          description: Unique identifier of entities that are authrorised as per common nomenclatures, if applicable.
-          type: array
-          items:
-            type: string
-        authorisedOIMPs:
-          description: Only applicable if the authorization is for OIMP.
-            This field specifies the other international mitigation purpose (OIMP) authorised for this cooperative approaches
-          type: array
-          items:
-            type: string
-        firstTransferDefnForOIMP:
-          description: Only for authorisations for use toward OIMP.
-            Specifies the first transfer definition used by the Pary pursuant to decision 2/CMA.3, annex, para. 2(b).
-            Refer to common nomenclatures for code lookup.
-          type: integer
-          minimum: 2
-          maximum: 4
-          example: 2
-        cooperativeApproachStartDate:
-          description: optionally provided start date of cooperativeApproach
+        lastChangeDate:
+          description: Date of last change to the authorization.
           type: string
           format: date
           example: "2024-07-21"
-        cooperativeApproachEndDate:
-          description: optionally provided end date of cooperativeApproach
+        startDate:
+          description: start date of the authorization.
           type: string
           format: date
-          example: "2027-07-21"
+          example: "2024-07-21"
+        endDate:
+          description: end date of the authorization.
+          type: string
+          format: date
+          example: "2026-07-21"
+        isAuthorizationForCA:
+          description: Is this authorization for a cooperative approach
+          type: boolean
+        isAuthorizationForITMOs:
+          description: Is this authorization for ITMOs
+          type: boolean
+        isAuthorizationForEntities:
+          description: Is this authorization for a entities
+          type: boolean
+        NDCStartDate:
+          description: start date of NDC period of the issuing Party.
+          type: string
+          format: date
+          example: "2024-07-21"
+        NDCEndDate:
+          description: end date of the NDC period of the issuing Party.
+          type: string
+          format: date
+          example: "2026-07-21"
+        possibleChanges:
+          description: Where changes to the authorizaton may occur,<br><br>
+            information on the circumstances in which such changes may occur,<br><br>
+            and a desciption of the process for managing them<br><br>
+            in a way that avoids double counting.
+          type: array
+          items:
+            description: A possible change, and the management process.
+            type: string
+            example: "a possible change"
+        actualChanges:
+          description: Where changes to the authorizaton have occurred,<br><br>
+            a description of the curcumstances in which the change occurred,<br><br>
+            and and how the changes follow the process for managing them<br><br>
+            in a way that avoids double counting.
+          type: array
+          items:
+            description: A occurred change, and the followed management process.
+            type: string
+            example: ""
+        changeDelta:
+          description: Where changes to the authorizaton have occurred,<br><br>
+            a description of the specific change in respect,<br><br>
+            to the earlier version of the authorization.
+          type: array
+          items:
+            description: What has changed.
+            type: string
+            example: "the difference"
         termsAndConditions:
           description: optionally provided terms and conditions for this authorisation
           type: array
           items:
             type: string
-        mitigationOutcomeDocHashes:
-          description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.
-                  This array contains the SHA256 hashes of all mitigation outcome documents for this ITMO.
-                  The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(originatingPartyRegistry, firstID, lastID, SHA256)
-                  that will return the URL of the MO document corresponding to the hash.
-          type: array
-          items:
-            description: SHA256 hash of a single mitigation outcome document
-            type: string
-            minItems: 1
-            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         additionalInfo:
           description: Any additional information the Party submitted with the authorisation.
           type: array
@@ -1194,117 +1177,54 @@ components:
             type: string
             maxLength:  255
 
-    CooperativeApproach:
+    CooperativeApproachAuthorization:
       type: object
       required:
+        - authorization
+        - cooperativeApproachName
         - cooperativeApproachId
-        - authorisationID
-        - authorisationDate
-        - authorisationVersion
         - metric
         - sectors
         - activityTypes
+        - purpose
       properties:
-        cooperativeApproachId:
-          description: Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
-          type: string
-          example: "CA0002"
-        authorisationID:
-          description: Authorization ID as assigned by the Party reporting the authorisation.
-          type: string
-          example: "GUY 2024-CA1"
-        authorisationDate:
-          description: Datestamp of the authorisation of the cooperative approach.
-            A cooperative approach may be authorised multiple times.  Only the latest is valid.
-          type: string
-          format: date
-          example: "2024-07-21"
-        authorisationVersion:
-          description: Version of the authorisation of the cooperative approach.  The latest version is valid.
-          type: string
-          example: "1.0"
+        authorization:
+          description: the authorization superclass
+          $ref: '#/components/schemas/Authorization'
+        cooperativeApproachAuthorized:
+          description: the cooperative approach being authorised.
+          $ref: '#/components/schemas/CooperativeApproach'
 
-    ITMO:
+    ITMOAuthorization:
       type: object
       required:
-        - cooperativeApproach
-        - originatingPartyRegistry
-        - firstID
-        - lastID
-        - firstTransferringParty
-        - vintage
-        - mitigationOutcomeHashes
-        - sectors
-        - activityTypes
-        - metric
-        - quantityCO2
-        - mitigationType
-        - authorisationID
+        - authorization
+        - cooperativeApproachId
+        - purposeForAuthorization
+        - quantityC02
       properties:
-        cooperativeApproachID:
-          description: Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
+        authorization:
+          description: the authorization superclass
+          $ref: '#/components/schemas/Authorization'
+        cooperativeApproachId:
+          description: Cooperative approaches under Article 6.2.<br><br>
+            The format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer,<br><br>
+            that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
           type: string
           example: "CA0002"
-        orginatingPartyRegistry:
-          description: ISO-3166-1 alpha-3 code of the participating Party in which the mitigation outcomes originated.
-          type: string
-          example: "BEL"
-        firstID:
-          description: Identifier of the first ITMO in the block, commencing with First ID, ending with Last ID.\nBlocks from the same Originating Party Registry cannot overlap.
+        purposeForAuthorization:
+          description: Purpose for authorisation as described by Decision 6/CMA.4 para 17 (j)<br><br>
+            Refer to common nomenclatures for code lookup.
           type: integer
-          format: int32
+          minimum: 1
+          maximum: 7
           example: 1
-        lastID:
-          description: Identifier of the last ITMO in the block, commencing with First ID, ending with Last ID.\nBlocks from the same Originating Party Registry cannot overlap.
-          # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
-          # but as all ITMOs are considered as blocks, the last identifier of the block is required.
-          type: integer
-          format: int32
-          example: 7144
-        partyITMORegistry:
-          description: ISO-3166-1 alpha-3 code of participating party registry currently owns the ITMO(s).
-          type: string
-          example: "FRA"
-        firstTransferringParty:
-          description: ISO-3166-1 alpha-3 code of participating party registry that initiates the \"First Transfer\".
-            Refer to common nomenclalture for definition of \"First Transfer\".
-          type: string
-          example: "FRA"
-        vintage:
-          description: Year in which mitigation outcome occured.
-          type: integer
-          format: int32
-          minimum: 2021
-          maximum: 9999
-          example: 2025
-        mitigationOutcomeHashes:
-          description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.
-                  This array contains the SHA256 hashes of all mitigation outcome documents for this ITMO.
-                  The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(originatingPartyRegistry, firstID, lastID, SHA256)
-                  that will return the URL of the MO document corresponding to the hash.
-          type: array
-          items:
-            description: SHA256 hash of a single mitigation outcome document
-            type: string
-            minItems: 1
-            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        sectors:
-          description: One or more sectors where the mitigation outcome occurred as per common nomenclatures based on IPCC guidelines.
-            Refer to common nomenclature for recognised values for \"sectors\".
+        OIMPsAuthorized:
+          description: Only applicable if the authorization is for OIMP.<br><br>
+            This field specifies the other international mitigation purpose (OIMP) authorised for this cooperative approaches
           type: array
           items:
             type: string
-        activitytypes:
-          description: The mitigation activity type(s) from which the ITMOs were generated.
-            Refer to common nomenclature for recognised values for \"activityTypes\".
-          type: array
-          items:
-            type: string
-        metric:
-          description: The metric used to measure the ITMO.
-            As defined in the common nomenclature - recognised values are \"GHG\" and \"non-GHG\".
-          type: string
-          example: "GHG"
         quantityCO2:
           description: Quantity of ITMOs in metric tons of CO2 equivalent.
           type: integer
@@ -1312,45 +1232,252 @@ components:
           minimum: 1
           maximum: 999999999
           example: 7144362
-        gwpValues:
-          description: If the mitigation outcome involves a non-CO2 greenhouse gas(es), the global warming potential (GWP) value(s) applied, consistent with the relevant CMA decisions (e.g.,\'100-year values from 5th assessment report by the IPCC\').
-          type: string          
-        non-GHGMetric:
-          description: Type of non-GHG metric applied (e.g., ‘megawatt hours of renewable electricity generation’). This field should be reported as \‘Not applicable\’ (NA) if the ITMOs are in a GHG metric.
+        vintages:
+          description: Years in which mitigation outcomes occured as covered by the authorisation
+          type: array
+          items:
+            type: integer
+            minimum: 2021
+            maximum: 9999
+            example: 2025
+        authorizationRegistryId:
+          description: The registry the participating Party has access to, for tracking and reccording ITMOs.
+          #ref: "#/components/schemas/RegistryId"
+        underlyingCooperativeApproaches:
+          description: Details, including registries and frameworks used by the ITMOs.
+          type: array
+          items:
+            description: Relevant registries in any underlying regulations, frameworks, standards, or procedures.
+            #ref: "#/components/schemas/UnderlyingCooperativeApproach"
+
+    UnderlyingCooperativeApproach:
+      type: object
+      required:
+        - registryId
+        - approachName
+      properties:
+        registryId:
+          description: The identifier of the relavant registry in a underlying approach
+          #ref: "#/components/schemas/RegistryId"
+        approachName:
+          description: Name of the underlying regulation, framework, standard, or procedure<br><br>
+            under which the relevant registry operates.
+
+    EntityAuthorization:
+      type: object
+      required:
+        - authorization
+        - purposeForAuthorization
+        - quantityC02
+      properties:
+        authorization:
+          description: the authorization superclass
+          $ref: '#/components/schemas/Authorization'
+        cooperativeApproachId:
+          description: the cooperativeApproach for which these entities are authorised.
           type: string
-        quantityNon-GHG:
-          description: Quantity of ITMOs in the respective non-GHG metric. This field should be reported as ‘Not applicable’ (NA) if the ITMOs are in a GHG metric.
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 999999999
-        mitigationType:
-          description: “Emission reductions” or “Removals”
+          example: "CA0002"
+        authorisedEntityIds:
+          description: Unique identifier of entities that are authorised as per common nomenclatures, if applicable.<br><br>
+            These entities are added to the cooperative approach's list of authorised entities.
+          type: array
+          items:
+            type: string
+
+    CooperativeApproach:
+      type: object
+      required:
+        - cooperativeApproachId
+        - authorisationId
+        - otherParticipatingParties
+        - startDate
+        - endDate
+        - metric
+        - sectors
+        - mitigationTypes
+        - activityTypes
+      properties:
+        cooperativeApproachId:
+          description: Cooperative approaches under Article 6.2.<br><br>
+            The format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer,<br><br>
+            that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
           type: string
-          example: Emissions reduction
-        isAuthorised:
-          description: whether this A6.4ER has been authorised, thus, is an ITMO.  If it is authorised, the cooperativeApproach cannot be CA0000.
-          type: boolean
-          example: true
-        authorisationID:
-          description: Authorization ID as assigned by the Party reporting the authorisation.
+          example: "CA0002"
+        authorisationId:
+          description: Authorization Id as assigned by the Party authorizing this cooperative approach.
           type: string
           example: "GUY 2024-CA1"
-#  
-# Apart from authorisationID, other details from the authorisation of the ITMO(s)
-# shall be retrieved from the authorisation transaction log using the authorisation ID.
-# These details should not be part of the ITMO object.
-#
-#        authorisingParty:
-#          description: ISO 3166-1 alpha-3 identifier of the authorising Party.  For native ITMOs, it will be the same as the first transferring Party.
-#          type: string
-#          example: "GUY"
-#        authorisationDateTime:
-#          description: date-timestamp of the authorisation of A6.4ER, turning it into an ITMO
-#          type: string
-#          format: date-time
-#          example: "2024-07-21T17:32:28Z"
-#
+        otherParticipatingParties:
+          description: Identifiers of other participating Parties covered by authorization of cooperative approach.
+          type: array
+          items:
+            description: ISO-3166-1 alpha-3 code of the participating Party as per common nomenclatures.
+            type: string
+            example: "BEL"
+        startDate:
+          description: start date of the cooperative approach.
+          type: string
+          format: date
+          example: "2024-07-21"
+        endDate:
+          description: end date of the cooperative approach.
+          type: string
+          format: date
+          example: "2026-07-21"
+        firstTransferForOIMP:
+          description: Only for authorisations for use toward OIMP.<br><br>
+            Specifies the first transfer definition used by the Pary pursuant to decision 2/CMA.3, annex, para. 2(b).<br><br>
+            Refer to common nomenclatures for code lookup.
+          type: integer
+          minimum: 2
+          maximum: 4
+          example: 2          
+        metric:
+          description: The metric used to measure the ITMO.<br><br>
+            As defined per common nomenclature - recognised values are \"GHG\" and \"non-GHG\".
+          type: string
+          example: "GHG"
+        nonGHGMetrics:
+          description: The nonGHG metrics used by this cooperative approach
+          type: array
+          items:
+            description: Each NonGHGMetic used by this cooperative approach
+            $ref: '#/components/schemas/NonGHGMetric'
+        sectors:
+          description: One or more sectors where the mitigation outcome will occur as per common nomenclatures based on IPCC guidelines.<br><br>
+            Refer to common nomenclature for recognised values for \"sectors\".
+          type: array
+          items:
+            type: string
+        mitigationTypes:
+          description: The mitigation type(s) covered by the cooperative approach.<br><br>
+            Refer to common nomenclatures for recognised values for  \"mitigationTypes\".
+          type: integer
+          example: 1
+        activityTypes:
+          description: The mitigation activity type(s) from which the ITMOs were generated.<br><br>
+            Refer to common nomenclature for recognised values for \"activityTypes\".
+          type: array
+          items:
+            type: integer
+            example: 1
+        activities:
+          description: More information of the activities
+          type: array
+          items:
+            description: reference to each activity
+            $ref: '#/components/schemas/ActivityRef'
+        authorisedEntityIds:
+          description: Unique identifier of entities that are authorised as per common nomenclatures,<br><br>
+            for this cooperative approach, if applicable.
+          type: array
+          items:
+            type: string
+        mitigationOutcomeDocHashes:
+          description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.<br><br>
+            This array contains the SHA256 hashes of all mitigation outcome documents for this cooperativeApproach.<br><br>
+            The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(cooperativeApproachId, sha256)
+            that will return the URL of the MO document corresponding to the hash.
+          type: array
+          items:
+            description: SHA256 hash of a single mitigation outcome document
+            type: string
+            minItems: 1
+            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        otherReferences:
+          description: Identification of, or coress-reference to, underlying regulations,<br><br>
+            frameworks, standards, or procedures,<br><br>
+            including any specific methodologies underpinning the cooperative approach.
+          type: array
+          items:
+            type: string
+            example: ""
+
+    NonGHGMetric:
+      type: object
+      required:
+        - metric
+        - conversion
+        - gwpValues
+      properties:
+        metric:
+          description: The non-GHG metric name
+          type: string
+          example: "megawatt hours of renewable electricity generation"
+        conversion:
+          description: the conversion factor to convert the metric to 1 metric tonne of C02.
+          type: number
+          format: double
+          example: 0.39
+        gwpValues:
+          description: If the mitigation outcome involves a non-CO2 greenhouse gas(es),<br><br>
+            the global warming potential (GWP) value(s) applied,<br><br>
+            consistent with the relevant CMA decisions (e.g.,\'100-year values from 5th assessment report by the IPCC\').
+          type: string          
+
+    ActivityRef:
+      type: object
+      required:
+        - activityName
+      properties:
+        activityId:
+          description: the identifier of the activity, if it has one
+          type: string
+          example: ""
+        activityName:
+          description: the name of the activity
+          type: string
+          example: ""
+
+    ITMO:
+      type: object
+      required:
+        - cooperativeApproachId
+        - authorisationId
+        - originatingPartyRegistry
+        - firstTransferringParty
+        - firstId
+        - lastId
+        - vintage
+        - partyITMORegistry
+      properties:
+        cooperativeApproachId:
+          description: Cooperative approach under which ITMOs were authorised.
+          type: string
+          example: "CA0002"
+        authorisationId:
+          description: Authorization Id as assigned by the Party reporting the authorisation.
+          type: string
+          example: "GUY 2024-CA1"
+        orginatingPartyRegistry:
+          description: The participating Party registry in which the mitigation outcomes originated.
+          #ref: "#/components/schemas/RegistryId"
+        firstTransferringParty:
+          description: ISO-3166-1 alpha-3 code of participating Party that initiates the \"First Transfer\".
+            Refer to common nomenclalture for definition of \"First Transfer\".
+          type: string
+          example: "FRA"
+        firstId:
+          description: Identifier of the first ITMO in the block, commencing with First Id, ending with Last Id.\nBlocks from the same Originating Party Registry cannot overlap.
+          type: integer
+          format: int32
+          example: 1
+        lastId:
+          description: Identifier of the last ITMO in the block, commencing with First Id, ending with Last Id.\nBlocks from the same Originating Party Registry cannot overlap.
+          # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
+          # but as all ITMOs are considered as blocks, the last identifier of the block is required.
+          type: integer
+          format: int32
+          example: 7144
+        vintage:
+          description: Year in which mitigation outcome occured
+          type: integer
+          minimum: 2021
+          maximum: 9999
+          example: 2025
+        partyITMORegistry:
+          description: The participating Party registry that currently owns the ITMO(s).
+          #ref: "#/components/schemas/RegistryId"
         accountId:
           description: the identifier of the account currently holding the ITMOs.
             The account id must be unique across a registry.
