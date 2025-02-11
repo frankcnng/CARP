@@ -1010,19 +1010,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/pendingActions:
+/action/{regId}/pendingActions:
     get:
       tags:
         - Action
       operationId: getPendingActions
-      summary: Retrieve the actions that are pending processing for the registry identified by regId
-      description: Retrieve the actions that are pending processing for the registry identified by regId.
-        This is the API that is expected to be normally used by registries to process transactions.
-        The similar API, getSelectedActions(), returns actions with other statuses, used for management or testing.
+      summary: Retrieve the actions that are pending processing by the registry identified by regId
+      description: Retrieve the actions that are pending processing by the registry identified by regId.<br><br>
+        This operation is used by a registry to process actions that have not yet been finalized and where the registry is expected to undertake the relevant steps to progress the action<br><br>
+        * If it is a sending registry, complete or terminate the action.<br><br>
+        * If it is a receiving registry, accept or reject the action.<br><br>
+        This operation can also be used by a registry to query the status of a pending action it is already aware of<br><br>
+        * If it is a sending registry, at any point before its finalization.<br><br>
+        * If it is a receiving registry, after it has been validated and before its finalization.<br><br>
+        Another operation (getSelectedActions) returns actions with finalized statuses.
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry for which actions are to be retrieved.
+          description: The identifier of the registry for which pending actions are to be retrieved.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
@@ -1034,7 +1039,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  itmos:
+                  actions:
                     type: array
                     maxItems: 100
                     items:
@@ -1057,14 +1062,14 @@ paths:
       tags:
         - Action
       operationId: getSelectedActions
-      summary: Retrieve the transactions for the registry identified by regId and other parameters
-      description: Retrieve the transactions for the registry identified by regId and other parameters.
-        Actions where the registry is both the from registry and the to registry will be retrieved.
-        This API is for management and testing, as it is more complicated than getPendingActions()
+      summary: Retrieve the finalized actions for the registry identified by regId and other filtering parameters
+      description: Retrieve the finalized actions for the registry identified by regId and other filtering parameters.<br><br>
+        Finalized actions where the registry is either the sender, or the receiver are retrieved.<br><br>
+        Another operation (getPendingActions) returns actions with not yet finalized statuses.
       parameters:
         - name: regId
           description: The identifier of the registry for which actions are to be retrieved.
-            Actions where the registry is both the from registry and the to registry will be retrieved.
+            Finalized actions where the registry is either the sender, or the receiver are retrieved.
           in: path
           required: true
           schema:
@@ -1076,7 +1081,7 @@ paths:
             format: int32
             minimum: 0
             maximum: 999999999
-          description: The number of items to skip before starting to collect the transactions
+          description: The number of items to skip before starting to collect the actions
         - in: query
           name: limit
           schema:
@@ -1084,25 +1089,25 @@ paths:
             format: int32
             minimum: 1
             maximum: 100
-          description: The number of transactions to return
+          description: The number of actions to return
         - in: query
           name: status
           schema:
             type: string
-            enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
-          description: Allows to filter by transaction status
+            enum: [COMPLETED, TERMINATED]
+          description: Allows to filter by action status
         - in: query
           name: from
           schema:
             type: string
             format: date-time
-          description: The minimum date-time of transactions to return
+          description: The minimum date-time of actions to return
         - in: query
           name: to
           schema:
             type: string
             format: date-time
-          description: The maximum date-time of transactions to return
+          description: The maximum date-time of actions to return
       responses:
         '200':
           description: Successful operation
@@ -1111,12 +1116,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  itmos:
+                  actions:
                     type: array
                     maxItems: 100
                     items:
                       $ref: '#/components/schemas/Action'
-
         '400':
           description: Unsuccessful operation
           content:
