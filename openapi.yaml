@@ -31,14 +31,20 @@ tags:
     description: Manage participating Party registries, including its contact details.
   - name: Account
     description: Manage the account(s) of participating Party registries
+  - name: Authorization
+    description: Manage the authorization(s) of cooperative approaches, ITMOs, entities
   - name: Action
     description: Manage actions of participating Party registries
+  - name: CooperativeApproach
+    description: Manage cooperative approaches of the call registry
   - name: ITMO
     description: Manage ITMOs of the caller registry
   - name: Export
     description: Manage exports of information of the caller registry
   - name: PullView
     description: Used by Pull and View interface
+  - name: CARP
+    description: Used by CARP, instead of registries
   - name: NonProduction
     description: Nonproduction or testing feature
 
@@ -91,6 +97,7 @@ paths:
     get:
       tags: 
         - Registry
+        - PullView
       operationId: getRegistry
       summary: Retrieve the details of the participating Party registry
       description: Retrieve the details of the participating Party registry corresponding to regId.<br>
@@ -101,11 +108,7 @@ paths:
           description: Identifier of the registry corresponding to the participating Party registry
           required: true
           schema:
-            type: string
-            minLength: 5
-            maxLength: 5
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       responses:
         '200':
           description: Successful operation.
@@ -125,7 +128,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
-    
     post:
       tags:
         - Registry
@@ -141,11 +143,7 @@ paths:
           description: The registry identifier of the new participating Party registry
           required: true
           schema:
-            type: string
-            minLength: 5
-            maxLength: 5
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The registry contact list of this registry.<br><br>
           The contact list array must contain at least two Contacts.
@@ -185,6 +183,7 @@ paths:
     post:
       tags:
         - Registry
+        - PullView
       operationId: insertContact
       summary:
         Insert a contact to a registry's list of contacts
@@ -199,11 +198,7 @@ paths:
           description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
-            type: string
-            minLength: 5
-            maxLength: 5
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The contact to be inserted.
         required: true
@@ -249,11 +244,7 @@ paths:
           description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
-            type: string
-            minLength: 5
-            maxLength: 5
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
         - name: email
           in: path
           description: The email address of the contact to be removed.
@@ -284,7 +275,9 @@ paths:
   /registry/{regId}/getAccounts:
     get:
       tags:
+        - Registry
         - Account
+        - PullView
       operationId: getAccounts
       summary:
         Return an array of accounts belonging to the registry with identifier regId.
@@ -297,9 +290,7 @@ paths:
           description: The registry identifier of the participating Party registry for which the accounts are to be returned.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       responses:
         '200':
           description: Successful operation
@@ -329,6 +320,7 @@ paths:
   /registry/{regId}/insertAccount:
     post:
       tags:
+        - Registry
         - Account
       operationId: insertAccount
       summary:
@@ -342,9 +334,7 @@ paths:
           description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The account to be inserted.
         required: true
@@ -375,6 +365,7 @@ paths:
   /registry/{regId}/removeAccount/{accountId}:
     post:
       tags:
+        - Registry
         - Account
       operationId: removeAccount
       summary:
@@ -389,9 +380,7 @@ paths:
           description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
         - name: accountId
           in: path
           description: The accountId to be removed.
@@ -426,7 +415,7 @@ paths:
     post:
       tags:
         - Registry
-		- NonProduction
+        - NonProduction
       operationId: resetTestRegistry
       summary:
         Reset a test registry - this operation is NOT available in any production environment
@@ -442,11 +431,7 @@ paths:
           description: The registry identifier of the participating Party registry to be reset
           required: true
           schema:
-            type: string
-            minLength: 5
-            maxLength: 5
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The registry contact list of this registry.
           Array must contain at least two Contacts.
@@ -482,16 +467,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-
   /action/{regId}/registerCooperativeApproachAuth:
     post:
       tags:
-        - Action
+        - Authorization
+        - CooperativeApproach
+        - CARP
       operationId: registerCooperativeApproachAuth
-      summary: Register authorised cooperative approach, from the registry identified by regId.
-      description: Register authorised cooperative approach, from the registry identified by regId.
-        This may be performed by the secretariat when it registers the CA with the CARP.
-        This enables the CAs and ITMOs for interoperability.
+      summary: Register authorised cooperative approach,<br>
+        from the registry identified by regId.<br>
+      description: Register authorised cooperative approach, from the registry identified by regId.<br>
+        This will be performed by the secretariat when it registers the CA authorisation with the CARP.<br>
+        This enables the CAs and ITMOs for interoperability.<br>
         This will create the CooperativeApproachAuthorisation and the CooperativeApproach within the International Registry.
       parameters:
         - name: regId
@@ -499,9 +486,7 @@ paths:
           description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The cooperative approach authorisation to be registered.
         required: true
@@ -530,35 +515,34 @@ paths:
                 $ref: '#/components/schemas/Errors'
 
 
-  /action/{regId}/registerITMOs:
+  /action/{regId}/registerITMOAuth:
     post:
       tags:
-        - Action
-      operationId: registerITMOs
-      summary: Register authorised ITMOs, from the registry identified by regId.
-      description: Register authorised ITMOs, from the registry identified by regId.
-        This enables ITMOs for interoperability by registering the ITMO's unique identifier and accountId.
-        If the accountId does not exist in the registry, the account is added to the registry.
-        If the ITMOs's unique identifier (Party Id, serialFist, serialLast) overlaps with another ITMO block,
-        the operation fails.
-        If the ITMO's cooperative approach is not found, or is not yet authorised, the operation fails.
-        If the ITMO's details contradict those provided when the ITMO or its Cooperative Approach were authorised, the operation fails.
+        - Authorization
+        - ITMO
+        - CARP
+      operationId: registerITMOAuth
+      summary: Register the authorisation of ITMOs from the registry identified by regId.<br>
+      description: Register authorised ITMOs, from the registry identified by regId.<br>
+        This enables ITMOs for interoperability by to be issued via a Issuance Action Proposal from the registry.<br>
+        Note that this operation does not create ITMOs, in creates an ITMO Authorization,<br>
+        containing an authorized C02 quantity, a cooperative approach id, and an authorization id.<br>
+        When the ITMOs are subsequently issued by the registry, it must be consistent with this information.<br>
+        If the ITMO's cooperative approach id is not found, or is not yet authorised, the operation fails.
       parameters:
         - name: regId
           in: path
           description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The ITMOs to be registered.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ITMO'
+              $ref: '#/components/schemas/ITMOAuthorization'
       responses:
         '200':
           description: Successful operation
@@ -579,18 +563,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-
   /action/{regId}/propose:
     post:
       tags:
         - Action
       operationId: proposeAction
-      summary: Propose a new action, from the registry identified by regId
-        If the proposed action is valid, it will be added to the pending actions list, avalable for appropriate registries to process.
+      summary: Propose a new action, from the registry identified by regId.<br>
+        If the proposed action is valid, it will be added to the pending actions list,<br>
+        avalable for appropriate registries to process.<br>
         An actionId is returned by the operation, so regitries can check and augment the status of an action.
-      description: Propose a new action, from the registry identified by regId
-        If the proposed action is valid, it will be added to the pending actions list, avalable for appropriate registries to process.
-        An actionId is returned by the operation, so regitries can check and augment the status of an action.
+      description: Propose a new action, from the registry identified by regId.<br>
+        If the proposed action is valid, it will be added to the pending actions list,<br>
+        avalable for appropriate registries to process.<br>
+        An actionId is returned by the operation, so registries can check and augment the status of an action.
 
         If the proposed action is not valid, the operation will fail.
         The incoming payload is the proposedAction, that also include the ITMOs involved in the action.
@@ -601,9 +586,7 @@ paths:
           description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The proposed action.
         required: true
@@ -611,7 +594,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProposedAction'
-
       responses:
         '200':
           description: Successful operation
@@ -647,9 +629,7 @@ paths:
           description: The identifier of the registry for which actions are to be retrieved.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
         - name: actionId
           in: path
           description: The action identifier
@@ -697,8 +677,7 @@ paths:
           description: The identifier of the registry attempting to process the action.
           required: true
           schema:
-            type: string
-            example: "BEL"
+            $ref: "#/components/schemas/RegistryId"
         - name: actionId
           in: path
           description: The action identifier
@@ -741,8 +720,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
-  
-  
+
   /action/{regId}/pendingActions:
     get:
       tags:
@@ -758,9 +736,7 @@ paths:
           description: The identifier of the registry for which actions are to be retrieved.
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
       responses:
         '200':
           description: Successful operation
@@ -803,9 +779,7 @@ paths:
           in: path
           required: true
           schema:
-            type: string
-            pattern: '^[A-Z]{3}\d{2}$'
-            example: DEU00
+            $ref: "#/components/schemas/RegistryId"
         - in: query
           name: offset
           schema:
@@ -867,10 +841,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-
 components:
   schemas:
-
     Registry:
       type: object
       required:
