@@ -124,7 +124,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
     
-    post:
+    put:
       tags:
         - Registry
       operationId: createRegistry
@@ -132,7 +132,7 @@ paths:
       description: Create a new participating Party registry with an identifier of regId.<br>
         If a registry with the same registry identifier already exists, the operation will be unsuccessful.<br>
         The caller of this operation must be participating Party responsible for the registry, as determined by the authentication mechaism,<br>
-		ie, the apiKey must be assigned to the relevant Party.
+          ie, the apiKey must be assigned to the relevant Party.
       parameters:
         - name: regId
           in: path
