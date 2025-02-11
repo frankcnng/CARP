@@ -363,7 +363,7 @@ paths:
                   itmos:
                     type: array
                     maxItems: 5000
-                	items:
+                    items:
                       $ref: '#/components/schemas/Account'
         '400':
           description: Unsuccessful operation
@@ -658,14 +658,13 @@ paths:
           content:
             application/json:
               schema:
-				type: object
-				properties:
-				  itmos:
-					type: array
-					maxItems: 100
-					items:
-					  $ref: '#/components/schemas/Action'
-
+                type: object
+                properties:
+                  itmos:
+                   type: array
+                   maxItems: 100
+                   items:
+                    $ref: '#/components/schemas/Action'
         '400':
           description: Unsuccessful operation
           content:
