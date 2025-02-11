@@ -37,6 +37,8 @@ tags:
     description: Manage ITMOs of the caller registry
   - name: Export
     description: Manage exports of information of the caller registry
+  - name: PullView
+    description: Used by Pull and View interface
 
 paths: 
 
@@ -44,6 +46,7 @@ paths:
     get:
       tags:
         - Status
+		- PullView
       operationId: getServerStatus
       summary: Get the current server status and date/time
       description: Get the current server status and date/time
@@ -60,10 +63,10 @@ paths:
                     type: string
                     enum: [Operational, Non-Operational, Action Proposals Disallowed]
                     description: >
-                      The operational status of the server:
-                      * Operational: all operations are allowed
-                      * Non-Operational: no operations are allowed
-                      * Action Proposals Disallowed: all operations are allowed, except Action Proposals
+                      The operational status of the server:<br>
+                      * Operational: all operations are allowed<br>
+                      * Non-Operational: no operations are allowed<br>
+                      * Action Proposals Disallowed: all operations are allowed, except Action Proposals.
                     example: Operational
                   timestamp:
                     type: string
@@ -88,7 +91,7 @@ paths:
         - Registry
       operationId: getRegistry
       summary: Retrieve the details of the participating Party registry
-      description: Retrieve the details of the participating Party registry corresponding to regId.
+      description: Retrieve the details of the participating Party registry corresponding to regId.<br>
         To keep coding compact, in code, "registry" will be used instead of "participatingPartyRegistrySection" 
       parameters:
         - name: regId
@@ -121,14 +124,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
     
-    put:
+    post:
       tags:
         - Registry
       operationId: createRegistry
       summary: Create a new participating Party registry
-      description: Create a new participating Party registry with an identifier of regId.<br><br>
-        If a registry with the same registry identifier already exists, the operation will be unsuccessful.<br><br>
-        The caller of this operation must be participating Party responsible for the registry, as determined by the authentication mechaism, ie, the apiKey must be assigned to the relevant Party.
+      description: Create a new participating Party registry with an identifier of regId.<br>
+        If a registry with the same registry identifier already exists, the operation will be unsuccessful.<br>
+        The caller of this operation must be participating Party responsible for the registry, as determined by the authentication mechaism,<br>
+		ie, the apiKey must be assigned to the relevant Party.
       parameters:
         - name: regId
           in: path
