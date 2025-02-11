@@ -1024,8 +1024,7 @@ components:
         - itmos
       properties:
         fromRegistry:
-          description: Important note. When a transaction is proposed, this must be the caller registry.
-          $ref: "#/components/schemas/RegistryId"
+           $ref: "#/components/schemas/RegistryId"
         fromAccount:
           type: integer
           format: int32
@@ -1033,7 +1032,6 @@ components:
           maximum: 999999999
           example: 7564
         toRegistry:
-          description: If action is a transfer, the receiving registry.
           $ref: "#/components/schemas/RegistryId"
         toAccount:
           type: integer
@@ -1189,11 +1187,9 @@ components:
         - purpose
       properties:
         authorization:
-          description: the authorization superclass
           $ref: '#/components/schemas/Authorization'
         cooperativeApproachAuthorized:
-          description: the cooperative approach being authorised.
-          $ref: '#/components/schemas/CooperativeApproach'
+           $ref: '#/components/schemas/CooperativeApproach'
 
     ITMOAuthorization:
       type: object
@@ -1204,7 +1200,6 @@ components:
         - quantityC02
       properties:
         authorization:
-          description: the authorization superclass
           $ref: '#/components/schemas/Authorization'
         cooperativeApproachId:
           description: Cooperative approaches under Article 6.2.<br><br>
@@ -1271,7 +1266,6 @@ components:
         - quantityC02
       properties:
         authorization:
-          description: the authorization superclass
           $ref: '#/components/schemas/Authorization'
         cooperativeApproachId:
           description: the cooperativeApproach for which these entities are authorised.
@@ -1341,7 +1335,6 @@ components:
           description: The nonGHG metrics used by this cooperative approach
           type: array
           items:
-            description: Each NonGHGMetic used by this cooperative approach
             $ref: '#/components/schemas/NonGHGMetric'
         sectors:
           description: One or more sectors where the mitigation outcome will occur as per common nomenclatures based on IPCC guidelines.<br><br>
@@ -1365,8 +1358,7 @@ components:
           description: More information of the activities
           type: array
           items:
-            description: reference to each activity
-            $ref: '#/components/schemas/ActivityRef'
+             $ref: '#/components/schemas/ActivityRef'
         authorisedEntityIds:
           description: Unique identifier of entities that are authorised as per common nomenclatures,<br><br>
             for this cooperative approach, if applicable.
