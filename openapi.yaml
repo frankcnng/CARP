@@ -46,7 +46,7 @@ paths:
     get:
       tags:
         - Status
-		- PullView
+        - PullView
       operationId: getServerStatus
       summary: Get the current server status and date/time
       description: Get the current server status and date/time
