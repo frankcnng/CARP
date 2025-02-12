@@ -656,7 +656,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-
   /pullview/{regId}/itmo/{ftpPartyId}{firstId}{lastId}:
     get:
       tags:
@@ -701,7 +700,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CooperativeApproach'
+                $ref: '#/components/schemas/ITMO'
         '400':
           description: Unsuccessful operation
           content:
