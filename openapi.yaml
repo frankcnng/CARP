@@ -94,6 +94,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+
   /registry/{regId}:
     get:
       tags: 
@@ -129,6 +130,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
+
     post:
       tags:
         - Registry
@@ -470,388 +472,6 @@ paths:
                 $ref: '#/components/schemas/Errors'
 
 
-  /pullview/{regId}/authorization/{authId}:
-    get:
-      tags:
-        - Authorization
-        - PullView
-      operationId: getAuthorization
-      summary: Retrieve authorization with identifier authId, registered to the registry identified by regId.
-      description: Retrieve authorization with identifier authId, registered to the registry identified by regId.<br>
-        Depending on what was authorised, different properties in the response will be populated.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: authId
-          in: path
-          description: The id of the authorisation to be retrieved.
-          required: true
-          schema:
-            type: string
-            example: "GUY 2024-CA1"
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  caAuths:
-                    $ref: '#/components/schemas/CooperativeApproachAuthorization'
-                  itmoAuths:
-                    $ref: '#/components/schemas/ITMOAuthorization'
-                  entityAuths:
-                    $ref: '#/components/schemas/EntityAuthorization'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /pullview/{regId}/authorizations:
-    get:
-      tags:
-        - Authorization
-        - PullView
-      operationId: getAuthorizations
-      summary: Retrieve all authorizations registered to the registry identified by regId.
-      description: Retrieve all authorizations registered to the registry identified by regId.<br>
-        This includes cooperative approach authorizations, ITMO authorizations, and entity authorizations.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  caAuths:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/CooperativeApproachAuthorization'
-                  itmoAuths:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/ITMOAuthorization'
-                  entityAuths:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/EntityAuthorization'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-
-  /pullview/{regId}/cooperativeApproach/{caId}:
-    get:
-      tags:
-        - CooperativeApproach
-        - PullView
-      operationId: getCooperativeApproach
-      summary: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.
-      description: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: caId
-          in: path
-          description: The id of the cooperative approach be retrieved.
-          required: true
-          schema:
-            type: string
-            example: "CA0002"
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CooperativeApproach'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /pullview/{regId}/cooperativaApproaches:
-    get:
-      tags:
-        - CooperativeApproach
-        - PullView
-      operationId: getCooperativeApproaches
-      summary: Retrieve all cooperative approaches registered to the registry identified by regId.
-      description: Retrieve all cooperative approaches registered to the registry identified by regId.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the cooperative approaches are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  cooperativeApproaches:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/CooperativeApproach'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-
-  /pullview/{regId}/itmo/{ftpPartyId}{firstId}{lastId}:
-    get:
-      tags:
-        - ITMO
-        - PullView
-      operationId: getITMO
-      summary: Retrieve ITMO with identifier ftpPartyId,firstId,lastId, held by the registry identified by regId.
-      description: Retrieve ITMO with identifier ftpPartyId,firstId,lastId, held by the registry identified by regId.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: ftpPartyId
-          in: path
-          description: The id of first transferring participating Party for the ITMO.
-          required: true
-          schema:
-            type: string
-            example: "BEL"
-        - name: firstId
-          in: path
-          description: Sequence number of the first ITMO in the block.
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 3144
-        - name: lastId
-          in: path
-          description: Sequence number of the last ITMO in the block.
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 7144
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ITMO'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /pullview/{regId}/itmos:
-    get:
-      tags:
-        - ITMO
-        - PullView
-      operationId: getITMOs
-      summary: Retrieve all ITMOs registered to the registry identified by regId.
-      description: Retrieve all ITMOs registered to the registry identified by regId.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the ITMOs are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  itmos:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/ITMO'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-
-  /action/{regId}/registerCooperativeApproachAuth:
-    post:
-      tags:
-        - Authorization
-        - CooperativeApproach
-        - CARP
-      operationId: registerCooperativeApproachAuth
-      summary: Register authorised cooperative approach,<br>
-        from the registry identified by regId.<br>
-      description: Register authorised cooperative approach, from the registry identified by regId.<br>
-        This will be performed by the secretariat when it registers the CA authorisation with the CARP.<br>
-        This enables the CAs and ITMOs for interoperability.<br>
-        This will create the CooperativeApproachAuthorization and the CooperativeApproach within the International Registry.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The cooperative approach authorisation to be registered.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CooperativeApproachAuthorization'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /action/{regId}/registerITMOAuth:
-    post:
-      tags:
-        - Authorization
-        - ITMO
-        - CARP
-      operationId: registerITMOAuth
-      summary: Register the authorisation of ITMOs from the registry identified by regId.<br>
-      description: Register authorised ITMOs, from the registry identified by regId.<br>
-        This enables ITMOs for interoperability by to be issued via a Issuance Action Proposal from the registry.<br>
-        Note that this operation does not create ITMOs, in creates an ITMO Authorization,<br>
-        containing an authorized C02 quantity, a cooperative approach id, and an authorization id.<br>
-        When the ITMOs are subsequently issued by the registry, it must be consistent with this information.<br>
-        If the ITMO's cooperative approach id is not found, or is not yet authorised, the operation fails.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The ITMOs to be registered.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ITMOAuthorization'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
   /action/{regId}/propose:
     post:
       tags:
@@ -988,7 +608,7 @@ paths:
               properties:
                 status:
                   type: string
-                  format: enum[ACCEPTED, REJECTED, CANCELLED]
+                  format: enum[ACCEPTED, REJECTED, COMPLETED, TERMINATED]
                   example: REJECTED
       responses:
         '200':
@@ -1017,13 +637,14 @@ paths:
       operationId: getPendingActions
       summary: Retrieve the actions that are pending processing by the registry identified by regId
       description: Retrieve the actions that are pending processing by the registry identified by regId.<br><br>
-        This operation is used by a registry to process actions that have not yet been finalized and where the registry is expected to undertake the relevant steps to progress the action<br><br>
+        This operation is used by a registry to process actions that have not yet been finalized,<br><br>
+        and where the registry is expected to undertake the relevant steps to progress the action.<br><br>
         * If it is a sending registry, complete or terminate the action.<br><br>
         * If it is a receiving registry, accept or reject the action.<br><br>
         This operation can also be used by a registry to query the status of a pending action it is already aware of<br><br>
         * If it is a sending registry, at any point before its finalization.<br><br>
         * If it is a receiving registry, after it has been validated and before its finalization.<br><br>
-        Another operation (getSelectedActions) returns actions with finalized statuses.
+        Another operation (getfinalizedActions) returns actions with finalized statuses.
       parameters:
         - name: regId
           in: path
@@ -1057,14 +678,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/selectedActions:
+  /action/{regId}/finalizedActions:
     get:
       tags:
         - Action
-      operationId: getSelectedActions
+      operationId: getfinalizedActions
       summary: Retrieve the finalized actions for the registry identified by regId and other filtering parameters
       description: Retrieve the finalized actions for the registry identified by regId and other filtering parameters.<br><br>
-        Finalized actions where the registry is either the sender, or the receiver are retrieved.<br><br>
+        finalized actions where the registry is either the sender, or the receiver are retrieved.<br><br>
         Another operation (getPendingActions) returns actions with not yet finalized statuses.
       parameters:
         - name: regId
@@ -1134,6 +755,638 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /action/{regId}/selectedActions:
+    get:
+      tags:
+        - Action
+        - NonProduction
+      operationId: getSelectedActions
+      summary: Retrieve the actions, for the registry identified by regId and other filtering parameters.
+      description: Retrieve the actions for the registry identified by regId and other filtering parameters.<br><br>
+        This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
+        and not for registries.
+      parameters:
+        - name: regId
+          description: The identifier of the registry for which actions are to be retrieved.
+            Finalized actions where the registry is either the sender, or the receiver are retrieved.
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 999999999
+          description: The number of items to skip before starting to collect the actions
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+          description: The number of actions to return
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
+          description: Allows to filter by action status
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: The minimum date-time of actions to return
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: The maximum date-time of actions to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    maxItems: 100
+                    items:
+                      $ref: '#/components/schemas/Action'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+
+  /authorization/{regId}/registerCooperativeApproachAuth:
+    post:
+      tags:
+        - Authorization
+        - CooperativeApproach
+        - CARP
+      operationId: registerCooperativeApproachAuth
+      summary: Register authorised cooperative approach,<br>
+        from the registry identified by regId.
+      description: Register authorised cooperative approach, from the registry identified by regId.<br>
+        This will be performed by the secretariat when it registers the CA authorisation with the CARP.<br>
+        This enables the CAs and ITMOs for interoperability.<br>
+        This will create the CooperativeApproachAuthorization and the CooperativeApproach within the International Registry.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      requestBody:
+        description: The cooperative approach authorisation to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CooperativeApproachAuthorization'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorization/{regId}/registerITMOAuth:
+    post:
+      tags:
+        - Authorization
+        - ITMO
+        - CARP
+      operationId: registerITMOAuth
+      summary: Register the authorisation of ITMOs from the registry identified by regId.
+      description: Register authorised ITMOs, from the registry identified by regId.<br>
+        This enables ITMOs for interoperability by to be issued via a Issuance Action Proposal from the registry.<br>
+        Note that this operation does not create ITMOs, in creates an ITMO Authorization,<br>
+        containing an authorized C02 quantity, a cooperative approach id, and an authorization id.<br>
+        When the ITMOs are subsequently issued by the registry, it must be consistent with this information.<br>
+        If the ITMO's cooperative approach id is not found, or is not yet authorised, the operation fails.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      requestBody:
+        description: The ITMOs to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ITMOAuthorization'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorization/{regId}/{authId}:
+    get:
+      tags:
+        - Authorization
+        - PullView
+      operationId: getAuthorization
+      summary: Retrieve authorization with identifier authId, registered to the registry identified by regId.
+      description: Retrieve authorization with identifier authId, registered to the registry identified by regId.<br>
+        Depending on what was authorised, different properties in the response will be populated.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: authId
+          in: path
+          description: The id of the authorisation to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  caAuths:
+                    $ref: '#/components/schemas/CooperativeApproachAuthorization'
+                  itmoAuths:
+                    $ref: '#/components/schemas/ITMOAuthorization'
+                  entityAuths:
+                    $ref: '#/components/schemas/EntityAuthorization'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+    post:
+      tags:
+        - Authorization
+        - CARP
+      operationId: updateAuthorization
+      summary: Update an authorization,<br>
+        from the registry identified by regId.
+      description: Update an authorization, identified by authId,<br>
+        from the registry identified by regId.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: authId
+          in: path
+          description: The id of the authorisation to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+      requestBody:
+        description: The cooperative approach authorisation to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                caAuths:
+                  $ref: '#/components/schemas/CooperativeApproachAuthorization'
+                itmoAuths:
+                  $ref: '#/components/schemas/ITMOAuthorization'
+                entityAuths:
+                  $ref: '#/components/schemas/EntityAuthorization'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/{regId}:
+    get:
+      tags:
+        - Authorization
+        - PullView
+      operationId: getAuthorizations
+      summary: Retrieve all authorizations registered to the registry identified by regId.
+      description: Retrieve all authorizations registered to the registry identified by regId.<br>
+        This includes cooperative approach authorizations, ITMO authorizations, and entity authorizations.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  caAuths:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/CooperativeApproachAuthorization'
+                  itmoAuths:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/ITMOAuthorization'
+                  entityAuths:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/EntityAuthorization'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+
+  /cooperativeApproach/{regId}/{caId}:
+    get:
+      tags:
+        - CooperativeApproach
+        - PullView
+      operationId: getCooperativeApproach
+      summary: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.
+      description: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.<br>
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for that authorised the cooperative approach.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: caId
+          in: path
+          description: The id of the cooperative approach be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "CA0002"
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CooperativeApproach'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+    post:
+      tags:
+        - CooperativeApproach
+      operationId: updateCooperativeApproach
+      summary: Update cooperative approach identified by caId,<br>
+        from the registry identified by regId.
+      description: Update cooperative approach identified by caId,<br>
+        from the registry identified by regId,<br>
+        with attributes from the cooperative approach in the requestBody.<br>
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry that authorised the cooperative approach.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: caId
+          in: path
+          description: The id of the cooperative approach be updated.
+          required: true
+          schema:
+            type: string
+            example: "CA0002"
+      requestBody:
+        description: The cooperative approach authorisation to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CooperativeApproach'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /cooperativeApproaches/{regId}:
+    get:
+      tags:
+        - CooperativeApproach
+        - PullView
+      operationId: getCooperativeApproaches
+      summary: Retrieve all cooperative approaches registered to the registry identified by regId.
+      description: Retrieve all cooperative approaches registered to the registry identified by regId.<br>
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for which the cooperative approaches are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cooperativeApproaches:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/CooperativeApproach'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+
+  /itmo/{regId}/{ftpPartyId}{firstId}{lastId}:
+    get:
+      tags:
+        - ITMO
+        - PullView
+      operationId: getITMO
+      summary: Retrieve ITMO with identifier ftpPartyId,firstId,lastId, held by the registry identified by regId.
+      description: Retrieve ITMO with identifier ftpPartyId,firstId,lastId, held by the registry identified by regId.<br>
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for which the ITMOs are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: ftpPartyId
+          in: path
+          description: The id of first transferring participating Party for the ITMO.
+          required: true
+          schema:
+            type: string
+            example: "BEL"
+        - name: firstId
+          in: path
+          description: Sequence number of the first ITMO in the block.
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 3144
+        - name: lastId
+          in: path
+          description: Sequence number of the last ITMO in the block.
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 7144
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ITMO'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+    post:
+      tags:
+        - ITMO
+      operationId: updateITMO
+      summary: Update the attributes of the ITMO .
+      description: Update the attributes of the ITMO identified by ftpPartyId, firstId, lastId,<br>
+        owned by the registry identified by regId.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry holding the ITMO.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: ftpPartyId
+          in: path
+          description: The id of first transferring participating Party for the ITMO.
+          required: true
+          schema:
+            type: string
+            example: "BEL"
+        - name: firstId
+          in: path
+          description: Sequence number of the first ITMO in the block.
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 3144
+        - name: lastId
+          in: path
+          description: Sequence number of the last ITMO in the block.
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 7144
+      requestBody:
+        description: The ITMO with the updated attributes.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ITMO'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /itmos/{regId}:
+    get:
+      tags:
+        - ITMO
+        - PullView
+      operationId: getITMOs
+      summary: Retrieve all ITMOs registered to the registry identified by regId.
+      description: Retrieve all ITMOs registered to the registry identified by regId.<br>
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for which the ITMOs are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  itmos:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/ITMO'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+
 components:
   schemas:
     Registry:
@@ -1156,7 +1409,8 @@ components:
         lastmodifieddatetime:
           type: string
           format: date-time
-          description: The date and time of the most recent change to the registry transactions, accounts or holdings.  This is used to set the cut-off date during the export.
+          description: The date and time of the most recent change to the registry transactions, accounts or holdings.<br>
+            This is used to set the cut-off date during the export.
           example: "2026-07-21T17:22:28Z"
         creationdatetime:
           type: string
@@ -1623,10 +1877,10 @@ components:
             The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(cooperativeApproachId, sha256)
             that will return the URL of the MO document corresponding to the hash.
           type: array
+          minItems: 1
           items:
             description: SHA256 hash of a single mitigation outcome document
             type: string
-            minItems: 1
             example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         otherReferences:
           description: Identification of, or coress-reference to, underlying regulations,<br><br>
