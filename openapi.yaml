@@ -1414,6 +1414,7 @@ components:
           type: string
           format: date-time
           example: "2024-07-21T17:32:28Z"
+      additionalProperties: false
 
     RegistryId:
       type: string
@@ -1463,6 +1464,7 @@ components:
           type: string
           format: date-time
           example: "2024-07-21T17:32:28Z"
+      additionalProperties: false
 
     Contact:
       type: object
@@ -1495,6 +1497,7 @@ components:
           minimum: 1
           maximum: 10
           example: 3
+      additionalProperties: false
 
     Action:
       type: object
@@ -1512,6 +1515,7 @@ components:
           example: 5869444
         proposedAction:
           $ref: '#/components/schemas/ProposedAction'
+      additionalProperties: false
 
     ProposedAction:
       type: object
@@ -1585,6 +1589,7 @@ components:
           type: string
           format: date-time
           example: "2024-07-21T17:32:28Z"
+      additionalProperties: false
 
     ActionError:
       type: object
@@ -1609,6 +1614,7 @@ components:
           description: Specific circumstances for error in this action proposal.
           type: string
           example: "ITMOs DEU342-5341 are locked by another action."
+      additionalProperties: false
 
     ActionWarning:
       type: object
@@ -1636,6 +1642,7 @@ components:
           description: Specific circumstances for error in this action proposal.
           type: string
           example: "Proposed issuance of ITMOs BEL342-15341 under CA998 exceed the 10000 tonnes of CO2 authorized for CA998."
+      additionalProperties: false
 
 
     Authorization:
@@ -1653,8 +1660,13 @@ components:
         - isAuthorizationForITMOs
         - isAuthorizationForEntities
       properties:
+        authorizingPartyId:
+          description: ISO-3166-1 alpha-3 code of the participating Party reporting this authorization,<br>
+            as per common nomenclatures.
+          type: string
+          example: "BEL"
         authorisationId:
-          description: Authorization Id as assigned by the Party reporting the authorisation.
+          description: Authorization Id as assigned by the participating Party reporting the authorisation.
           type: string
           example: "GUY 2024-CA1"
         authorisationDate:
@@ -1741,22 +1753,19 @@ components:
           items:
             type: string
             maxLength:  255
+      additionalProperties: false
 
     CooperativeApproachAuthorization:
       type: object
       required:
         - authorization
-        - cooperativeApproachName
-        - cooperativeApproachId
-        - metric
-        - sectors
-        - activityTypes
-        - purpose
+        - cooperativeApproachAuthorized
       properties:
         authorization:
           $ref: '#/components/schemas/Authorization'
         cooperativeApproachAuthorized:
            $ref: '#/components/schemas/CooperativeApproach'
+      additionalProperties: false
 
     ITMOAuthorization:
       type: object
@@ -1764,7 +1773,8 @@ components:
         - authorization
         - cooperativeApproachId
         - purposeForAuthorization
-        - quantityC02
+        - quantityCO2
+        - vintages
       properties:
         authorization:
           $ref: '#/components/schemas/Authorization'
@@ -1811,6 +1821,7 @@ components:
           items:
             description: Relevant registries in any underlying regulations, frameworks, standards, or procedures.
             #ref: "#/components/schemas/UnderlyingCooperativeApproach"
+      additionalProperties: false
 
     UnderlyingCooperativeApproach:
       type: object
@@ -1822,14 +1833,15 @@ components:
           description: The identifier of the relavant registry in a underlying approach
           #ref: "#/components/schemas/RegistryId"
         approachName:
-          description: Name of the underlying regulation, framework, standard, or procedure<br><br>
+          description: Name of the underlying regulation, framework, standard, or procedure<br>
             under which the relevant registry operates.
+      additionalProperties: false
 
     EntityAuthorization:
       type: object
       required:
         - authorization
-        - cooperativaApproachId
+        - cooperativeApproachId
         - authorisedEntityIds
       properties:
         authorization:
@@ -1844,6 +1856,7 @@ components:
           type: array
           items:
             type: string
+      additionalProperties: false
 
     CooperativeApproach:
       type: object
@@ -1951,6 +1964,7 @@ components:
           items:
             type: string
             example: ""
+      additionalProperties: false
 
     NonGHGMetric:
       type: object
@@ -1972,7 +1986,8 @@ components:
           description: If the mitigation outcome involves a non-CO2 greenhouse gas(es),<br><br>
             the global warming potential (GWP) value(s) applied,<br><br>
             consistent with the relevant CMA decisions (e.g.,\'100-year values from 5th assessment report by the IPCC\').
-          type: string          
+          type: string
+      additionalProperties: false
 
     ActivityRef:
       type: object
@@ -1987,6 +2002,7 @@ components:
           description: the name of the activity
           type: string
           example: ""
+      additionalProperties: false
 
     ITMO:
       type: object
@@ -2009,7 +2025,7 @@ components:
           description: Authorization Id as assigned by the Party reporting the authorisation.
           type: string
           example: "GUY 2024-CA1"
-        orginatingPartyRegistry:
+        originatingPartyRegistry:
           description: The participating Party registry in which the mitigation outcomes originated.
           #ref: "#/components/schemas/RegistryId"
         firstTransferringParty:
@@ -2076,6 +2092,7 @@ components:
           type: string
           format: date-time
           example: "2024-07-21T17:32:28Z"
+      additionalProperties: false
 
     Errors:
       type: object
@@ -2098,7 +2115,8 @@ components:
                 type: string
                 maxLength: 1024
                 example: "Unexpected error"
-              
+      additionalProperties: false
+
   securitySchemes:
 
     basicAuth:
