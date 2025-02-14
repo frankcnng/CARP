@@ -1426,6 +1426,7 @@ components:
     Account:
       type: object
       required:
+        - registryId
         - id
       properties:
         registryId:
@@ -1766,8 +1767,8 @@ components:
       type: object
       required:
         - authorization
-        - purposeForAuthorization
-        - quantityC02
+        - cooperativaApproachId
+        - authorisedEntityIds
       properties:
         authorization:
           $ref: '#/components/schemas/Authorization'
@@ -1930,13 +1931,12 @@ components:
       required:
         # Properties required by decision 6/CMA.4, annex I, para.5, in the order specified in the decision
         - cooperativeApproachId
+        - authorisationId
         - originatingPartyRegistry
         - firstTransferringParty
         - firstId
         - lastId
         - vintage
-        # Other useful properties defined in these communication standards
-        - authorisationId
         - partyITMORegistry
       properties:
         cooperativeApproachId:
@@ -1956,12 +1956,12 @@ components:
           type: string
           example: "FRA"
         firstId:
-          description: Identifier of the first ITMO in the block, commencing with First Id, ending with Last Id.\nBlocks from the same Originating Party Registry cannot overlap.
+          description: Identifier of the first ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
           type: integer
           format: int32
           example: 1
         lastId:
-          description: Identifier of the last ITMO in the block, commencing with First Id, ending with Last Id.\nBlocks from the same Originating Party Registry cannot overlap.
+          description: Identifier of the last ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
           # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
           # but as all ITMOs are considered as blocks, the last identifier of the block is required.
           type: integer
