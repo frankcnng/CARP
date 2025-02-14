@@ -795,7 +795,7 @@
 			{
 				"value":	"4",
 				"description":	"The receiving account does not exist."
-			}
+			},
 			{
 				"value":	"5",
 				"description":	"The ITMOs transferred are locked by another action."
@@ -811,7 +811,7 @@
 			{
 				"value":	"8",
 				"description":	"Each block in the issuance of ITMOs transaction does not specify the same sending and acquiring account."
-			}
+			},
 			{
 				"value":	"9",
 				"description":	"The serial numbers of issued ITMOs must start with one and be contiguous."
@@ -823,7 +823,7 @@
 			{
 				"value":	"11",
 				"description":	"The first transferring Party attribute of the ITMO must match the sending registry (e.g., Party cannot issue ITMOs on behalf of another Party)."
-			}
+			},
 			{
 				"value":	"12",
 				"description":	"Registry is cannot issue ITMOs concurrently."
