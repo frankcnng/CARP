@@ -1221,14 +1221,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /itmo/{regId}/{ftpPartyId}{firstId}{lastId}:
+  /itmo/{regId}/{itmoUniqueId}:
     get:
       tags:
         - ITMO
         - PullView
       operationId: getITMO
-      summary: Retrieve ITMO with identifier ftpPartyId,firstId,lastId, held by the registry identified by regId.
-      description: Retrieve ITMO with identifier ftpPartyId,firstId,lastId, held by the registry identified by regId.<br>
+      summary: Retrieve ITMO with identifier itmoUniqueId, held by the registry identified by regId.
+      description: Retrieve ITMO with identifier itmoUniqueId, held by the registry identified by regId.<br>
       parameters:
         - name: regId
           in: path
@@ -1236,29 +1236,12 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - name: ftpPartyId
+        - name: itmoUniqueId
           in: path
-          description: The id of first transferring participating Party for the ITMO.
+          description: The unique identifier of the ITMOs are to be returned.
           required: true
           schema:
-            type: string
-            example: "BEL"
-        - name: firstId
-          in: path
-          description: Sequence number of the first ITMO in the block.
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 3144
-        - name: lastId
-          in: path
-          description: Sequence number of the last ITMO in the block.
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 7144
+            $ref: "#/components/schemas/ITMOUniqueId"
       responses:
         '200':
           description: Successful operation.
@@ -1284,7 +1267,7 @@ paths:
         - ITMO
       operationId: updateITMO
       summary: Update the attributes of the ITMO.
-      description: Update the attributes of the ITMO identified by ftpPartyId, firstId, lastId,<br>
+      description: Update the attributes of the ITMO identified by itmoUniqueId,<br>
         owned by the registry identified by regId.
       parameters:
         - name: regId
@@ -1293,29 +1276,12 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - name: ftpPartyId
+        - name: itmoUniqueId
           in: path
-          description: The id of first transferring participating Party for the ITMO.
+          description: The unique identifier of the ITMOs are to be returned.
           required: true
           schema:
-            type: string
-            example: "BEL"
-        - name: firstId
-          in: path
-          description: Sequence number of the first ITMO in the block.
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 3144
-        - name: lastId
-          in: path
-          description: Sequence number of the last ITMO in the block.
-          required: true
-          schema:
-            type: integer
-            format: int32
-            example: 7144
+            $ref: "#/components/schemas/ITMOUniqueId"
       requestBody:
         description: The ITMO with the updated attributes.
         required: true
@@ -2011,9 +1977,7 @@ components:
         - cooperativeApproachId
         - authorisationId
         - originatingPartyRegistry
-        - firstTransferringParty
-        - firstId
-        - lastId
+        - itmoUniqueId
         - vintage
         - partyITMORegistry
       properties:
@@ -2028,23 +1992,9 @@ components:
         originatingPartyRegistry:
           description: The participating Party registry in which the mitigation outcomes originated.
           #ref: "#/components/schemas/RegistryId"
-        firstTransferringParty:
-          description: ISO-3166-1 alpha-3 code of participating Party that initiates the \"First Transfer\".
-            Refer to common nomenclalture for definition of \"First Transfer\".
-          type: string
-          example: "FRA"
-        firstId:
-          description: Identifier of the first ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
-          type: integer
-          format: int32
-          example: 1
-        lastId:
-          description: Identifier of the last ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
-          # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
-          # but as all ITMOs are considered as blocks, the last identifier of the block is required.
-          type: integer
-          format: int32
-          example: 7144
+        itmoUniqueId:
+          description: The unique identifier of the ITMO(s).
+          #ref: "#/components/schemas/ITMOUniqueId"
         vintage:
           description: Year in which mitigation outcome occured
           type: integer
@@ -2054,14 +2004,6 @@ components:
         partyITMORegistry:
           description: The participating Party registry that currently owns the ITMO(s).
           #ref: "#/components/schemas/RegistryId"
-        accountId:
-          description: the identifier of the account currently holding the ITMOs.
-            The account id must be unique across a registry.
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 999999999
-          example: 7564
         suppInfo:
           description: Any supplementary information the current owning Party may need to attach to the ITMOs
             This should be an append only property.
@@ -2093,6 +2035,61 @@ components:
           format: date-time
           example: "2024-07-21T17:32:28Z"
       additionalProperties: false
+
+    ITMOUniqueId:
+      type: object
+      required:
+        - firstTransferringParty
+        - firstId
+        - lastId
+      description: The unique identifier of an ITMO.
+      properties:
+        firstTransferringParty:
+          description: ISO-3166-1 alpha-3 code of participating Party that initiates the \"First Transfer\".
+            Refer to common nomenclalture for definition of \"First Transfer\".
+          type: string
+          example: "FRA"
+        firstId:
+          description: Identifier of the first ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
+          type: integer
+          format: int32
+          example: 1
+        lastId:
+          description: Identifier of the last ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
+          # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
+          # but as all ITMOs are considered as blocks, the last identifier of the block is required.
+          type: integer
+          format: int32
+          example: 7144
+      additionalProperties: false
+
+    AccountITMOAssociation:
+      type: object
+      required:
+        - partyITMORegistry
+        - accountId
+        - itmoId
+      description: An association between an account and an ITMO.<br>
+        Used to find the account holding an ITMO,<br>
+        and the ITMOs contained in an account.<br>
+        This could be implemented as an associative table in a database.
+      properties:
+        partyITMORegistry:
+          description: The participating Party registry that currently owns the ITMO(s).
+          #ref: "#/components/schemas/RegistryId"
+        accountId:
+          description: the identifier of the account currently holding the ITMOs.
+            The account id must be unique across a registry.
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 999999999
+          example: 7564
+        itmoId:
+          description: The unique identifier of the ITMO(s).
+          #ref: "#/components/schemas/ITMOUniqueId"
+      additionalProperties: false
+
 
     Errors:
       type: object
