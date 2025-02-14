@@ -1558,6 +1558,16 @@ components:
           type: string
           format: dateTime
           example: "2024-07-21T17:32:28Z"
+        errors:
+          type: array
+          description: Errors found in this action proposal
+          items:
+            $ref: "#/components/schemas/ActionError"
+        warnings:
+          type: array
+          description: Warnings found in this action proposal
+          items:
+            $ref: "#/components/schemas/ActionWarning"
         labels:
           type: array
           maxItems: 10
@@ -1575,6 +1585,58 @@ components:
           type: string
           format: date-time
           example: "2024-07-21T17:32:28Z"
+
+    ActionError:
+      type: object
+      description: An error that causes a proposed action to be invalid.<br>
+        The hub will invalidate the proposed action due to this error.
+      required:
+        - errorCode
+        - errorDescription
+        - errorSpecifics
+      properties:
+        errorCode:
+          description: Standard error code for this error.<br>
+            Refer to common nomenclatures.
+          type: integer
+          example: 1
+        errorDescription:
+          description: Standard error description for this error.<br>
+            Refer to common nomenclatures.
+          type: String
+          example: "Receiving ITMOs locked by another action."
+        errorSpecifics:
+          description: Specific circumstances for error in this action proposal.
+          type: String
+          example: "ITMOs DEU342-5341 are locked by another action."
+
+    ActionWarning:
+      type: object
+      description: An warning regarding a proposed action<br>
+        that may create inconsistencies in the ITMO ecosystem.<br>
+        The hub will log the warning in the proposed action,<br>
+        but will consider the action to be valid.<br>
+        It is up to the registries to reject or terminate the action.
+      required:
+        - warningCode
+        - warningDescription
+        - warningSpecifics
+      properties:
+        warningCode:
+          description: Standard warning code for this warning.<br>
+            Refer to common nomenclatures.
+          type: integer
+          example: 1
+        warningDescription:
+          description: Standard warning description for this warning.<br>
+            Refer to common nomenclatures.
+          type: String
+          example: "The proposed ITMOs exceed the quantity of CO2 authorised for this cooperative approach."
+        warningSpecifics:
+          description: Specific circumstances for error in this action proposal.
+          type: String
+          example: "Proposed issuance of ITMOs BEL342-15341 under CA998 exceed the 10000 tonnes of CO2 authorized for CA998."
+
 
     Authorization:
       type: object
