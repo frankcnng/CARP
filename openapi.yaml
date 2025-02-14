@@ -1603,11 +1603,11 @@ components:
         errorDescription:
           description: Standard error description for this error.<br>
             Refer to common nomenclatures.
-          type: String
+          type: string
           example: "Receiving ITMOs locked by another action."
         errorSpecifics:
           description: Specific circumstances for error in this action proposal.
-          type: String
+          type: string
           example: "ITMOs DEU342-5341 are locked by another action."
 
     ActionWarning:
@@ -1630,11 +1630,11 @@ components:
         warningDescription:
           description: Standard warning description for this warning.<br>
             Refer to common nomenclatures.
-          type: String
+          type: string
           example: "The proposed ITMOs exceed the quantity of CO2 authorised for this cooperative approach."
         warningSpecifics:
           description: Specific circumstances for error in this action proposal.
-          type: String
+          type: string
           example: "Proposed issuance of ITMOs BEL342-15341 under CA998 exceed the 10000 tonnes of CO2 authorized for CA998."
 
 
