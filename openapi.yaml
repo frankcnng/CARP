@@ -673,6 +673,55 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /action/{regId}/pendingPartyActions:
+    get:
+      tags:
+        - Action
+      operationId: getPendingPartyActions
+      summary: Retrieve the actions that are pending processing by the participating Party of the registry identified by regId.
+      description: Retrieve the actions that are pending processing by the participating Party of theregistry identified by regId.<br><br>
+        This operation is used by a registry to process actions that have not yet been finalized,<br><br>
+        and where a registry of the Party is expected to undertake the relevant steps to progress the action.<br><br>
+        * If it is a sending registry, complete or terminate the action.<br><br>
+        * If it is a receiving registry, accept or reject the action.<br><br>
+        This operation can also be used by a registry to query the status of a pending action it is already aware of<br><br>
+        * If it is a sending registry, at any point before its finalization.<br><br>
+        * If it is a receiving registry, after it has been validated and before its finalization.<br><br>
+        The list of actions returned is sorted in descending order or the proposed action data time (ie, the oldest action is first).<br><br>
+        Another operation (getfinalizedPartyActions) returns actions with finalized statuses.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry for which pending actions are to be retrieved.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    maxItems: 100
+                    items:
+                      $ref: '#/components/schemas/Action'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
   /action/{regId}/finalizedActions:
     get:
       tags:
@@ -750,6 +799,83 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /action/{regId}/finalizedPartyActions:
+    get:
+      tags:
+        - Action
+      operationId: getPartyFinalizedActions
+      summary: Retrieve the finalized actions for the Party owning the registry identified by regId and other filtering parameters
+      description: Retrieve the finalized actions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
+        Finalized actions where a registry of the Party is either the sender, or the receiver are retrieved.<br><br>
+        Another operation (getPartyPendingActions) returns actions with not yet finalized statuses.
+      parameters:
+        - name: regId
+          description: The identifier of the registry for which actions are to be retrieved.
+            Finalized actions where the registry is either the sender, or the receiver are retrieved.
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 999999999
+          description: The number of items to skip before starting to collect the actions
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+          description: The number of actions to return
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [COMPLETED, TERMINATED]
+          description: Allows to filter by action status
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: The minimum date-time of actions to return
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: The maximum date-time of actions to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    maxItems: 100
+                    items:
+                      $ref: '#/components/schemas/Action'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
   /action/{regId}/selectedActions:
     get:
       tags:
@@ -758,6 +884,84 @@ paths:
       operationId: getSelectedActions
       summary: Retrieve the actions, for the registry identified by regId and other filtering parameters.
       description: Retrieve the actions for the registry identified by regId and other filtering parameters.<br><br>
+        This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
+        and not for registries.
+      parameters:
+        - name: regId
+          description: The identifier of the registry for which actions are to be retrieved.
+            Finalized actions where the registry is either the sender, or the receiver are retrieved.
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 999999999
+          description: The number of items to skip before starting to collect the actions
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+          description: The number of actions to return
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
+          description: Allows to filter by action status
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: The minimum date-time of actions to return
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: The maximum date-time of actions to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    maxItems: 100
+                    items:
+                      $ref: '#/components/schemas/Action'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /action/{regId}/selectedPartyActions:
+    get:
+      tags:
+        - Action
+        - NonProduction
+      operationId: getSelectedPartyActions
+      summary: Retrieve the actions, for the Party owning the registry identified by regId and other filtering parameters.
+      description: Retrieve the actions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
         This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
         and not for registries.
       parameters:
@@ -1693,12 +1897,14 @@ components:
           type: string
           example: "FRA"
         firstId:
-          description: Identifier of the first ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
+          description: Identifier of the first ITMO in the block, commencing with firstId, ending with lastId.<br>
+            Blocks from the same originating Party registry cannot overlap.
           type: integer
           format: int32
           example: 1
         lastId:
-          description: Identifier of the last ITMO in the block, commencing with First Id, ending with Last Id.<br>Blocks from the same Originating Party Registry cannot overlap.
+          description: Identifier of the last ITMO in the block, commencing with firstId, ending with lastId.<br>
+            Blocks from the same originating Party registry cannot overlap.
           # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
           # but as all ITMOs are considered as blocks, the last identifier of the block is required.
           type: integer
