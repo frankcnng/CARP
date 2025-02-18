@@ -471,15 +471,11 @@ paths:
       tags:
         - Action
       operationId: proposeAction
-      summary: Propose a new action, from the registry identified by regId.<br>
-        If the proposed action is valid, it will be added to the pending actions list,<br>
-        avalable for appropriate registries to process.<br>
-        An actionId is returned by the operation, so regitries can check and augment the status of an action.
+      summary: Propose a new action, from the registry identified by regId.
       description: Propose a new action, from the registry identified by regId.<br>
         If the proposed action is valid, it will be added to the pending actions list,<br>
         avalable for appropriate registries to process.<br>
-        An actionId is returned by the operation, so registries can check and augment the status of an action.
-
+        An actionId is returned by the operation, so registries can check and augment the status of an action.<br><br>
         If the proposed action is not valid, the operation will fail.
         The incoming payload is the proposedAction, that also include the ITMOs involved in the action.
         These will be locked for the duration of the action.
@@ -504,6 +500,10 @@ paths:
             application/json:
               schema:
                 type: integer
+                format: uint32
+                minimum: 1
+                maximum: 4294967295
+                example: 87349
         '400':
           description: Unsuccessful operation
           content:
@@ -592,7 +592,7 @@ paths:
             maximum: 4294967295
             example: 87349
       requestBody:
-        description: The action to process.
+        description: The new status of action to process.
           Only the recipient can accept or reject an action.
           Only the proposer can cancel an action.
         content:
@@ -1033,6 +1033,98 @@ paths:
                 $ref: '#/components/schemas/Errors'
 
 
+  /notifications/{regId}/pendingNotifications:
+    get:
+      tags:
+        - ITMO
+      operationId: getPendingNotifications
+      summary: Retrieve unacknowledged notifications for the Party owning the registry identified by regId.
+      description: Retrieve unacknowledged notifications for the Party owning the registry identified by regId.<br>
+        Notifications that with a status of ACKNOWLEDGED are not returned.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry for which pending notifications for its Party are to be retrieved.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    maxItems: 200
+                    items:
+                      $ref: '#/components/schemas/Notification'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /notifications/{regId}/acknowledgeNotification/{notificationId}:
+    post:
+      tags:
+        - ITMO
+      operationId: acknowledgeNotification
+      summary: Acknowldge the notification for the Party owning the registry identified by regId.
+      description: Acknowledge the notification for the Party owning the registry identified by regId.<br>
+        with the notification identifier or notificationId.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry for which pending notifications for its Party are to be retrieved.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: notificationId
+          in: path
+          description: The notification identifier
+          required: true
+          schema:
+            type: integer
+            format: uint32
+            minimum: 1
+            maximum: 4294967295
+            example: 87349
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    maxItems: 200
+                    items:
+                      $ref: '#/components/schemas/Notification'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
   /itmo/{regId}/{itmoUniqueId}:
     get:
       tags:
@@ -1078,9 +1170,13 @@ paths:
       tags:
         - ITMO
       operationId: updateITMO
-      summary: Update the attributes of the ITMO.
-      description: Update the attributes of the ITMO identified by itmoUniqueId,<br>
-        owned by the registry identified by regId.
+      summary: Update the updateable attributes of the ITMO.
+      description: Update the updateable attributes of the ITMO identified by itmoUniqueId,<br>
+        owned by the registry identified by regId.<br>
+        These are:<br>
+        - authorizationId<br>
+        - cooperativeApproachId<br>
+        - vintage.
       parameters:
         - name: regId
           in: path
@@ -1094,13 +1190,32 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/ITMOUniqueId"
-      requestBody:
-        description: The ITMO with the updated attributes.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ITMO'
+        - name: authorizationId
+          in: query
+          description: the updated value of the authorization identifier.<br>
+            If not provided, the authorization identifier is not changed.
+          required: false
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: cooperativeApproachId
+          in: query
+          description: the new value of the cooperative approach identifier.<br>
+            If not provided, the cooperative approach identifier is not changed.
+          required: false
+          schema:
+            type: string
+            example: "CA0002"
+        - name: vintage
+          in: query
+          description: the updated value of the vintage.<br>
+            If not provided, the vintage is not changed.
+          required: false
+          schema:
+            type: integer
+            minimum: 2021
+            maximum: 9999
+            example: 2025
       responses:
         '200':
           description: Successful operation
@@ -1332,10 +1447,14 @@ components:
 
     ProposedAction:
       type: object
-      description: An proposed action to be performed on a block of ITMOs.
-        A registry proposes an action to the hub.  Once the hub validates the proposedAction, it is given an actionId (see Action schema).
-        An action consists in the transfer of at least one ITMO from one account to another account, in the same or in a different registry.
-        An authorisation/issuance/creation action must specify the same origin and destination account.
+      description: A registry proposes an action to the hub.<br>
+        Once the hub validates the proposedAction, it is given an actionId (see Action schema).<br>
+        An proposed action to be performed on a block of ITMOs.<br>
+        An transfer action consists of the transfer of at least one ITMO from one account to another account,<br>
+        in the same or in a different registry.<br>
+        An acquisition action consits of the acquisition of at least one ITMO from one account to another account,<br>
+        in different registries.<br>
+        An authorisation/issuance/creation action must specify the same origin and destination account.<br>
         All other transaction must specify different origin and destination accounts.
       required:
         - fromRegistry
@@ -1671,6 +1790,7 @@ components:
             type: string
       additionalProperties: false
 
+
     CooperativeApproach:
       type: object
       required:
@@ -1816,6 +1936,80 @@ components:
           type: string
           example: ""
       additionalProperties: false
+
+    Notification:
+      type: object
+      description: A Notification to a Party's registry for the Party to acknowledge (through one of its registries).<br>
+        This includes notification of an updated value of attributes of ITMOs held by the 
+      required:
+        - partyId
+        - notificationId
+        - notificationType
+        - notificationStatus
+        - createdDateTime
+      properties:
+        partyId:
+          description: ISO-3166-1 alpha-3 code of the participating Party being notified,<br>
+            as per common nomenclatures.
+          type: string
+          example: "BEL"
+        notificationId:
+          type: integer
+          format: uint32
+          description: Identifier for the notification.  Notification identifiers for a Party are never reused.
+          minimum: 0
+          maximum: 4294967295
+          example: 5869444
+        notificationStatus:
+          description: The status of the notification
+          type: string
+          enum: [CREATED, RETRIEVED, ACKNOWLEDGED]
+        createdDateTime:
+          description:  Date-timestamp of creation of the notification.
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+        firstRetrievedDateTime:
+          description:  Date-timestamp of first retrieval of the notification.
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+        lastRetrievedDateTime:
+          description:  Date-timestamp of more recent retrieval of the notification.
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+        acknowledgedDateTime:
+          description:  Date-timestamp of acknowledgment of the notification.
+          type: string
+          format: date-time
+          example: "2024-07-21T17:32:28Z"
+        notificationType:
+          description: The type of notification
+          type: string
+          enum: [AUTHIDCHANGE, CAIDCHANGE, VINTAGECHANGE]
+        itmoUniqueId:
+          description: The unique identifier of the ITMO(s) that has been updated.
+          #ref: "#/components/schemas/ITMOUniqueId"
+        newAuthorizationId:
+          description: the updated value of the authorization identifier.<br>
+            If not null, the authorization identifier is not changed.
+          type: string
+          example: "GUY 2024-CA1"
+        newCooperativeApproachId:
+          description: the updated value of the cooperative approach identifier.<br>
+            If not null, the cooperative approach identifier is not changed.
+          type: string
+          example: "CA0002"
+        newVintage:
+          description: the updated value of the vintage.<br>
+            If not null, the vintage is not changed.
+          type: integer
+          minimum: 2021
+          maximum: 9999
+          example: 2025
+      additionalProperties: false
+
 
     ITMO:
       type: object
