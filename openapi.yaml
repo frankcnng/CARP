@@ -35,6 +35,8 @@ tags:
     description: Manage the contact(s) of the participating Party registries.
   - name: Action
     description: Manage actions of participating Party registries
+  - name: Notification
+    description: Manage notifications from and to partitipating Party registries
   - name: ITMO
     description: Manage ITMOs of the caller registry
   - name: Export
@@ -1032,11 +1034,82 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /notifications/{regId}/notifyITMOUpdate/{itmoUniqueId}:
+    post:
+      tags:
+        - ITMO
+        - Notification
+      operationId: notifyITMOUpdate
+      summary: A registry of first transferring participating Party<br>
+        sends a notification of an update to the updateable attributes of the ITMO.
+      description: A registry of first transferring participating Party<br>
+        sends a notification of an update to the updateable attributes of the ITMO identified by itmoUniqueId.<br>
+        These are:<br>
+        - authorizationId<br>
+        - vintage.<br>
+        The registry identified by regId is the calling registry,<br>
+        and must be a registry of the first transferring participating Party of the ITMO,<br>
+        otherwise, the operation fails.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the calling registry and must be a registry of the first transferring Party.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: itmoUniqueId
+          in: path
+          description: The unique identifier of the ITMOs are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/ITMOUniqueId"
+        - name: authorizationId
+          in: query
+          description: the updated value of the authorization identifier.<br>
+            If not provided, the authorization identifier is not changed.
+          required: false
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: vintage
+          in: query
+          description: the updated value of the vintage.<br>
+            If not provided, the vintage is not changed.
+          required: false
+          schema:
+            type: integer
+            minimum: 2021
+            maximum: 9999
+            example: 2025
+      responses:
+        '200':
+          description: Successful operation, the notificationId of the created notification is returned.
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: uint32
+                minimum: 1
+                maximum: 4294967295
+                example: 87349
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
 
   /notifications/{regId}/pendingNotifications:
     get:
       tags:
         - ITMO
+        - Notification
       operationId: getPendingNotifications
       summary: Retrieve unacknowledged notifications for the Party owning the registry identified by regId.
       description: Retrieve unacknowledged notifications for the Party owning the registry identified by regId.<br>
@@ -1078,9 +1151,10 @@ paths:
     post:
       tags:
         - ITMO
+        - Notification
       operationId: acknowledgeNotification
-      summary: Acknowldge the notification for the Party owning the registry identified by regId.
-      description: Acknowledge the notification for the Party owning the registry identified by regId.<br>
+      summary: Acknowldge the notification by the Party owning the registry identified by regId.
+      description: Acknowledge the notification by the Party owning the registry identified by regId.<br>
         with the notification identifier or notificationId.
       parameters:
         - name: regId
@@ -1153,76 +1227,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ITMO'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-    post:
-      tags:
-        - ITMO
-      operationId: updateITMO
-      summary: Update the updateable attributes of the ITMO.
-      description: Update the updateable attributes of the ITMO identified by itmoUniqueId,<br>
-        owned by the registry identified by regId.<br>
-        These are:<br>
-        - authorizationId<br>
-        - cooperativeApproachId<br>
-        - vintage.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry holding the ITMO.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: itmoUniqueId
-          in: path
-          description: The unique identifier of the ITMOs are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/ITMOUniqueId"
-        - name: authorizationId
-          in: query
-          description: the updated value of the authorization identifier.<br>
-            If not provided, the authorization identifier is not changed.
-          required: false
-          schema:
-            type: string
-            example: "GUY 2024-CA1"
-        - name: cooperativeApproachId
-          in: query
-          description: the new value of the cooperative approach identifier.<br>
-            If not provided, the cooperative approach identifier is not changed.
-          required: false
-          schema:
-            type: string
-            example: "CA0002"
-        - name: vintage
-          in: query
-          description: the updated value of the vintage.<br>
-            If not provided, the vintage is not changed.
-          required: false
-          schema:
-            type: integer
-            minimum: 2021
-            maximum: 9999
-            example: 2025
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
         '400':
           description: Unsuccessful operation
           content:
@@ -1940,7 +1944,7 @@ components:
     Notification:
       type: object
       description: A Notification to a Party's registry for the Party to acknowledge (through one of its registries).<br>
-        This includes notification of an updated value of attributes of ITMOs held by the 
+        This includes notification of an updated value of attributes of ITMOs held by the Party
       required:
         - partyId
         - notificationId
@@ -1987,7 +1991,7 @@ components:
         notificationType:
           description: The type of notification
           type: string
-          enum: [AUTHIDCHANGE, CAIDCHANGE, VINTAGECHANGE]
+          enum: [AUTHIDCHANGE, VINTAGECHANGE]
         itmoUniqueId:
           description: The unique identifier of the ITMO(s) that has been updated.
           #ref: "#/components/schemas/ITMOUniqueId"
@@ -1996,11 +2000,6 @@ components:
             If not null, the authorization identifier is not changed.
           type: string
           example: "GUY 2024-CA1"
-        newCooperativeApproachId:
-          description: the updated value of the cooperative approach identifier.<br>
-            If not null, the cooperative approach identifier is not changed.
-          type: string
-          example: "CA0002"
         newVintage:
           description: the updated value of the vintage.<br>
             If not null, the vintage is not changed.
