@@ -3,7 +3,7 @@ info:
   title: API for International Registry Interoperability (Work In Progress)
   description: 
      <b>Introduction</b>
-     <br><br>This API is part of the communication standards for transactions with
+     <br><br>This API is part of the communication standards for actions on
      Internationally Transferred Mitigation Outcomes (ITMOs) pursuant to decision 6/CMA.4, para. 32.
      <br><br>Participating Parties opting to apply the guidance referred to in 
      decision 6/CMA.4, annex I, chapter I.B are expected to adhere to this API when they interoperate.
