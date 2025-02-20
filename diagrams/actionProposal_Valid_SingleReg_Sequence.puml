@@ -17,7 +17,9 @@ note right: actionStatus == Proposed
 deactivate Hub
 deactivate Sender
 
-Hub -> Hub++: lockITMOs(iTMOIDs[])
+Hub -> Hub++: splitITMOs(actionProposal)
+note right: split ITMOs according to //actionProposal//
+Hub -> Hub: lockITMOs(iTMOIDs[])
 note right: //iTMOIDs[]// extracted from //actionProposal//
 
 Hub -> Hub: validateProposal(actionProposal)
