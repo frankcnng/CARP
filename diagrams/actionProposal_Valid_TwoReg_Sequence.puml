@@ -20,7 +20,9 @@ note right: actionStatus == Proposed
 deactivate Sender
 deactivate Hub
 
-Hub -> Hub++: lockITMOs(iTMOIDs[])
+Hub -> Hub++: splitITMOs(actionProposal)
+note right: split ITMOs according to //actionProposal//
+Hub -> Hub: lockITMOs(iTMOIDs[])
 Hub -> Hub: validateProposal(actionProposal)
 Hub -> Hub--: createNextAction(actionProposal)
 note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
