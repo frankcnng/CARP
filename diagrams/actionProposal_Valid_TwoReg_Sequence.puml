@@ -29,7 +29,7 @@ note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
 
 activate Receiver
 Receiver -> Hub++: getPendingActions()
-note right: Registry polls the Hub\nfor pending Actions
+  note right: Registry polls the Hub\nfor pending Actions
   
 Receiver <-- Hub: //actions[]//
 deactivate Hub
@@ -72,6 +72,18 @@ alt No warnings or Receiving Registry proceeds despite warnings
   note right: actionStatus == Completed
   Hub -> Hub--: unlockITMOs(iTMOIDs[])
 
+  activate Receiver
+  Receiver -> Hub++: getFinalizedActions()
+    note right: Registry polls the Hub\nfor finalized Actions
+    
+  Receiver <-- Hub: //actions[]//
+  deactivate Hub
+  
+  Receiver -> Receiver: processFinalizedActions(actions[])
+  activate Receiver
+  Receiver -> Receiver--: processAction(action)
+  note left: actionStatus == Completed
+  deactivate Receiver
 end
 
 alt Receiving Registry does not proceed
@@ -109,6 +121,18 @@ alt Receiving Registry does not proceed
   note right: actionStatus == Terminated
   Hub -> Hub--: unlockITMOs(iTMOIDs[])
 
+  activate Receiver
+  Receiver -> Hub++: getFinalizedActions()
+    note right: Registry polls the Hub\nfor finalized Actions
+    
+  Receiver <-- Hub: //actions[]//
+  deactivate Hub
+  
+  Receiver -> Receiver: processFinalizedActions(actions[])
+  activate Receiver
+  Receiver -> Receiver--: processAction(action)
+  note left: actionStatus == Terminated
+  deactivate Receiver
 end
 
 @enduml
