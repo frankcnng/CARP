@@ -1,3 +1,4 @@
+
 @startuml actionProposal_Invalid_Sequence
 
 title Action Proposal - Invalid Proposal
@@ -11,12 +12,15 @@ activate Sender
 Sender -> Sender: selectAndSplitITMOs(actionProposal)
 note right: select ITMOs from multiple blocks\nor split ITMOs into smaller blocks\nto match quantity in //actionProposal//
 
+
 Sender -> Sender: lockITMOs(iTMOIDs[])
 Sender -> Hub++ : proposeAction(actionProposal)
 note right: actionStatus == Proposed
 deactivate Sender
 deactivate Hub
 
+Hub -> Hub++: splitITMOs(actionProposal)
+note right: split ITMOs according to //actionProposal//
 Hub -> Hub++: lockITMOs(iTMOIDs[])
 Hub -> Hub: validateProposal(actionProposal)
 Hub -> Hub--: createNextAction(actionProposal)
