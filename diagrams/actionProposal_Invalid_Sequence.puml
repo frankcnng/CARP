@@ -21,7 +21,7 @@ deactivate Hub
 
 Hub -> Hub++: splitITMOs(actionProposal)
 note right: split ITMOs according to //actionProposal//
-Hub -> Hub++: lockITMOs(iTMOIDs[])
+Hub -> Hub: lockITMOs(iTMOIDs[])
 Hub -> Hub: validateProposal(actionProposal)
 Hub -> Hub--: createNextAction(actionProposal)
 note right: actionStatus == Invalidated\n\n(includes reason proposal\nis invalid,\nlogged in Action)
