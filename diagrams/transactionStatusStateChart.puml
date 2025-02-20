@@ -22,7 +22,7 @@ State Finalized {
   Accepted -[bold]-> Completed
   Invalidated --> Terminated : / Reason
   Rejected --> Terminated : / Reason
-  ip --> Terminated : [> 24-hours]\n/ Reason 
+  ip --> Terminated : Time-out\n[> 24-hours]\n/ Reason 
   Completed -[dashed]-> Terminated : [Reversal agreed]\n/ Reason
 }
 @enduml
