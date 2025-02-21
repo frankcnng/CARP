@@ -1,0 +1,136 @@
+
+@startuml itmoUpdate_Notification_Sequence
+
+title ITMO Update Notification
+
+skinparam style strictuml
+
+participant "First transferring\nparticipating\nParty registry" as Sender
+participant "Interoperability\nHub" as Hub
+participant "Receiving\nregistry 1" as Receiver1
+participant "Receiving\nregistry 2" as Receiver2
+
+activate Sender
+Sender -> Sender: updateITMO(itmo)
+
+Sender -> Hub++ : proposeAction(actionProposal)
+note right: actionStatus == Proposed
+deactivate Sender
+deactivate Hub
+
+Hub -> Hub++: splitITMOs(actionProposal)
+note right: split ITMOs according to //actionProposal//
+Hub -> Hub: lockITMOs(iTMOIDs[])
+Hub -> Hub: validateProposal(actionProposal)
+Hub -> Hub--: createNextAction(actionProposal)
+note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
+
+activate Receiver
+Receiver -> Hub++: getPendingActions()
+  note right: Registry polls the Hub\nfor pending Actions
+  
+Receiver <-- Hub: //actions[]//
+deactivate Hub
+
+Receiver -> Receiver: processPendingActions(actions[])
+activate Receiver
+Receiver -> Receiver: processActionStatusAndWarnings(action)
+note left: actionStatus == Validated
+Receiver -> Receiver: processAction(action)
+
+alt No warnings or Receiving Registry proceeds despite warnings
+
+  Receiver -> Hub++: processAction(actionId, actionStatus)
+  deactivate Receiver
+  deactivate Receiver
+  note right: actionStatus == Accepted
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note left: actionStatus == Accepted
+  deactivate Hub
+
+  activate Sender
+  Sender -> Hub++ : getPendingActions()
+  Sender <-- Hub : //actions[]//
+  deactivate Hub
+  
+  Sender -> Sender: processPendingActions(actions[])
+  activate Sender
+  Sender -> Sender: processActionStatusAndWarnings(action)
+  note right: actionStatus == Accepted
+  Sender -> Sender: processAction(action)
+  Sender -> Sender: unlockITMOs(iTMOIDs[])
+
+  Sender -> Hub++: processAction(actionId, actionStatus)
+  note right: actionStatus == Completed
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note right: actionStatus == Completed
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
+
+  activate Receiver
+  Receiver -> Hub++: getFinalizedActions()
+    note right: Registry polls the Hub\nfor finalized Actions
+    
+  Receiver <-- Hub: //actions[]//
+  deactivate Hub
+  
+  Receiver -> Receiver: processFinalizedActions(actions[])
+  activate Receiver
+  Receiver -> Receiver--: processAction(action)
+  note left: actionStatus == Completed
+  deactivate Receiver
+end
+
+alt Receiving Registry does not proceed
+
+  activate Receiver
+  activate Receiver
+  Receiver -> Hub++: processAction(actionId, actionStatus)
+  note right: actionStatus == Rejected
+  deactivate Receiver
+  deactivate Receiver
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note left: actionStatus == Rejected
+  deactivate Hub
+
+  activate Sender
+  Sender -> Hub++ : getPendingActions()
+  Sender <-- Hub: //actions[]//
+  deactivate Hub
+  
+  Sender -> Sender: processPendingActions(actions[])
+  activate Sender
+  Sender -> Sender: processActionStatusAndWarnings(action)
+  note right: actionStatus == Rejected
+
+  Sender -> Sender: processAction(action)
+  Sender -> Sender: unlockITMOs(iTMOIDs[])
+
+  Sender -> Hub++: processAction(actionId, actionStatus)
+  note right: actionStatus == Terminated
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessAction(actionId, actionStatus)
+  Hub -> Hub: processAction(actionId, actionStatus)
+  note right: actionStatus == Terminated
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
+
+  activate Receiver
+  Receiver -> Hub++: getFinalizedActions()
+    note right: Registry polls the Hub\nfor finalized Actions
+    
+  Receiver <-- Hub: //actions[]//
+  deactivate Hub
+  
+  Receiver -> Receiver: processFinalizedActions(actions[])
+  activate Receiver
+  Receiver -> Receiver--: processAction(action)
+  note left: actionStatus == Terminated
+  deactivate Receiver
+end
+
+@enduml
