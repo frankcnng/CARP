@@ -1,7 +1,7 @@
 @startuml Transaction State Chart
 
 skinparam dpi 300
-skinparam monochrome true
+skinparam monochrome false
 skinparam shadowing true
 
 top to bottom direction
@@ -10,19 +10,19 @@ hide empty description
 state "Ongoing" as ip
 
 State ip {
-  [*] -[bold]> Proposed
-  Proposed -[bold]-> Validated 
-  Proposed --> Invalidated
+  [*] -[bold,#green]> Proposed
+  Proposed -[bold,#green]-> Validated 
+  Proposed -[#red]-> Invalidated
 
-  Validated -[bold]-> Accepted
-  Validated --> Rejected
+  Validated -[bold,#green]-> Accepted
+  Validated -[#red]-> Rejected
 }
 
 State Finalized {
-  Accepted -[bold]-> Completed
-  Invalidated --> Terminated : / Reason
-  Rejected --> Terminated : / Reason
-  ip --> Terminated : / Time-out\n[> 24-hours] 
-  Completed -[dashed]-> Terminated : [Reversal agreed]\n/ Reason
+  Accepted -[bold,#green]-> Completed
+  Invalidated -[#red]-> Terminated : / Reason
+  Rejected -[#red]-> Terminated : / Reason
+  ip -[#red]-> Terminated : / Time-out\n[> 24-hours] 
+  Completed -[dashed,#red]-> Terminated : [Reversal agreed]\n/ Reason
 }
 @enduml
