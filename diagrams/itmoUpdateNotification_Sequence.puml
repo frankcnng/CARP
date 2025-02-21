@@ -1,3 +1,4 @@
+@startuml
 
 @startuml itmoUpdate_Notification_Sequence
 
@@ -7,130 +8,47 @@ skinparam style strictuml
 
 participant "First transferring\nparticipating\nParty registry" as Sender
 participant "Interoperability\nHub" as Hub
-participant "Receiving\nregistry 1" as Receiver1
-participant "Receiving\nregistry 2" as Receiver2
+participant "Holding\nregistry 1" as Receiver1
+participant "Holding\nregistry 2" as Receiver2
 
 activate Sender
 Sender -> Sender: updateITMO(itmo)
 
-Sender -> Hub++ : proposeAction(actionProposal)
-note right: actionStatus == Proposed
+Sender -> Hub++ : notifyITMOUpdate(itmoId, attributes, ...)
+Hub -> Hub: addNotification(itmoId, attributes, ...)
+  note right: notificationStatus -- Created
+Sender <-- Hub: //notificationId//
 deactivate Sender
 deactivate Hub
 
-Hub -> Hub++: splitITMOs(actionProposal)
-note right: split ITMOs according to //actionProposal//
-Hub -> Hub: lockITMOs(iTMOIDs[])
-Hub -> Hub: validateProposal(actionProposal)
-Hub -> Hub--: createNextAction(actionProposal)
-note left: actionStatus == Validated\n\n(may include warnings\nlogged in Action)
-
-activate Receiver
-Receiver -> Hub++: getPendingActions()
-  note right: Registry polls the Hub\nfor pending Actions
-  
-Receiver <-- Hub: //actions[]//
+activate Receiver1
+Receiver1 -> Hub++: getPendingNotifications()
+  note left: R1.party.notificationId.NotificationStatus == Retrieved
+Receiver1 <-- Hub: //R1's notifications[]//
 deactivate Hub
 
-Receiver -> Receiver: processPendingActions(actions[])
-activate Receiver
-Receiver -> Receiver: processActionStatusAndWarnings(action)
-note left: actionStatus == Validated
-Receiver -> Receiver: processAction(action)
+Receiver1 -> Receiver1: processPendingNotifications(notifications[])
+activate Receiver1
+Receiver1 -> Receiver1: processNotification(notification)
+Receiver1 -> Receiver1: updateITMO(itmoId, attributes, ...)
+Receiver1 -> Hub++: acknowledgeNotification(notificationId)
+note right: actionStatus == Acknowledged
+deactivate Receiver1
+deactivate Receiver1
+Hub -> Hub--: updateNotification(R1.party, notificationId)
+  note left: status == Acknowledged
 
-alt No warnings or Receiving Registry proceeds despite warnings
+activate Receiver2
+Receiver2 -> Hub++: getPendingNotifications()
+  note left: R2.party.notificationId.NotificationStatus == Retrieved
+Receiver2 <-- Hub: //R2's notifications[]//
+deactivate Hub
+Receiver2 -> Receiver2: processPendingNotifications(notifications[])
+activate Receiver2
+Receiver2 -> Receiver2: processNotification(notification)
+deactivate Receiver2
+deactivate Receiver2
+note left: R2 does not act on notification,\ndoes not update ITMO,\nthus R2.party.notificationId.noticationStatus\nremains Retrieved.
 
-  Receiver -> Hub++: processAction(actionId, actionStatus)
-  deactivate Receiver
-  deactivate Receiver
-  note right: actionStatus == Accepted
-  Hub -> Hub: validateProcessAction(actionId, actionStatus)
-  Hub -> Hub: processAction(actionId, actionStatus)
-  note left: actionStatus == Accepted
-  deactivate Hub
-
-  activate Sender
-  Sender -> Hub++ : getPendingActions()
-  Sender <-- Hub : //actions[]//
-  deactivate Hub
-  
-  Sender -> Sender: processPendingActions(actions[])
-  activate Sender
-  Sender -> Sender: processActionStatusAndWarnings(action)
-  note right: actionStatus == Accepted
-  Sender -> Sender: processAction(action)
-  Sender -> Sender: unlockITMOs(iTMOIDs[])
-
-  Sender -> Hub++: processAction(actionId, actionStatus)
-  note right: actionStatus == Completed
-  deactivate Sender
-  deactivate Sender
-  Hub -> Hub: validateProcessAction(actionId, actionStatus)
-  Hub -> Hub: processAction(actionId, actionStatus)
-  note right: actionStatus == Completed
-  Hub -> Hub--: unlockITMOs(iTMOIDs[])
-
-  activate Receiver
-  Receiver -> Hub++: getFinalizedActions()
-    note right: Registry polls the Hub\nfor finalized Actions
-    
-  Receiver <-- Hub: //actions[]//
-  deactivate Hub
-  
-  Receiver -> Receiver: processFinalizedActions(actions[])
-  activate Receiver
-  Receiver -> Receiver--: processAction(action)
-  note left: actionStatus == Completed
-  deactivate Receiver
-end
-
-alt Receiving Registry does not proceed
-
-  activate Receiver
-  activate Receiver
-  Receiver -> Hub++: processAction(actionId, actionStatus)
-  note right: actionStatus == Rejected
-  deactivate Receiver
-  deactivate Receiver
-  Hub -> Hub: validateProcessAction(actionId, actionStatus)
-  Hub -> Hub: processAction(actionId, actionStatus)
-  note left: actionStatus == Rejected
-  deactivate Hub
-
-  activate Sender
-  Sender -> Hub++ : getPendingActions()
-  Sender <-- Hub: //actions[]//
-  deactivate Hub
-  
-  Sender -> Sender: processPendingActions(actions[])
-  activate Sender
-  Sender -> Sender: processActionStatusAndWarnings(action)
-  note right: actionStatus == Rejected
-
-  Sender -> Sender: processAction(action)
-  Sender -> Sender: unlockITMOs(iTMOIDs[])
-
-  Sender -> Hub++: processAction(actionId, actionStatus)
-  note right: actionStatus == Terminated
-  deactivate Sender
-  deactivate Sender
-  Hub -> Hub: validateProcessAction(actionId, actionStatus)
-  Hub -> Hub: processAction(actionId, actionStatus)
-  note right: actionStatus == Terminated
-  Hub -> Hub--: unlockITMOs(iTMOIDs[])
-
-  activate Receiver
-  Receiver -> Hub++: getFinalizedActions()
-    note right: Registry polls the Hub\nfor finalized Actions
-    
-  Receiver <-- Hub: //actions[]//
-  deactivate Hub
-  
-  Receiver -> Receiver: processFinalizedActions(actions[])
-  activate Receiver
-  Receiver -> Receiver--: processAction(action)
-  note left: actionStatus == Terminated
-  deactivate Receiver
-end
 
 @enduml
