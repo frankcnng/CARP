@@ -1,0 +1,52 @@
+@startuml TxnProposal_Invalid_Sequence
+
+title Transaction Proposal - Invalid Proposal
+
+skinparam style strictuml
+
+participant "Sending\nregistry" as Sender
+participant "Interoperability\nHub" as Hub
+
+activate Sender
+Sender -> Sender: selectAndSplitITMOs(txnProposal)
+note right: select ITMOs from multiple blocks\nor split ITMOs into smaller blocks\nto match quantity in //txnProposal//
+
+
+Sender -> Sender: lockITMOs(iTMOIDs[])
+Sender -> Hub++ : proposeTxn(txnProposal)
+note right: txnStatus == Proposed
+deactivate Sender
+deactivate Hub
+
+Hub -> Hub++: splitITMOs(txnProposal)
+note right: split ITMOs according to //txnProposal//
+Hub -> Hub: lockITMOs(iTMOIDs[])
+Hub -> Hub: validateProposal(txnProposal)
+Hub -> Hub--: createNextTxn(txnProposal)
+note right: txnStatus == Invalidated\n\n(includes reason proposal\nis invalid, logged in Txn)
+
+activate Sender
+Sender -> Hub++ : getPendingTxns()
+note right: Registry polls the Hub\nfor pending Txns
+
+Sender <-- Hub: //txns[]//
+deactivate Hub
+
+Sender -> Sender: processPendingTxns(txns)
+activate Sender
+Sender -> Sender: processTxnStatusAndWarnings(txn)
+note right: txnStatus == Invalidated
+
+Sender -> Sender: processTxn(txn)
+Sender -> Sender: unlockITMOs(iTMOIDs[])
+
+Sender -> Hub++: processTxn(txnId, txnStatus)
+note right: txnStatus == Terminated
+deactivate Sender
+deactivate Sender
+Hub -> Hub: validateProcessTxn(txnId, txnStatus)
+Hub -> Hub: processTxn(txnId, txnStatus)
+note right: txnStatus == Terminated
+Hub -> Hub--: unlockITMOs(iTMOIDs[])
+
+@enduml
