@@ -1,0 +1,138 @@
+@startuml TxnProposal_Valid_TwoReg_Sequence
+
+title Transaction Proposal - Valid Proposal - Two Registries
+
+skinparam style strictuml
+
+participant "Sending\nregistry" as Sender
+participant "Interoperability\nHub" as Hub
+participant "Receiving\nregistry" as Receiver
+
+activate Sender
+Sender -> Sender: selectAndSplitITMOs(txnProposal)
+note right: select ITMOs from multiple blocks\nor split ITMOs into smaller blocks\nto match quantity in //txnProposal//
+
+Sender -> Sender: lockITMOs(iTMOIDs[])
+note right: iTMOIDs[] from //selectAndSplitITMOs()//
+
+Sender -> Hub++ : proposeTxn(txnProposal)
+note right: txnStatus == Proposed
+deactivate Sender
+deactivate Hub
+
+Hub -> Hub++: splitITMOs(txnProposal)
+note right: split ITMOs according to //txnProposal//
+Hub -> Hub: lockITMOs(iTMOIDs[])
+Hub -> Hub: validateProposal(txnProposal)
+Hub -> Hub--: createNextTxn(txnProposal)
+note left: txnStatus == Validated\n\n(may include warnings\nlogged in Txn)
+
+activate Receiver
+Receiver -> Hub++: getPendingTxns()
+  note right: Registry polls the Hub\nfor pending Txns
+  
+Receiver <-- Hub: //txns[]//
+deactivate Hub
+
+Receiver -> Receiver: processPendingTxns(txns[])
+activate Receiver
+Receiver -> Receiver: processTxnStatusAndWarnings(txn)
+note left: txnStatus == Validated
+Receiver -> Receiver: processTxn(txn)
+
+alt No warnings or Receiving Registry proceeds despite warnings
+
+  Receiver -> Hub++: processTxn(txnId, txnStatus)
+  deactivate Receiver
+  deactivate Receiver
+  note right: txnStatus == Accepted
+  Hub -> Hub: validateProcessTxn(txnId, txnStatus)
+  Hub -> Hub: processTxn(txnId, txnStatus)
+  note left: txnStatus == Accepted
+  deactivate Hub
+
+  activate Sender
+  Sender -> Hub++ : getPendingTxns()
+  Sender <-- Hub : //txns[]//
+  deactivate Hub
+  
+  Sender -> Sender: processPendingTxns(txns[])
+  activate Sender
+  Sender -> Sender: processTxnStatusAndWarnings(txn)
+  note right: txnStatus == Accepted
+  Sender -> Sender: processTxn(txn)
+  Sender -> Sender: unlockITMOs(iTMOIDs[])
+
+  Sender -> Hub++: processTxn(txnId, txnStatus)
+  note right: txnStatus == Completed
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessTxn(txnId, txnStatus)
+  Hub -> Hub: processTxn(txnId, txnStatus)
+  note right: txnStatus == Completed
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
+
+  activate Receiver
+  Receiver -> Hub++: getFinalizedTxns()
+    note right: Registry polls the Hub\nfor finalized Txns
+    
+  Receiver <-- Hub: //txns[]//
+  deactivate Hub
+  
+  Receiver -> Receiver: processFinalizedTxns(txns[])
+  activate Receiver
+  Receiver -> Receiver--: processTxn(txn)
+  note left: txnStatus == Completed
+  deactivate Receiver
+end
+
+alt Receiving Registry does not proceed
+
+  activate Receiver
+  activate Receiver
+  Receiver -> Hub++: processTxn(txnId, txnStatus)
+  note right: txnStatus == Rejected
+  deactivate Receiver
+  deactivate Receiver
+  Hub -> Hub: validateProcessTxn(txnId, txnStatus)
+  Hub -> Hub: processTxn(txnId, txnStatus)
+  note left: txnStatus == Rejected
+  deactivate Hub
+
+  activate Sender
+  Sender -> Hub++ : getPendingTxns()
+  Sender <-- Hub: //txns[]//
+  deactivate Hub
+  
+  Sender -> Sender: processPendingTxns(txns[])
+  activate Sender
+  Sender -> Sender: processTxnStatusAndWarnings(txn)
+  note right: txnStatus == Rejected
+
+  Sender -> Sender: processTxn(txn)
+  Sender -> Sender: unlockITMOs(iTMOIDs[])
+
+  Sender -> Hub++: processTxn(txnId, txnStatus)
+  note right: txnStatus == Terminated
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessTxn(txnId, txnStatus)
+  Hub -> Hub: processTxn(txnId, txnStatus)
+  note right: txnStatus == Terminated
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
+
+  activate Receiver
+  Receiver -> Hub++: getFinalizedTxns()
+    note right: Registry polls the Hub\nfor finalized Txns
+    
+  Receiver <-- Hub: //txns[]//
+  deactivate Hub
+  
+  Receiver -> Receiver: processFinalizedTxns(txns[])
+  activate Receiver
+  Receiver -> Receiver--: processTxn(txn)
+  note left: txnStatus == Terminated
+  deactivate Receiver
+end
+
+@enduml
