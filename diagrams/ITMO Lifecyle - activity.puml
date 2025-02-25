@@ -5,109 +5,122 @@ title ITMO Lifecycle \n
 
 start
 
-partition ITMOs do not yet exist in International Registry {
-    
-    :Cooperative Approach Authorized;
+
+    :Cooperative Approach\nAuthorized;
       note left
-        decision 2 CMA.3, annex, para 18(g)
-        * participating Party authorizes Cooperative Approach
+        Decision 2 CMA.3,
+        annex, para 18(g)
+        * participating Party authorizes
+          Cooperative Approach
       end note
   
     :Party registers
-    Cooperative Approach authorization
-    with Secretariat;
+    Cooperative Approach
+    authorization;
       note left
-        decision 2 CMA.3, annex, para 18
-        * Party submits initial report to register authorization
-        * One or more combinations of authorizations of
+        Decision 2 CMA.3,
+        annex, para 18
+        * Party submits initial report
+            to register authorization
+        * One or more combinations
+            of authorizations of
             Coooperative Approach,
-            ITMOs relating to the Cooperative Approach, and
-            Entities (participating Parties?)
+            ITMOs relating to the
+            Cooperative Approach, and
+            Entities
       end note
     |Secretariat|
     :Secretariat (issuing authority)
-    assigns Authorization ID.
-    Secretariat registers Cooperative Approach
-    in CARP and Common Nomenclatures;
+    - assigns Authorization Id
+    - registers Cooperative Approach
+      and authorization
+      in CARP and 
+      Common Nomenclatures;
       note left
-        * Authorization ID must be assigned
-            by secretariat to ensure uniqueness
-        * Secretariat will also register 
-            authorized objects in International Registry
+        Authorization Id must be
+        assigned by secretariat
+        to ensure uniqueness
       end note
     |Participating Party|
     :Party registers 
     ITMO(s) authorization
     with Secretariat;
       note left
-          * If not already registered with 
-            Cooperative Approach authorization 
-            registration
+          If not already registered
+          with Cooperative Approach
+          authorization registration
       end note
 
     |Secretariat|
-    :Secretariat registers ITMOs authorization
-    in CARP and International Registry;
+    :Secretariat
+    - assigns Authorization Id
+    - registers ITMO(s) authorization
+      in CARP;
       note left
-        * Authorization ID must be assigned
-            by secretariat to ensure uniqueness
+        * Authorization Id must be
+            assigned by secretariat
+            to ensure uniqueness
         * Secretariat will also register 
-            authorized objects in International Registry
+            authorized entities
       end note
 
     |Participating Party|
     if (Party opts for Interoperability) then (yes)
   
       |Interoperating Party|
-      :Party registry
-      registers ITMOs
-      with International Registry;
+      :First transferring\nparticipating Party\nissues ITMOs;
         note left
-        * Use //registerITMO// API
-        * This registers the ITMOs for Interoperability
-            with International Registry
-            and other like-minded registries
-        * Registry must provide account ID for ITMO(s)
-          * If account does not exists, it will be created
-        * ITMOs will be created in the International Registry
-        * unique ITMOID will be returned to registry
-          * registryID-serialFirst-serialLast
+        * Use //proposeTxn// API
+        * Txn type is Issuance
+        * Registry provides account Id
+            to hold the ITMO(s)
+        * ITMOs will be created in
+          the International Registry
+        * unique ITMOId will be
+          returned to registry
         end note
-      |International Registry|
-      :Validate and register ITMOs;
+      |Interoperability\nHub|
+      :Validate Issuance
+      and
+      provide ITMO Id;
 
       |Interoperating Party|
+      :Finalize Issuance
+      and record ITMO Id;
     else (no)
       |Participating Party|
       stop
     
   endif
-}
 
 |Interoperating Party|
-partition ITMOs exist in International Registry {
-    
-  while () is (Other ITMO operations)
+
+
+  while (Propose Use or Cancel txn) is (no)
   
-    :Initiate other operations on ITMOs;
+    :Propose other
+    txns on ITMOs;
       note left
-      * Other operations on ITMOs
-          such as internal/external transfer, update, ...
+      Other txns such as
+      transfers, updates, ...
       end note
-    |International Registry|
-    :Validate and facilitate operations;
+    |Interoperability\nHub|
+    :Validate and
+    facilitate
+    other txns;
     |Interoperating Party|
-    :Finalise other operations on ITMOs;
-  endwhile (Use or Cancel ITMOs)
-    :Initiate Use or Cancel ITMOs;
-    |International Registry|
-    :Validate and facilitate
-    Use or Cancel ITMOs;
+    :Finalise other
+    txns on ITMOs;
+  endwhile (yes)
+    |Interoperability\nHub|
+    :Validate and
+    facilitate
+    Use or Cancel
+    txns;
     |Interoperating Party|
-    :Finalise Use or Cancel ITMOs;
+    :Finalise Use or
+    Cancel txns;
     stop
 
-    
-}
 
 @enduml
