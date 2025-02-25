@@ -1,0 +1,69 @@
+@startuml TxnProposal_Valid_SingleReg_Sequence
+
+title Transaction Proposal - Valid Proposal - Single Registry
+
+skinparam style strictuml
+
+participant "Sending\nregistry" as Sender
+participant "Interoperability\nHub" as Hub
+
+activate Sender
+Sender -> Sender: selectAndSplitITMOs(txnProposal)
+note right: select ITMOs from multiple blocks\nor split ITMOs into smaller blocks\nto match quantity in //txnProposal//
+
+Sender -> Sender: lockITMOs(iTMOIDs[])
+Sender -> Hub++ : proposeTxn(txnProposal)
+note right: txnStatus == Proposed
+deactivate Hub
+deactivate Sender
+
+Hub -> Hub++: splitITMOs(txnProposal)
+note right: split ITMOs according to //txnProposal//
+Hub -> Hub: lockITMOs(iTMOIDs[])
+note right: //iTMOIDs[]// extracted from //txnProposal//
+
+Hub -> Hub: validateProposal(txnProposal)
+Hub -> Hub--: createNextTxn(txnProposal)
+note right: txnStatus == Validated\n\n(may include warnings\nlogged in txn)
+
+activate Sender
+Sender -> Hub++ : getPendingTxns()
+Sender <-- Hub--: //txns[]//
+note right: Registry polls the Hub\nfor pending txns
+
+Sender -> Sender: processPendingTxns(txns[])
+activate Sender
+Sender -> Sender: processTxnStatusAndWarnings(txn)
+note right: txnStatus == Validated
+Sender -> Sender: processTxn(txn)
+Sender -> Sender: unlockITMOs(iTMOIDs[])
+
+alt No warnings or Registry proceeds despite warnings
+
+  Sender -> Hub++: processTxn(txnId, txnStatus)
+  note right: txnStatus == Accepted
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessTxn(txnId, txnStatus)
+  Hub -> Hub: processTxn(txnId, txnStatus)
+  note right: txnStatus == Completed
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
+
+end
+
+alt Registry does not proceed
+
+  activate Sender
+  activate Sender
+  Sender -> Hub++: processTxn(txnId, txnStatus)
+  note right: txnStatus == Terminated
+  deactivate Sender
+  deactivate Sender
+  Hub -> Hub: validateProcessTxn(txnId, txnStatus)
+  Hub -> Hub: processTxn(txnId, txnStatus)
+  note right: txnStatus == Terminated
+  Hub -> Hub--: unlockITMOs(iTMOIDs[])
+
+end
+
+@enduml
