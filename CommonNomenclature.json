@@ -31,15 +31,17 @@
 	"CooperativeApproach":
 	{
 		"attribute":	"Cooperative Approach",
-		"description":	"Cooperative approaches under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.",
+		"description":	"Cooperative approach under Article 6.2.\nThe format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer, that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.",
 		"AEF fields":
 		[
 			"Cooperative approach"
 		],
 		"requiredBy":
 		[
-			"Decision 6/CMA.4 Annex I, paragraph 5",
-			"Decision 6/CMA.4 paragraph 17 (j)"
+			"Decision 6/CMA.4, Annex I, paragraph 5(a)",
+			"Decision X/CMA.6, Annex II, Table 2, footnote c",
+			"Decision X/CMA.6, Annex II, Table 3, footnote c",
+			"Decision X/CMA.6, Annex II, Table 4, footnote a",
 		],
 		"type": "string",
 		"definedValues":
