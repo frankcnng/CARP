@@ -1,0 +1,72 @@
+@startuml
+
+title TxnStatus - Two Registry - StateChart
+
+@startuml
+
+skinparam dpi 300
+skinparam monochrome false
+skinparam shadowing true
+hide empty description
+
+state Receiving_Registry {
+
+ state "Validated" as validated_receiver
+ state "Accepted" as accepted_receiver
+ state "Rejected" as rejected_receiver
+ state "Completed" as completed_receiver
+ state "Terminated" as terminated_receiver
+ 
+ validated_receiver -[bold,#green]-> accepted_receiver
+ validated_receiver -[#red]-> rejected_receiver
+ 
+ completed_receiver -[bold,#green]-> [*]
+ terminated_receiver -[#red]-> [*]
+}
+
+state Sending_Registry {
+
+ state "Proposed" as proposed_sender
+ state "Invalidated" as invalidated_sender
+ state "Accepted" as accepted_sender
+ state "Rejected" as rejected_sender
+ state "Completed" as completed_sender
+ state "Terminated" as terminated_sender
+
+ [*] -right[bold,#green]-> proposed_sender
+ accepted_sender -[bold,#green]-> completed_sender
+ rejected_sender -[#red]-> terminated_sender
+ invalidated_sender -[#red]-> terminated_sender
+}
+
+state Interoperability_Hub {
+
+ state "Proposed" as proposed_hub
+ state "Validated" as validated_hub
+ state "Invalidated" as invalidated_hub
+ state "Accepted" as accepted_hub
+ state "Rejected" as rejected_hub
+ state "Completed" as completed_hub
+ state "Terminated" as terminated_hub
+
+ proposed_hub -[bold,#green]-> validated_hub
+ proposed_hub -[#red]-> invalidated_hub
+
+ terminated_hub -[#red]-> [*]
+
+}
+
+proposed_sender -down[bold,#green]-> proposed_hub: Proposal
+invalidated_hub -up[#red]-> invalidated_sender
+validated_hub -down[bold,#green]-> validated_receiver
+accepted_receiver -up[bold,#green]-> accepted_hub: Acceptance
+accepted_hub -up[bold,#green]-> accepted_sender: Acceptance
+
+rejected_receiver -up[#red]-> rejected_hub: Rejection
+rejected_hub -up[#red]-> rejected_sender: Rejection
+
+completed_sender -down[bold,#green]-> completed_hub: Completion
+terminated_sender -down[#red]-> terminated_hub: Termination
+completed_hub -down[bold,#green]-> completed_receiver: Completion
+terminated_hub -down[#red]-> terminated_receiver: Termination
+@enduml
