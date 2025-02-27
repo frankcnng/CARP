@@ -1,0 +1,50 @@
+@startuml
+
+title TxnStatus - Single Registry - StateChart
+
+@startuml
+
+skinparam dpi 150
+skinparam monochrome false
+skinparam shadowing true
+hide empty description
+
+
+state Sending_Registry {
+
+ state "Proposed" as proposed_sender
+ state "Validated" as validated_sender
+ state "Invalidated" as invalidated_sender
+ state "Completed" as completed_sender
+ state "Terminated" as terminated_sender
+
+ [*] -left[bold,#green]-> proposed_sender
+ validated_sender -[bold,#green]-> completed_sender
+ validated_sender -[#red]-> terminated_sender
+ invalidated_sender -[#red]-> terminated_sender
+}
+
+state Interoperability_Hub {
+
+ state "Proposed" as proposed_hub
+ state "Validated" as validated_hub
+ state "Invalidated" as invalidated_hub
+ state "Completed" as completed_hub
+ state "Terminated" as terminated_hub
+
+ proposed_hub -[bold,#green]-> validated_hub
+ proposed_hub -[#red]-> invalidated_hub
+ 
+ completed_hub -[bold,#green]-> [*]
+ terminated_hub -[#red]-> [*]
+}
+
+proposed_sender -down[bold,#green]-> proposed_hub: Proposal
+completed_sender -down[bold,#green]-> completed_hub: Completion
+terminated_sender -down[#red]-> terminated_hub: Termination
+
+validated_hub -up[bold,#green]-> validated_sender
+invalidated_hub -up[#red]-> invalidated_sender
+
+
+@enduml
