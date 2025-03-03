@@ -129,15 +129,15 @@
 	{
 		"AEF fields":
 		[
-			"First transferring participating Party ID.\nNote that ITMO may exist before first transfer, thus this field is optional."
+			"Unique identifier of the participating Party in which the authorized mitigation outcome occured."
 		],
 		"requiredBy":
 		[
-			"Decision 6/CMA.4 Annex I, paragraph 5",
-			"Decision 6/CMA.4 paragraph 17 (j)"
+			"Decision 6/CMA.4, para. 17(j)",
+			"Decision 6/CMA.4, Annex I, para. 5(c)"
 		],
 		"attribute":	"First Transferring Party",
-		"description":	"ISO-3166-1 alpha-3 code of participating party registry that initiates the \"First Transfer\".",
+		"description":	"ISO-3166-1 alpha-3 code of the participating Party.",
 		"type":	"string",
 		"required":	"false"
 	},
