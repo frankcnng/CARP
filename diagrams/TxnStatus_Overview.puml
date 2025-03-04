@@ -1,4 +1,4 @@
-@startuml Transaction State Chart
+@startuml TxnStatus_Overview_StateChart
 
 title TxnStatus Overview
 
