@@ -73,21 +73,21 @@
 		],
 		"required":	"true"
 	},
-	"OriginatingPartyRegistry":
+	"FirstTransferringParty":
 	{
 		"AEF fields":
 		[
-			"Party ITMO registry ID"
+			"Unique identifier of the participating Party in which the authorized mitigation outcome occured."
 		],
 		"requiredBy":
 		[
-			"Decision 6/CMA.4 Annex I, paragraph 5",
-			"Decision 6/CMA.4 paragraph 17 (j)"
+			"Decision 6/CMA.4, para. 17(j)",
+			"Decision 6/CMA.4, Annex I, para. 5(c)"
 		],
-		"attribute":	"Originating Party Registry",
-		"description":	"ISO-3166-1 alpha-3 code of the participating Party in which the mitigation outcomes originated.",
+		"attribute":	"First Transferring Party",
+		"description":	"ISO-3166-1 alpha-3 code of the participating Party.",
 		"type":	"string",
-		"required":	"true"
+		"required":	"false"
 	},
 	"FirstID":
 	{
@@ -125,33 +125,49 @@
 		"maximum":	"999999999",
 		"required":	"true"
 	},
-	"FirstTransferringParty":
+	"OriginatingPartyRegistry":
 	{
 		"AEF fields":
 		[
-			"Unique identifier of the participating Party in which the authorized mitigation outcome occured."
+			"Party ITMO registry ID"
 		],
 		"requiredBy":
 		[
-			"Decision 6/CMA.4, para. 17(j)",
-			"Decision 6/CMA.4, Annex I, para. 5(c)"
+			"Decision 6/CMA.4 Annex I, paragraph 5",
+			"Decision 6/CMA.4 paragraph 17 (j)"
 		],
-		"attribute":	"First Transferring Party",
-		"description":	"ISO-3166-1 alpha-3 code of the participating Party.",
+		"attribute":	"Originating Party Registry",
+		"description":	"ISO-3166-1 alpha-3 code of the registry that issued the ITMOs.",
 		"type":	"string",
-		"required":	"false"
+		"required":	"true"
+	},
+	"PartyITMORegistry":
+	{
+		"AEF fields":
+		[
+			"Party ITMO registry ID"
+		],
+		"requiredBy":
+		[
+			"AEF"
+		],
+		"attribute":	"PartyITMORegistry",
+		"description":	"ISO-3166-1 alpha-3 code of the participating Party registry in which the reported action has been tracked.",
+		"type":	"string",
+		"required":	"true"
 	},
 	"FirstTransfer":
 	{
 		"attribute":	"First Transfer",
-		"description":	"Definition of \"first transfer\" pursuant to decision, 2/CMA.3, Annex, paragraph 2.\nTherefore defines the \"First Transferring Party.\".",
+		"description":	"Definition of \"first transfer\" pursuant to decision, 2/CMA.3, Annex, paragraph 2.",
 		"AEF fields":
 		[
-			"Definition of \"First transferring participating Party ID\"."
+			"Purpose for authorization",
+			"First transfer definition for OIMP."
 		],
 		"requiredBy":
 		[
-			"Definition of \"First Transferring Party\"."
+			"Definition of \"First transfer definition for OIMP\"."
 		],
 		"type":	"string",
 		"definedValues":
