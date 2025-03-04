@@ -1,0 +1,16 @@
+@startuml getTxnStatus_Sequence
+
+skinparam dpi 300
+skinparam monochrome true
+skinparam shadowing true
+
+hide footbox
+skinparam sequenceMessageAlign center
+
+participant "Registry" as r
+participant "Interoperability Hub" as h
+
+r->h: getTxnStatus(txnId, regTxnStatus)
+note left: optionally provide the registry's txnStatus
+h-->>r: /hubTxnStatus/
+note left: returns the hub's transaction status
