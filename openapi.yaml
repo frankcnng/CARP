@@ -1,3 +1,4 @@
+
 openapi: 3.0.3
 info:
   title: API for International Registry Interoperability (Work In Progress)
@@ -1580,14 +1581,13 @@ components:
           example: "Proposed issuance of ITMOs BEL342-15341 under CA998 exceed the 10000 tonnes of CO2 authorized for CA998."
       additionalProperties: false
 
-
     Authorization:
       type: object
       description: Abstract superclass for authorisations
       required:
         - authorizingPartyId
-        - authorisationId
-        - authorisationDate
+        - authorizationRef
+        - authorizationDate
         - version
         - lastChangeDate
         - startDate
@@ -1601,11 +1601,9 @@ components:
             as per common nomenclatures.
           type: string
           example: "BEL"
-        authorisationId:
-          description: Authorization Id as assigned by the participating Party reporting the authorisation.
-          type: string
-          example: "GUY 2024-CA1"
-        authorisationDate:
+        authorizationRef:
+           $ref: '#/components/schemas/AuthorizationRef'
+        authorizationDate:
           description: Datestamp of the authorisation of the cooperative approach.
             A cooperative approach may be authorised multiple times.  Only the latest is valid.
           type: string
@@ -1689,6 +1687,23 @@ components:
           items:
             type: string
             maxLength:  255
+      additionalProperties: false
+
+    AuthorizationRef:
+      type: object
+      required:
+        - authorizationId
+        - authorizationVersion
+      description: Reference to the current authorization of the ITMO.
+      properties:
+        authorizationId:
+          description: Authorization Id as assigned by the participating Party reporting the authorisation.
+          type: string
+          example: "GUY 2024-CA1"
+        authorizationVersion:
+          description: Version number of the authorization.
+          type: string
+          example: "1.0"
       additionalProperties: false
 
     CooperativeApproachAuthorization:
@@ -2015,7 +2030,7 @@ components:
       required:
         # Properties required by decision 6/CMA.4, annex I, para.5, in the order specified in the decision
         - cooperativeApproachId
-        - authorisationId
+        - authorizationRef
         - originatingPartyRegistry
         - itmoUniqueId
         - vintage
@@ -2025,16 +2040,14 @@ components:
           description: Cooperative approach under which ITMOs were authorised.
           type: string
           example: "CA0002"
-        authorisationId:
-          description: Authorization Id as assigned by the Party reporting the authorisation.
-          type: string
-          example: "GUY 2024-CA1"
-        originatingPartyRegistry:
-          description: The participating Party registry in which the mitigation outcomes originated.
-          #ref: "#/components/schemas/RegistryId"
+        authorizationRef:
+           $ref: '#/components/schemas/AuthorizationRef'
         itmoUniqueId:
           description: The unique identifier of the ITMO(s).
           #ref: "#/components/schemas/ITMOUniqueId"
+        originatingPartyRegistry:
+          description: The participating Party registry that issued the ITMO(s).
+          #ref: "#/components/schemas/RegistryId"
         vintage:
           description: Year in which mitigation outcome occured
           type: integer
@@ -2085,7 +2098,7 @@ components:
       description: The unique identifier of an ITMO.
       properties:
         firstTransferringParty:
-          description: ISO-3166-1 alpha-3 code of participating Party that initiates the \"First Transfer\".
+          description: ISO-3166-1 alpha-3 code of participating Party in which the mitigation outcomes occurred as per common nomenclatures.
             Refer to common nomenclalture for definition of \"First Transfer\".
           type: string
           example: "FRA"
@@ -2104,6 +2117,7 @@ components:
           format: int32
           example: 7144
       additionalProperties: false
+
 
     AccountITMOAssociation:
       type: object
