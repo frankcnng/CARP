@@ -18,18 +18,16 @@ State ip {
 
   Validated -[bold,#green]-> Accepted
   Validated -[#red]-> Rejected
-  Validated -[#red]-> Timed_out
-  Invalidated -[#red]-> Timed_out
-  Accepted -[#red]-> Timed_out
-  Rejected -[#red]-> Timed_out
 }
 
 State Finalized {
   Accepted -[bold,#green]-> Completed
-  Invalidated -[#red]-> Terminated : / Reason
-  Rejected -[#red]-> Terminated : / Reason
-  Timed_out -[#red]-> Terminated : / Timed_out 
+  Invalidated -[#red]-> Terminated : / Invalid
+  Rejected -[#red]-> Terminated : / Rejected
   
   Completed -[dashed,#red]-> Terminated : [Reversal agreed]\n/ Reason
+  ip -[#red]-> Terminated : / Timed_out 
 }
+
+
 @enduml
