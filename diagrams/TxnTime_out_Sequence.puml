@@ -1,0 +1,28 @@
+@startuml TxnTime_out_Sequence
+
+title Transaction Time_out
+
+skinparam style strictuml
+
+participant "Interoperability\nHub" as Hub
+participant "Registry" as Reg
+
+Hub -> Hub++: timeoutTxns()
+note right: Terminate all pending transactions that\nhave not been updated for 24 hours\nwith a reason of "timed out"\n\ntxnStatus == Terminated\n                       /timed out
+deactivate Hub
+
+activate Reg
+Reg -> Hub++: getFinalizedTxns()
+  note right: Registry polls the Hub\nfor finalized Txns
+  
+Reg <-- Hub: //txns[]//
+deactivate Hub
+
+Reg -> Reg: processFinalizedTxns(txns[])
+activate Reg
+Reg -> Reg: processTxn(txn)
+note right: txnStatus == Terminated\n                       /timed out
+Reg -> Reg: unlockITMOs(iTMOIds[])
+note right: if registry previously\nlocked ITMOs, unlock them
+
+@enduml
