@@ -580,39 +580,39 @@
 		"definedValues":
 		[
 			{
+				"code":	"0",
+				"value":	"Issuance",
+				"description":	"Used when reporting an issuance of an ITMO."
+			},
+			{
 				"code":	"1",
-				"value":	"Authorization",
-				"description":	"Used when reporting the authorization of an ITMO."
-			},
-			{
-				"code":	"2",
-				"value":	"First transfer",
-				"description":	"Used when reporting the international transfer of an ITMO."
-			},
-			{
-				"code":	"3",
-				"value":	"Transfer",
-				"description":	"Used when reporting the international transfer of an ITMO."
-			},
-			{
-				"code":	"4",
 				"value":	"Acquisition",
 				"description":	"Used when reporting the international acquisition of an ITMO."
 			},
 			{
-				"code":	"5",
+				"code":	"2",
+				"value":	"Transfer",
+				"description":	"Used when reporting the international transfer of an ITMO."
+			},
+			{
+				"code":	"3",
 				"value":	"Use",
 				"description":	"Used when reporting the use of an ITMO."
 			},
 			{
-				"code":	"6",
+				"code":	"4",
 				"value":	"Cancellation",
 				"description":	"Used when reporting the cancellation of an ITMO."
 			},
 			{
-				"code":	"7",
+				"code":	"5",
 				"value":	"Voluntary Cancellation",
 				"description":	"Used when reporting the cancellation of an ITMO."
+			},
+			{
+				"code":	"6",
+				"value":	"First transfer",
+				"description":	"Used when reporting the international transfer of an ITMO."
 			}
 		],
 		"required":	"true"
