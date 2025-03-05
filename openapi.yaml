@@ -3,7 +3,7 @@ info:
   title: API for International Registry Interoperability (Work In Progress)
   description: 
      <b>Introduction</b>
-     <br><br>This API is part of the communication standards for actions on
+     <br><br>This API is part of the communication standards for transactions on
      Internationally Transferred Mitigation Outcomes (ITMOs) pursuant to decision 6/CMA.4, para. 32.
      <br><br>Participating Parties opting to apply the guidance referred to in 
      decision 6/CMA.4, annex I, chapter I.B are expected to adhere to this API when they interoperate.
@@ -33,8 +33,8 @@ tags:
     description: Manage the account(s) of participating Party registries.
   - name: Contact
     description: Manage the contact(s) of the participating Party registries.
-  - name: Action
-    description: Manage actions of participating Party registries
+  - name: Transaction
+    description: Manage transactions of participating Party registries
   - name: Notification
     description: Manage notifications from and to partitipating Party registries
   - name: ITMO
@@ -66,12 +66,12 @@ paths:
                 properties:
                   status:
                     type: string
-                    enum: [Operational, Non-Operational, Action Proposals Disallowed]
+                    enum: [Operational, Non-Operational, Transaction Proposals Disallowed]
                     description: >
                       The operational status of the server:<br>
                       * Operational: all operations are allowed<br>
                       * Non-Operational: no operations are allowed<br>
-                      * Action Proposals Disallowed: all operations are allowed, except Action Proposals.
+                      * Transaction Proposals Disallowed: all operations are allowed, except Transaction Proposals.
                     example: Operational
                   timestamp:
                     type: string
@@ -468,19 +468,19 @@ paths:
                 $ref: '#/components/schemas/Errors'
 
 
-  /action/{regId}/propose:
+  /transaction/{regId}/propose:
     post:
       tags:
-        - Action
-      operationId: proposeAction
-      summary: Propose a new action, from the registry identified by regId.
-      description: Propose a new action, from the registry identified by regId.<br>
-        If the proposed action is valid, it will be added to the pending actions list,<br>
+        - Transaction
+      operationId: proposeTxn
+      summary: Propose a new transaction, from the registry identified by regId.
+      description: Propose a new transaction, from the registry identified by regId.<br>
+        If the proposed transaction is valid, it will be added to the pending transactions list,<br>
         avalable for appropriate registries to process.<br>
-        An actionId is returned by the operation, so registries can check and augment the status of an action.<br><br>
-        If the proposed action is not valid, the operation will fail.
-        The incoming payload is the proposedAction, that also include the ITMOs involved in the action.
-        These will be locked for the duration of the action.
+        An transactionId is returned by the operation, so registries can check and augment the status of an transaction.<br><br>
+        If the proposed transaction is not valid, the operation will fail.
+        The incoming payload is the proposed transaction, that also include the ITMOs involved in the transaction.
+        These will be locked for the duration of the transaction.
       parameters:
         - name: regId
           in: path
@@ -489,12 +489,12 @@ paths:
           schema:
             $ref: "#/components/schemas/RegistryId"
       requestBody:
-        description: The proposed action.
+        description: The proposed transaction.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProposedAction'
+              $ref: '#/components/schemas/ProposedTransaction'
       responses:
         '200':
           description: Successful operation
@@ -519,26 +519,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/{actionId}:
+  /transaction/{regId}/{txnId}:
     get:
       tags:
-        - Action
+        - Transaction
         - PullView
-      operationId: getAction
-      summary: Retrieve the action corresponding to actionId
-      description: Retrieve the action corresonding to actionId.
+      operationId: getTxn
+      summary: Retrieve the transaction corresponding to txnId
+      description: Retrieve the transaction corresonding to txnId.
         The calling registry must have a registry id corresponding to regId,
-        and only only when regId is the fromRegistry or toRegistry will the action be returned.
+        and only only when regId is the fromRegistry or toRegistry will the transaction be returned.
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry for which actions are to be retrieved.
+          description: The identifier of the registry for which transactions are to be retrieved.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - name: actionId
+        - name: txnId
           in: path
-          description: The action identifier
+          description: The transaction identifier
           required: true
           schema:
             type: integer
@@ -558,7 +558,7 @@ paths:
                    type: array
                    maxItems: 100
                    items:
-                    $ref: '#/components/schemas/Action'
+                    $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -573,20 +573,20 @@ paths:
                 $ref: '#/components/schemas/Errors'
     post:
       tags:
-        - Action
-      operationId: processAction
-      summary: Accept, reject or cancel an action
-      description: Accept, reject or cancel an action
+        - Transaction
+      operationId: processTxn
+      summary: Accept, reject or cancel an transaction
+      description: Accept, reject or cancel an transaction
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry attempting to process the action.
+          description: The identifier of the registry attempting to process the transaction.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - name: actionId
+        - name: txnId
           in: path
-          description: The action identifier
+          description: The transaction identifier
           required: true
           schema:
             type: integer
@@ -595,9 +595,9 @@ paths:
             maximum: 4294967295
             example: 87349
       requestBody:
-        description: The new status of action to process.
-          Only the recipient can accept or reject an action.
-          Only the proposer can cancel an action.
+        description: The new status of transaction to process.
+          Only the recipient can accept or reject an transaction.
+          Only the proposer can cancel an transaction.
         content:
           application/json:
             schema:
@@ -613,7 +613,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Action'
+                $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -627,26 +627,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/pendingActions:
+  /transaction/{regId}/pendingTxns:
     get:
       tags:
-        - Action
-      operationId: getPendingActions
-      summary: Retrieve the actions that are pending processing by the registry identified by regId
-      description: Retrieve the actions that are pending processing by the registry identified by regId.<br><br>
-        This operation is used by a registry to process actions that have not yet been finalized,<br><br>
-        and where the registry is expected to undertake the relevant steps to progress the action.<br><br>
-        * If it is a sending registry, complete or terminate the action.<br><br>
-        * If it is a receiving registry, accept or reject the action.<br><br>
-        This operation can also be used by a registry to query the status of a pending action it is already aware of<br><br>
+        - Transaction
+      operationId: getPendingTxns
+      summary: Retrieve the transactions that are pending processing by the registry identified by regId
+      description: Retrieve the transactions that are pending processing by the registry identified by regId.<br><br>
+        This operation is used by a registry to process transactions that have not yet been finalized,<br><br>
+        and where the registry is expected to undertake the relevant steps to progress the transaction.<br><br>
+        * If it is a sending registry, complete or terminate the transaction.<br><br>
+        * If it is a receiving registry, accept or reject the transaction.<br><br>
+        This operation can also be used by a registry to query the status of a pending transaction it is already aware of<br><br>
         * If it is a sending registry, at any point before its finalization.<br><br>
         * If it is a receiving registry, after it has been validated and before its finalization.<br><br>
-        The list of actions returned is sorted in descending order or the proposed action data time (ie, the oldest action is first).<br><br>
-        Another operation (getfinalizedActions) returns actions with finalized statuses.
+        The list of transactions returned is sorted in descending order or the proposed transaction data time (ie, the oldest transaction is first).<br><br>
+        Another operation (getfinalizedTxns) returns transactions with finalized statuses.
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry for which pending actions are to be retrieved.
+          description: The identifier of the registry for which pending transactions are to be retrieved.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
@@ -658,11 +658,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  txns:
                     type: array
                     maxItems: 100
                     items:
-                      $ref: '#/components/schemas/Action'
+                      $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -676,26 +676,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/pendingPartyActions:
+  /transaction/{regId}/pendingPartyTxns:
     get:
       tags:
-        - Action
-      operationId: getPendingPartyActions
-      summary: Retrieve the actions that are pending processing by the participating Party of the registry identified by regId.
-      description: Retrieve the actions that are pending processing by the participating Party of theregistry identified by regId.<br><br>
-        This operation is used by a registry to process actions that have not yet been finalized,<br><br>
-        and where a registry of the Party is expected to undertake the relevant steps to progress the action.<br><br>
-        * If it is a sending registry, complete or terminate the action.<br><br>
-        * If it is a receiving registry, accept or reject the action.<br><br>
-        This operation can also be used by a registry to query the status of a pending action it is already aware of<br><br>
+        - Transaction
+      operationId: getPendingPartyTxns
+      summary: Retrieve the transactions that are pending processing by the participating Party of the registry identified by regId.
+      description: Retrieve the transactions that are pending processing by the participating Party of theregistry identified by regId.<br><br>
+        This operation is used by a registry to process transactions that have not yet been finalized,<br><br>
+        and where a registry of the Party is expected to undertake the relevant steps to progress the transaction.<br><br>
+        * If it is a sending registry, complete or terminate the transaction.<br><br>
+        * If it is a receiving registry, accept or reject the transaction.<br><br>
+        This operation can also be used by a registry to query the status of a pending transaction it is already aware of<br><br>
         * If it is a sending registry, at any point before its finalization.<br><br>
         * If it is a receiving registry, after it has been validated and before its finalization.<br><br>
-        The list of actions returned is sorted in descending order or the proposed action data time (ie, the oldest action is first).<br><br>
-        Another operation (getfinalizedPartyActions) returns actions with finalized statuses.
+        The list of transactions returned is sorted in descending order or the proposed transaction data time (ie, the oldest transaction is first).<br><br>
+        Another operation (getfinalizedPartyTxns) returns transactions with finalized statuses.
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry for which pending actions are to be retrieved.
+          description: The identifier of the registry for which pending transactions are to be retrieved.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
@@ -707,11 +707,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  txns:
                     type: array
                     maxItems: 100
                     items:
-                      $ref: '#/components/schemas/Action'
+                      $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -725,19 +725,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/finalizedActions:
+  /transaction/{regId}/finalizedTxns:
     get:
       tags:
-        - Action
-      operationId: getFinalizedActions
-      summary: Retrieve the finalized actions for the registry identified by regId and other filtering parameters
-      description: Retrieve the finalized actions for the registry identified by regId and other filtering parameters.<br><br>
-        finalized actions where the registry is either the sender, or the receiver are retrieved.<br><br>
-        Another operation (getPendingActions) returns actions with not yet finalized statuses.
+        - Transaction
+      operationId: getFinalizedTxns
+      summary: Retrieve the finalized transactions for the registry identified by regId and other filtering parameters
+      description: Retrieve the finalized transactions for the registry identified by regId and other filtering parameters.<br><br>
+        finalized transactions where the registry is either the sender, or the receiver are retrieved.<br><br>
+        Another operation (getPendingTxns) returns transactions with not yet finalized statuses.
       parameters:
         - name: regId
-          description: The identifier of the registry for which actions are to be retrieved.
-            Finalized actions where the registry is either the sender, or the receiver are retrieved.
+          description: The identifier of the registry for which transactions are to be retrieved.
+            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
           in: path
           required: true
           schema:
@@ -749,7 +749,7 @@ paths:
             format: int32
             minimum: 0
             maximum: 999999999
-          description: The number of items to skip before starting to collect the actions
+          description: The number of items to skip before starting to collect the transactions
         - in: query
           name: limit
           schema:
@@ -757,25 +757,25 @@ paths:
             format: int32
             minimum: 1
             maximum: 100
-          description: The number of actions to return
+          description: The number of transactions to return
         - in: query
           name: status
           schema:
             type: string
             enum: [COMPLETED, TERMINATED]
-          description: Allows to filter by action status
+          description: Allows to filter by transaction status
         - in: query
           name: from
           schema:
             type: string
             format: date-time
-          description: The minimum date-time of actions to return
+          description: The minimum date-time of transactions to return
         - in: query
           name: to
           schema:
             type: string
             format: date-time
-          description: The maximum date-time of actions to return
+          description: The maximum date-time of transactions to return
       responses:
         '200':
           description: Successful operation
@@ -784,11 +784,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  txns:
                     type: array
                     maxItems: 100
                     items:
-                      $ref: '#/components/schemas/Action'
+                      $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -802,19 +802,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/finalizedPartyActions:
+  /transaction/{regId}/finalizedPartyTxns:
     get:
       tags:
-        - Action
-      operationId: getPartyFinalizedActions
-      summary: Retrieve the finalized actions for the Party owning the registry identified by regId and other filtering parameters
-      description: Retrieve the finalized actions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
-        Finalized actions where a registry of the Party is either the sender, or the receiver are retrieved.<br><br>
-        Another operation (getPartyPendingActions) returns actions with not yet finalized statuses.
+        - Transaction
+      operationId: getPartyFinalizedTxns
+      summary: Retrieve the finalized transactions for the Party owning the registry identified by regId and other filtering parameters
+      description: Retrieve the finalized transactions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
+        Finalized transactions where a registry of the Party is either the sender, or the receiver are retrieved.<br><br>
+        Another operation (getPartyPendingTxns) returns transactions with not yet finalized statuses.
       parameters:
         - name: regId
-          description: The identifier of the registry for which actions are to be retrieved.
-            Finalized actions where the registry is either the sender, or the receiver are retrieved.
+          description: The identifier of the registry for which transactions are to be retrieved.
+            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
           in: path
           required: true
           schema:
@@ -826,7 +826,7 @@ paths:
             format: int32
             minimum: 0
             maximum: 999999999
-          description: The number of items to skip before starting to collect the actions
+          description: The number of items to skip before starting to collect the transactions
         - in: query
           name: limit
           schema:
@@ -834,25 +834,25 @@ paths:
             format: int32
             minimum: 1
             maximum: 100
-          description: The number of actions to return
+          description: The number of transactions to return
         - in: query
           name: status
           schema:
             type: string
             enum: [COMPLETED, TERMINATED]
-          description: Allows to filter by action status
+          description: Allows to filter by transaction status
         - in: query
           name: from
           schema:
             type: string
             format: date-time
-          description: The minimum date-time of actions to return
+          description: The minimum date-time of transactions to return
         - in: query
           name: to
           schema:
             type: string
             format: date-time
-          description: The maximum date-time of actions to return
+          description: The maximum date-time of transactions to return
       responses:
         '200':
           description: Successful operation
@@ -861,11 +861,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  txns:
                     type: array
                     maxItems: 100
                     items:
-                      $ref: '#/components/schemas/Action'
+                      $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -879,21 +879,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/selectedActions:
+  /transaction/{regId}/selectedTxns:
     get:
       tags:
-        - Action
+        - Transaction
         - PullView
         - NonProduction
-      operationId: getSelectedActions
-      summary: Retrieve the actions, for the registry identified by regId and other filtering parameters.
-      description: Retrieve the actions for the registry identified by regId and other filtering parameters.<br><br>
+      operationId: getSelectedTxns
+      summary: Retrieve the transactions, for the registry identified by regId and other filtering parameters.
+      description: Retrieve the transactions for the registry identified by regId and other filtering parameters.<br><br>
         This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
         and not for registries.
       parameters:
         - name: regId
-          description: The identifier of the registry for which actions are to be retrieved.
-            Finalized actions where the registry is either the sender, or the receiver are retrieved.
+          description: The identifier of the registry for which transactions are to be retrieved.
+            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
           in: path
           required: true
           schema:
@@ -905,7 +905,7 @@ paths:
             format: int32
             minimum: 0
             maximum: 999999999
-          description: The number of items to skip before starting to collect the actions
+          description: The number of items to skip before starting to collect the transactions
         - in: query
           name: limit
           schema:
@@ -913,25 +913,25 @@ paths:
             format: int32
             minimum: 1
             maximum: 100
-          description: The number of actions to return
+          description: The number of transactions to return
         - in: query
           name: status
           schema:
             type: string
             enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
-          description: Allows to filter by action status
+          description: Allows to filter by transaction status
         - in: query
           name: from
           schema:
             type: string
             format: date-time
-          description: The minimum date-time of actions to return
+          description: The minimum date-time of transactions to return
         - in: query
           name: to
           schema:
             type: string
             format: date-time
-          description: The maximum date-time of actions to return
+          description: The maximum date-time of transactions to return
       responses:
         '200':
           description: Successful operation
@@ -940,11 +940,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  txns:
                     type: array
                     maxItems: 100
                     items:
-                      $ref: '#/components/schemas/Action'
+                      $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -958,21 +958,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /action/{regId}/selectedPartyActions:
+  /transaction/{regId}/selectedPartyTxns:
     get:
       tags:
-        - Action
+        - Transaction
         - PullView
         - NonProduction
-      operationId: getSelectedPartyActions
-      summary: Retrieve the actions, for the Party owning the registry identified by regId and other filtering parameters.
-      description: Retrieve the actions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
+      operationId: getSelectedPartyTxns
+      summary: Retrieve the transactions, for the Party owning the registry identified by regId and other filtering parameters.
+      description: Retrieve the transactions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
         This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
         and not for registries.
       parameters:
         - name: regId
-          description: The identifier of the registry for which actions are to be retrieved.
-            Finalized actions where the registry is either the sender, or the receiver are retrieved.
+          description: The identifier of the registry for which transactions are to be retrieved.
+            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
           in: path
           required: true
           schema:
@@ -984,7 +984,7 @@ paths:
             format: int32
             minimum: 0
             maximum: 999999999
-          description: The number of items to skip before starting to collect the actions
+          description: The number of items to skip before starting to collect the transactions
         - in: query
           name: limit
           schema:
@@ -992,25 +992,25 @@ paths:
             format: int32
             minimum: 1
             maximum: 100
-          description: The number of actions to return
+          description: The number of transactions to return
         - in: query
           name: status
           schema:
             type: string
             enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
-          description: Allows to filter by action status
+          description: Allows to filter by transaction status
         - in: query
           name: from
           schema:
             type: string
             format: date-time
-          description: The minimum date-time of actions to return
+          description: The minimum date-time of transactions to return
         - in: query
           name: to
           schema:
             type: string
             format: date-time
-          description: The maximum date-time of actions to return
+          description: The maximum date-time of transactions to return
       responses:
         '200':
           description: Successful operation
@@ -1019,11 +1019,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  txns:
                     type: array
                     maxItems: 100
                     items:
-                      $ref: '#/components/schemas/Action'
+                      $ref: '#/components/schemas/Transaction'
         '400':
           description: Unsuccessful operation
           content:
@@ -1132,7 +1132,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  notifications:
                     type: array
                     maxItems: 200
                     items:
@@ -1184,7 +1184,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  actions:
+                  notifications:
                     type: array
                     maxItems: 200
                     items:
@@ -1323,7 +1323,7 @@ paths:
   /itmos/export/actions/{regId}:
     get:
       tags:
-        - Action
+        - Transaction
         - Export
       operationId: exportActions
       summary: Export registry's Party's actions in AEF.
@@ -1331,7 +1331,7 @@ paths:
       parameters:
         - name: regId
           in: path
-          description: The registry identifier of the participating Party registry for which the ITMOs are to be exported.
+          description: The registry identifier of the participating Party registry whose Party's actions are to be exported.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
@@ -1398,7 +1398,7 @@ components:
         lastmodifieddatetime:
           type: string
           format: date-time
-          description: The date and time of the most recent change to the registry actions, accounts or holdings.<br>
+          description: The date and time of the most recent change to the registry transactions, accounts or holdings.<br>
             This is used to set the cut-off date during the export.
           example: "2026-07-21T17:22:28Z"
         creationdatetime:
@@ -1490,41 +1490,41 @@ components:
           example: 3
       additionalProperties: false
 
-    Action:
+    Transaction:
       type: object
-      description: A ProposedAction that has been given an actionId by the hub after it has been proposed (see ProposedAction)
+      description: A ProposedTransaction that has been given an txnId by the hub after it has been proposed (see ProposedTransaction)
       required:
-        - actionId
-        - proposedAction
+        - txnId
+        - proposedTxn
       properties:
-        actionId:
+        txnId:
           type: integer
           format: uint32
-          description: Identifier for the action.  Action identifiers are unique across the international registry ecosystem.
+          description: Identifier for the transaction.  TxnIds are unique across the international registry ecosystem.
           minimum: 0
           maximum: 4294967295
           example: 5869444
-        proposedAction:
-          $ref: '#/components/schemas/ProposedAction'
+        proposedTxn:
+          $ref: '#/components/schemas/ProposedTransaction'
       additionalProperties: false
 
-    ProposedAction:
+    ProposedTransaction:
       type: object
-      description: A registry proposes an action to the hub.<br>
-        Once the hub validates the proposedAction, it is given an actionId (see Action schema).<br>
-        An proposed action to be performed on a block of ITMOs.<br>
-        An transfer action consists of the transfer of at least one ITMO from one account to another account,<br>
+      description: A registry proposes an transaction to the hub.<br>
+        Once the hub validates the proposedTxn, it is given an txnId (see Txn schema).<br>
+        An proposed transaction to be performed on a block of ITMOs.<br>
+        An transfer transaction consists of the transfer of at least one ITMO from one account to another account,<br>
         in the same or in a different registry.<br>
-        An acquisition action consits of the acquisition of at least one ITMO from one account to another account,<br>
+        An acquisition transaction consits of the acquisition of at least one ITMO from one account to another account,<br>
         in different registries.<br>
-        An authorisation/issuance/creation action must specify the same origin and destination account.<br>
+        An authorisation/issuance/creation transaction must specify the same origin and destination account.<br>
         All other transaction must specify different origin and destination accounts.
       required:
         - fromRegistry
         - fromAccount
         - toRegistry
         - toAccount
-        - actionType
+        - txnType
         - itmos
       properties:
         fromRegistry:
@@ -1543,7 +1543,7 @@ components:
           minimum: 1
           maximum: 999999999
           example: 38444
-        actionType:
+        txnType:
           type: integer
           description: The action type code. See Common Nomenclatures for action type codes, and their corresponding values and descriptions.
           example: 1
@@ -1559,14 +1559,14 @@ components:
           example: "2024-07-21T17:32:28Z"
         errors:
           type: array
-          description: Errors found in this action proposal
+          description: Errors found in this transaction proposal
           items:
-            $ref: "#/components/schemas/ActionError"
+            $ref: "#/components/schemas/TransactionError"
         warnings:
           type: array
-          description: Warnings found in this action proposal
+          description: Warnings found in this transaction proposal
           items:
-            $ref: "#/components/schemas/ActionWarning"
+            $ref: "#/components/schemas/TransactionWarning"
         labels:
           type: array
           maxItems: 10
@@ -1586,10 +1586,10 @@ components:
           example: "2024-07-21T17:32:28Z"
       additionalProperties: false
 
-    ActionError:
+    TransactionError:
       type: object
-      description: An error that causes a proposed action to be invalid.<br>
-        The hub will invalidate the proposed action due to this error.
+      description: An error that causes a proposed transaction to be invalid.<br>
+        The hub will invalidate the proposed transaction due to this error.
       required:
         - errorCode
         - errorDescription
@@ -1604,20 +1604,20 @@ components:
           description: Standard error description for this error.<br>
             Refer to common nomenclatures.
           type: string
-          example: "Receiving ITMOs locked by another action."
+          example: "Receiving ITMOs locked by another transaction."
         errorSpecifics:
-          description: Specific circumstances for error in this action proposal.
+          description: Specific circumstances for error in this transaction proposal.
           type: string
-          example: "ITMOs DEU342-5341 are locked by another action."
+          example: "ITMOs DEU342-5341 are locked by another transaction."
       additionalProperties: false
 
-    ActionWarning:
+    TransactionWarning:
       type: object
-      description: An warning regarding a proposed action<br>
+      description: An warning regarding a proposed transaction<br>
         that may create inconsistencies in the ITMO ecosystem.<br>
-        The hub will log the warning in the proposed action,<br>
-        but will consider the action to be valid.<br>
-        It is up to the registries to reject or terminate the action.
+        The hub will log the warning in the proposed transaction,<br>
+        but will consider the transaction to be valid.<br>
+        It is up to the registries to reject or terminate the transaction.
       required:
         - warningCode
         - warningDescription
@@ -1634,7 +1634,7 @@ components:
           type: string
           example: "The proposed ITMOs exceed the quantity of CO2 authorised for this cooperative approach."
         warningSpecifics:
-          description: Specific circumstances for error in this action proposal.
+          description: Specific circumstances for error in this transaction proposal.
           type: string
           example: "Proposed issuance of ITMOs BEL342-15341 under CA998 exceed the 10000 tonnes of CO2 authorized for CA998."
       additionalProperties: false
@@ -1823,13 +1823,13 @@ components:
             example: 2025
         authorizationRegistryId:
           description: The registry the participating Party has access to, for tracking and reccording ITMOs.
-          #ref: "#/components/schemas/RegistryId"
+          $ref: "#/components/schemas/RegistryId"
         underlyingCooperativeApproaches:
           description: Details, including registries and frameworks used by the ITMOs.
           type: array
           items:
             description: Relevant registries in any underlying regulations, frameworks, standards, or procedures.
-            #ref: "#/components/schemas/UnderlyingCooperativeApproach"
+            $ref: "#/components/schemas/UnderlyingCooperativeApproach"
       additionalProperties: false
 
     UnderlyingCooperativeApproach:
@@ -1840,7 +1840,7 @@ components:
       properties:
         registryId:
           description: The identifier of the relavant registry in a underlying approach
-          #ref: "#/components/schemas/RegistryId"
+          $ref: "#/components/schemas/RegistryId"
         approachName:
           description: Name of the underlying regulation, framework, standard, or procedure<br>
             under which the relevant registry operates.
@@ -2067,7 +2067,7 @@ components:
           enum: [AUTHIDCHANGE, VINTAGECHANGE]
         itmoUniqueId:
           description: The unique identifier of the ITMO(s) that has been updated.
-          #ref: "#/components/schemas/ITMOUniqueId"
+          $ref: "#/components/schemas/ITMOUniqueId"
         newAuthorizationId:
           description: the updated value of the authorization identifier.<br>
             If not null, the authorization identifier is not changed.
@@ -2092,6 +2092,7 @@ components:
         - originatingPartyRegistry
         - itmoUniqueId
         - vintage
+        - mitigationOutcomeDocHashes
         - partyITMORegistry
       properties:
         cooperativeApproachId:
@@ -2102,19 +2103,32 @@ components:
            $ref: '#/components/schemas/AuthorizationRef'
         itmoUniqueId:
           description: The unique identifier of the ITMO(s).
-          #ref: "#/components/schemas/ITMOUniqueId"
+          $ref: "#/components/schemas/ITMOUniqueId"
         originatingPartyRegistry:
           description: The participating Party registry that issued the ITMO(s).
-          #ref: "#/components/schemas/RegistryId"
+          $ref: "#/components/schemas/RegistryId"
         vintage:
           description: Year in which mitigation outcome occured
           type: integer
           minimum: 2021
           maximum: 9999
           example: 2025
+        mitigationOutcomeDocHashes:
+          description: (required by Decision 6/CMA.4, annex I, para.4).<br>
+            ITMOs must be traceable to their mitigation outcomes.<br><br>
+            This array contains the SHA256 hashes of all mitigation outcome documents for this cooperativeApproach.<br><br>
+            The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(cooperativeApproachId, sha256)<br>
+            that will return the URL of the MO document corresponding to the hash.<br><br>
+            This is a subset of the mitigation outcomes of the ITMOs cooperative approach.
+          type: array
+          minItems: 1
+          items:
+            description: SHA256 hash of a single mitigation outcome document
+            type: string
+            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         partyITMORegistry:
           description: The participating Party registry that currently owns the ITMO(s).
-          #ref: "#/components/schemas/RegistryId"
+          $ref: "#/components/schemas/RegistryId"
         suppInfo:
           description: Any supplementary information the current owning Party may need to attach to the ITMOs
             This should be an append only property.
@@ -2190,7 +2204,7 @@ components:
       properties:
         partyITMORegistry:
           description: The participating Party registry that currently owns the ITMO(s).
-          #ref: "#/components/schemas/RegistryId"
+          $ref: "#/components/schemas/RegistryId"
         accountId:
           description: the identifier of the account currently holding the ITMOs.
             The account id must be unique across a registry.
@@ -2201,7 +2215,7 @@ components:
           example: 7564
         itmoId:
           description: The unique identifier of the ITMO(s).
-          #ref: "#/components/schemas/ITMOUniqueId"
+          $ref: "#/components/schemas/ITMOUniqueId"
       additionalProperties: false
 
 
@@ -2238,4 +2252,3 @@ components:
 
 security:
   - basicAuth: []
-  
