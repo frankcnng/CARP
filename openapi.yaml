@@ -1822,13 +1822,13 @@ components:
             maximum: 9999
             example: 2025
         authorizationRegistryId:
-          description: The registry the participating Party has access to, for tracking and reccording ITMOs.
+#         description: The registry the participating Party has access to, for tracking and reccording ITMOs.
           $ref: "#/components/schemas/RegistryId"
         underlyingCooperativeApproaches:
           description: Details, including registries and frameworks used by the ITMOs.
           type: array
           items:
-            description: Relevant registries in any underlying regulations, frameworks, standards, or procedures.
+#           description: Relevant registries in any underlying regulations, frameworks, standards, or procedures.
             $ref: "#/components/schemas/UnderlyingCooperativeApproach"
       additionalProperties: false
 
@@ -1839,7 +1839,7 @@ components:
         - approachName
       properties:
         registryId:
-          description: The identifier of the relavant registry in a underlying approach
+#         description: The identifier of the relavant registry in a underlying approach
           $ref: "#/components/schemas/RegistryId"
         approachName:
           description: Name of the underlying regulation, framework, standard, or procedure<br>
@@ -2066,7 +2066,7 @@ components:
           type: string
           enum: [AUTHIDCHANGE, VINTAGECHANGE]
         itmoUniqueId:
-          description: The unique identifier of the ITMO(s) that has been updated.
+#         description: The unique identifier of the ITMO(s) that has been updated.
           $ref: "#/components/schemas/ITMOUniqueId"
         newAuthorizationId:
           description: the updated value of the authorization identifier.<br>
@@ -2102,10 +2102,10 @@ components:
         authorizationRef:
            $ref: '#/components/schemas/AuthorizationRef'
         itmoUniqueId:
-          description: The unique identifier of the ITMO(s).
+#         description: The unique identifier of the ITMO(s).
           $ref: "#/components/schemas/ITMOUniqueId"
         originatingPartyRegistry:
-          description: The participating Party registry that issued the ITMO(s).
+#         description: The participating Party registry that issued the ITMO(s).
           $ref: "#/components/schemas/RegistryId"
         vintage:
           description: Year in which mitigation outcome occured
@@ -2127,7 +2127,7 @@ components:
             type: string
             example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         partyITMORegistry:
-          description: The participating Party registry that currently owns the ITMO(s).
+#         description: The participating Party registry that currently owns the ITMO(s).
           $ref: "#/components/schemas/RegistryId"
         suppInfo:
           description: Any supplementary information the current owning Party may need to attach to the ITMOs
@@ -2203,7 +2203,7 @@ components:
         This could be implemented as an associative table in a database.
       properties:
         partyITMORegistry:
-          description: The participating Party registry that currently owns the ITMO(s).
+#         description: The participating Party registry that currently owns the ITMO(s).
           $ref: "#/components/schemas/RegistryId"
         accountId:
           description: the identifier of the account currently holding the ITMOs.
@@ -2214,7 +2214,7 @@ components:
           maximum: 999999999
           example: 7564
         itmoId:
-          description: The unique identifier of the ITMO(s).
+#         description: The unique identifier of the ITMO(s).
           $ref: "#/components/schemas/ITMOUniqueId"
       additionalProperties: false
 
