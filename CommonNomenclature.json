@@ -721,39 +721,43 @@
 		[
 			{
 				"value":	"100",
-				"description":	"Holding.\nAccount Type which may acquire A6.4ERs or CERs tracked in the mechanism registry."
+				"description":	"Holding.\nSee decision 2/CMA.3, Annex, para. 29."
 			},
 			{
 				"value":	"110",
-				"description":	"Pending.\nAccount type to which all A6.4ERs or CERs shall be issued."
+				"description":	"Pending.\nSee decision 2/CMA.3, Annex, para. 29."
 			},
 			{
 				"value":	"200",
-				"description":	"Retirement.\nAccount type for retirement of A6.4ERs and CERs."
+				"description":	"Use towards NDC.\nSee decision 2/CMA.3, Annex, para. 29."
+			},
+			{
+				"value":	"210",
+				"description":	"Use towards other purposes.\nSee decision 2/CMA.3, Annex, para. 29."
 			},
 			{
 				"value":	"300",
-				"description":	"Share of Proceeds of Adaptation.\nAccount type which receives A4.6ERs in accordance with paragraph 58 of the RMPs."
+				"description":	"Share of Proceeds of Adaptation.\nAccount type which receives A4.6ERs in accordance with decision 3/CMA.3, Annex, para. 58."
 			},
 			{
 				"value":	"400",
-				"description":	"Voluntary cancellation for other purposes.\nAccount type for voluntary cancellation of A6.4ERs for other purposes."
+				"description":	"Voluntary cancellation for other purposes.\nSee decision 2/CMA.3, Annex, para. 29."
 			},
 			{
 				"value":	"410",
-				"description":	"Mandatory cancellation for OMGE.\nAccount type for mandatory cancellation of A6.4ERs for OMGE in accordance with paragraph 59 of the RMPs."
+				"description":	"Mandatory cancellation for OMGE.\nAccount type for mandatory cancellation of A6.4ERs for OMGE in accordance with decision 3/CMA.3, Annex, para. 59."
 			},
 			{
 				"value":	"420",
-				"description":	"Voluntary cancellation for OMGE.\nAccount type for voluntary cancellation of A6.4ERs for OMGE in accordance with paragraph 70 of the RMPs."
+				"description":	"Voluntary cancellation for OMGE.\nAccount type for voluntary cancellation of A6.4ERs for OMGE in accordance with decision 3/CMA.3, Annex, para. 70."
 			},
 			{
 				"value":	"430",
-				"description":	"Cancellation for OIMP.\nAccount type for cancellation of A6.4ERs for OIMP."
+				"description":	"Cancellation for OIMP.\nSee decision 2/CMA.3, Annex, para. 29."
 			},
 			{
 				"value":	"440",
-				"description":	"Administrative cancellation.\nAccount type for administrative cancellation of A6.4ERs and CERs tracked in the mechanism registry for corrective actions and other purposes, as necessary."
+				"description":	"Administrative cancellation.\nSee decision 2/CMA.3, Annex, para. 29."
 			}
 		],
 		"required":	"false"
