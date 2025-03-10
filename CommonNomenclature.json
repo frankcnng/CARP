@@ -721,11 +721,15 @@
 		[
 			{
 				"value":	"100",
-				"description":	"Holding.\nSee decision 2/CMA.3, Annex, para. 29."
+				"description":	"Party holding.\nSee decisions 2/CMA.3, Annex, para. 29. and 3/CMA.3, Annex, para. 63."
 			},
 			{
 				"value":	"110",
-				"description":	"Pending.\nSee decision 2/CMA.3, Annex, para. 29."
+				"description":	"Pending.\nSee decision 3/CMA.3, Annex, para. 63."
+			},
+			{
+				"value":	"120",
+				"description":	"Authorized entity holding.\nSee decision 3/CMA.3, Annex, para. 63."
 			},
 			{
 				"value":	"200",
