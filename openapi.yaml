@@ -1284,6 +1284,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /itmos/firstTransferringParty/{regId}:
+    get:
+      tags:
+        - ITMO
+        - PullView
+      operationId: getFirstTransferringPartyITMOIds
+      summary: Retrieve all ITMO Ids where the Party owning the registry identified by regId is the first transferring Party.
+      description: Retrieve all ITMO Ids where the Party owning the registry identified by regId is the first transferring Party.<br>
+        Note that only the ITMO ids are returned, the entire ITMO, as the first transferring Party does not need to know which Party or registry is currently holding the ITMO.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for which the ITMOs are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  itmos:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/ITMOUniqueId'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
   /itmos/export/holdings/{regId}:
     get:
       tags:
