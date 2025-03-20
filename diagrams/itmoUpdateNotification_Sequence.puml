@@ -15,6 +15,7 @@ activate Sender
 Sender -> Sender: updateITMO(itmo)
 
 Sender -> Hub++ : notifyITMOUpdate(itmoId, attributes, ...)
+Hub->Hub: verifyNewAttributes(itmoid, attributes)
 Hub -> Hub: addNotification(itmoId, attributes, ...)
   note right: notificationStatus -- Created
 Sender <-- Hub: //notificationId//
@@ -35,7 +36,6 @@ Receiver1 -> Hub++: acknowledgeNotification(notificationId)
 note right: actionStatus == Acknowledged
 deactivate Receiver1
 deactivate Receiver1
-Hub -> Hub: updateITMO(itmoId, attributes, ...)
 Hub -> Hub--: updateNotification(R1.party, notificationId)
   note left: status == Acknowledged
 
