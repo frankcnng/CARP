@@ -1589,6 +1589,10 @@ components:
           type: integer
           description: The action type code. See Common Nomenclatures for action type codes, and their corresponding values and descriptions.
           example: 1
+        isFirstTransfer:
+          type: boolean
+          description: Whether this transaction is a first transfer.
+          example: false
         itmos:
           $ref: '#/components/schemas/ITMO'  
         status:
