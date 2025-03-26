@@ -1,4 +1,4 @@
-@startuml Certificate Authority
+@startuml security components
 
 skinparam dpi 300
 skinparam monochrome true
