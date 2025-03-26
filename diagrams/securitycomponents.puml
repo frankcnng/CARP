@@ -8,7 +8,7 @@ skinparam defaultTextAlignment center
 node "International Registry" {
 component "Registry section 1" as rs2
 component "Registry section 2" as rs1
-component "Registry Section 3" as rs3
+component "Registry section 3" as rs3
 component "Registry section ..." as rsn
 
 component "Interoperability hub" as h
