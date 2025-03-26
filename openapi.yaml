@@ -1074,7 +1074,7 @@ paths:
           name: status
           schema:
             type: string
-            enum: [NEW, PULLED, DELETED]
+            enum: [NEW, PULLED, ALL, DELETED]
           description: Allows to filter by message status
         - in: query
           name: from
@@ -1113,6 +1113,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
+
+  /messages/{regId}/updateMsgStatus/{messageId}:
+    post:
+      tags:
+        - ITMO
+        - Notification
+      operationId: updateMsgStatus
+      summary: Update the message status of message identified message Id by the registry identified by regId.
+      description: Update the message status of the message identified by messageId by the registry identified by regId.<br>
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry updating the message status.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: messageId
+          in: path
+          description: The message identifier
+          required: true
+          schema:
+            type: integer
+            format: uint32
+            minimum: 1
+            maximum: 4294967295
+            example: 87349
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [NEW, PULLED, DELETED]
+          description: The new status of the message
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    maxItems: 200
+                    items:
+                      $ref: '#/components/schemas/Notification'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
 
   /notifications/{regId}/notifyITMOUpdate/{itmoUniqueId}:
     post:
@@ -2417,4 +2475,3 @@ components:
 
 security:
   - basicAuth: []
-  
