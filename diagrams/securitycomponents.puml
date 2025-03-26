@@ -11,9 +11,9 @@ component "Registry section 2" as rs1
 component "Registry Section 3" as rs3
 component "Registry section ..." as rsn
 
-component "Interoperability hub" as h {
-    component "API Keys Management Tool" as ak
-}
+component "Interoperability hub" as h
+
+component "API Keys management tool" as ak
 
 }
 
