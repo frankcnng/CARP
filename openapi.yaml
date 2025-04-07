@@ -9,7 +9,7 @@ info:
      decision 6/CMA.4, annex I, chapter I.B are expected to adhere to this API when they interoperate.
      <br><br><b>Current status</b>
      <br><br>This API is currently in development.
-  version: 0.0.1
+  version: 0.0.2
   contact: 
     name: UNFCCC secretariat (Voluntary forum of Article 6 registry system administrators and technical experts)
     email: a6rsaf@unfccc.int
@@ -678,55 +678,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /transaction/{regId}/pendingPartyTxns:
-    get:
-      tags:
-        - Transaction
-      operationId: getPendingPartyTxns
-      summary: Retrieve the transactions that are pending processing by the participating Party of the registry identified by regId.
-      description: Retrieve the transactions that are pending processing by the participating Party of theregistry identified by regId.<br><br>
-        This operation is used by a registry to process transactions that have not yet been finalized,<br><br>
-        and where a registry of the Party is expected to undertake the relevant steps to progress the transaction.<br><br>
-        * If it is a sending registry, complete or terminate the transaction.<br><br>
-        * If it is a receiving registry, accept or reject the transaction.<br><br>
-        This operation can also be used by a registry to query the status of a pending transaction it is already aware of<br><br>
-        * If it is a sending registry, at any point before its finalization.<br><br>
-        * If it is a receiving registry, after it has been validated and before its finalization.<br><br>
-        The list of transactions returned is sorted in descending order or the proposed transaction data time (ie, the oldest transaction is first).<br><br>
-        Another operation (getfinalizedPartyTxns) returns transactions with finalized statuses.
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the registry for which pending transactions are to be retrieved.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 100
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
   /transaction/{regId}/finalizedTxns:
     get:
       tags:
@@ -736,83 +687,6 @@ paths:
       description: Retrieve the finalized transactions for the registry identified by regId and other filtering parameters.<br><br>
         finalized transactions where the registry is either the sender, or the receiver are retrieved.<br><br>
         Another operation (getPendingTxns) returns transactions with not yet finalized statuses.
-      parameters:
-        - name: regId
-          description: The identifier of the registry for which transactions are to be retrieved.
-            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 999999999
-          description: The number of items to skip before starting to collect the transactions
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 100
-          description: The number of transactions to return
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [COMPLETED, TERMINATED]
-          description: Allows to filter by transaction status
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-          description: The minimum date-time of transactions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: The maximum date-time of transactions to return
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 100
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /transaction/{regId}/finalizedPartyTxns:
-    get:
-      tags:
-        - Transaction
-      operationId: getPartyFinalizedTxns
-      summary: Retrieve the finalized transactions for the Party owning the registry identified by regId and other filtering parameters
-      description: Retrieve the finalized transactions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
-        Finalized transactions where a registry of the Party is either the sender, or the receiver are retrieved.<br><br>
-        Another operation (getPartyPendingTxns) returns transactions with not yet finalized statuses.
       parameters:
         - name: regId
           description: The identifier of the registry for which transactions are to be retrieved.
