@@ -1627,7 +1627,7 @@ components:
         operationalStatus:
           type: string
           enum: [OPERATIONAL, NON-OPERATIONAL, TXNS_DISALLOWED]
-          example: ACCEPTED
+          example: OPERATIONAL
         lastmodifieddatetime:
           type: string
           format: date-time
