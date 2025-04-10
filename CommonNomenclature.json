@@ -737,7 +737,7 @@
 			},
 			{
 				"value":	"210",
-				"description":	"Use towards other purposes.\nSee decision 2/CMA.3, annex, para. 29."
+				"description":	"Use towards OIMP.\nSee decision 2/CMA.3, annex, para. 29."
 			},
 			{
 				"value":	"300",
@@ -756,12 +756,8 @@
 				"description":	"Voluntary cancellation of A6.4ERs for OMGE.\nSee decision 3/CMA.3, annex, para. 70."
 			},
 			{
-				"value":	"420",
-				"description":	"Voluntary cancellation for OMGE of A6.4ERs.\nSee decision 3/CMA.3, annex, para. 70."
-			},
-			{
 				"value":	"430",
-				"description":	"Voluntary cancellation for OMGE of ITMOs not not counted towards NDC or OIMP.\nSee decision 2/CMA.3, annex, para. 39."
+				"description":	"Voluntary cancellation for OMGE of ITMOs not not counted towards NDC or OIMP.\nSee decision 2/CMA.3, annex, paras. 29 and 39."
 			},
 			{
 				"value":	"440",
