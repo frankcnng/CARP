@@ -710,7 +710,7 @@
 	"AccountType":
 	{
 		"attribute":	"Account Type",
-		"description":	"Minimum Account Types supported by the mechanism registry, under Article 6.4, Decision 7.CMA.4, Annex I - paragraph 32",
+		"description":	"Account Types defined in the communication standards",
 		"AEF fields": "not applicable",
 		"type": "integer",
 		"requiredBy":
@@ -721,47 +721,55 @@
 		[
 			{
 				"value":	"100",
-				"description":	"Party holding.\nSee decisions 2/CMA.3, Annex, para. 29. and 3/CMA.3, Annex, para. 63."
+				"description":	"Party holding.\nSee decision 2/CMA.3, annex, para. 29. and decision 3/CMA.3, annex, para. 63."
 			},
 			{
 				"value":	"110",
-				"description":	"Pending.\nSee decision 3/CMA.3, Annex, para. 63."
+				"description":	"Pending.\nSee decision 3/CMA.3, annex, para. 63."
 			},
 			{
 				"value":	"120",
-				"description":	"Authorized entity holding.\nSee decision 3/CMA.3, Annex, para. 63."
+				"description":	"Authorized entity holding.\nSee decision 3/CMA.3, annex, para. 63."
 			},
 			{
 				"value":	"200",
-				"description":	"Use towards NDC.\nSee decision 2/CMA.3, Annex, para. 29."
+				"description":	"Use towards NDC.\nSee decision 2/CMA.3, annex, para. 29."
 			},
 			{
 				"value":	"210",
-				"description":	"Use towards other purposes.\nSee decision 2/CMA.3, Annex, para. 29."
+				"description":	"Use towards other purposes.\nSee decision 2/CMA.3, annex, para. 29."
 			},
 			{
 				"value":	"300",
-				"description":	"Share of Proceeds of Adaptation.\nAccount type which receives A4.6ERs in accordance with decision 3/CMA.3, Annex, para. 58."
+				"description":	"Share of proceeds for adaptation.\nSee decision 3/CMA.3, annex, para. 58."
 			},
 			{
 				"value":	"400",
-				"description":	"Voluntary cancellation for other purposes.\nSee decision 2/CMA.3, Annex, para. 29."
+				"description":	"Voluntary cancellation for other purposes.\nSee decision 2/CMA.3, annex, para. 29."
 			},
 			{
 				"value":	"410",
-				"description":	"Mandatory cancellation for OMGE.\nAccount type for mandatory cancellation of A6.4ERs for OMGE in accordance with decision 3/CMA.3, Annex, para. 59."
+				"description":	"Mandatory cancellation of A6.4ERs for OMGE.\nSee decision 3/CMA.3, annex, para. 59."
 			},
 			{
 				"value":	"420",
-				"description":	"Voluntary cancellation for OMGE.\nAccount type for voluntary cancellation of A6.4ERs for OMGE in accordance with decision 3/CMA.3, Annex, para. 70."
+				"description":	"Voluntary cancellation of A6.4ERs for OMGE.\nSee decision 3/CMA.3, annex, para. 70."
+			},
+			{
+				"value":	"420",
+				"description":	"Voluntary cancellation for OMGE of A6.4ERs.\nSee decision 3/CMA.3, annex, para. 70."
 			},
 			{
 				"value":	"430",
-				"description":	"Cancellation for OIMP.\nSee decision 2/CMA.3, Annex, para. 29."
+				"description":	"Voluntary cancellation for OMGE of ITMOs not not counted towards NDC or OIMP.\nSee decision 2/CMA.3, annex, para. 39."
 			},
 			{
 				"value":	"440",
-				"description":	"Administrative cancellation.\nSee decision 2/CMA.3, Annex, para. 29."
+				"description":	"Cancellation for OIMP.\nSee decision 2/CMA.3, annex, para. 29."
+			},
+			{
+				"value":	"450",
+				"description":	"Administrative cancellation.\nSee decision 2/CMA.3, annex, para. 29."
 			}
 		],
 		"required":	"false"
