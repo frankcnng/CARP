@@ -35,6 +35,8 @@ tags:
     description: Manage the contact(s) of the participating Party registries.
   - name: Transaction
     description: Manage transactions of participating Party registries
+  - name: Validation
+    description: Manage transaction validations of participating Party registries
   - name: Message
     description: Manage messages of participating Party registries
   - name: Notification
@@ -750,6 +752,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Errors'
+
     post:
       tags:
         - Transaction
@@ -1077,6 +1080,58 @@ paths:
                     maxItems: 100
                     items:
                       $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /transaction/validation/{regId}:
+    post:
+      tags:
+        - Transaction
+        - Validation
+      operationId: configureValidation
+      summary: Configure a transaction validation
+      description: Configure a transaction validation - see communication standards.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry attempting to process the transaction.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: validationId
+          schema:
+            type: string
+          description: The identifier of the validation to set - see Communication Standards
+        - in: query
+          name: registryRole
+          schema:
+            type: string
+            enum: [SENDER, RECEIVER, BOTH]
+          description: The registry's role in the transaction to be validated
+        - in: query
+          name: isOn
+          schema:
+            type: boolean
+          description: Whether to turn this validation on
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                description: returns a message saying validation is configured
         '400':
           description: Unsuccessful operation
           content:
