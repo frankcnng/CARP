@@ -356,9 +356,9 @@ paths:
         - PullView
       operationId: getAccounts
       summary:
-        Return an array of accounts belonging to the registry with identifier regId.
+        Return an array of accounts belonging to the registry, or registry's Party, with identifier regId.
       description:
-        Return an array of accounts belonging to the registry with identifier regId.<br><br>
+        Return an array of accounts belonging to the registry, or registry's Party, with identifier regId.<br><br>
         If a registry doesn't have any accounts defined, return an empty array.
       parameters:
         - name: regId
@@ -367,6 +367,12 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [REGISTRY, PARTY]
+          description: Specifies whether to return the registry's ITMOs, or the registry's Party's ITMOs.
       responses:
         '200':
           description: Successful operation
@@ -809,6 +815,139 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /transaction/{regId}/txnStatus/{txnId}:
+    get:
+      tags:
+        - Transaction
+        - PullView
+      operationId: getTxnStatus
+      summary: Retrieve the status of the transaction corresponding to txnId
+      description: Retrieve the status of the transaction corresonding to txnId.
+        The calling registry must have a registry id corresponding to regId,
+        and only only when regId is the fromRegistry or toRegistry will the transaction be returned.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry for which transactions are to be retrieved.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: txnId
+          in: path
+          description: The transaction identifier
+          required: true
+          schema:
+            type: integer
+            format: uint32
+            minimum: 1
+            maximum: 4294967295
+            example: 87349
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED]
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /transaction/{regId}/txns:
+    get:
+      tags:
+        - Transaction
+        - PullView
+        - NonProduction
+      operationId: getTxns
+      summary: Retrieve the transactions, for the registry or Party identified by regId and other filtering parameters.
+      description: Retrieve the transactions for the registry or Party identified by regId and other filtering parameters.<br><br>
+        This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
+        and not for registries.
+      parameters:
+        - name: regId
+          description: The identifier of the registry for which transactions are to be retrieved.
+            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [REGISTRY, PARTY]
+          description: Specifies whether to return the registry's transactions, or the registry's Party's transactions.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 999999999
+          description: The number of items to skip before starting to collect the transactions.<br>Used with the limit parameter, this can page the return results.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+          description: The number of transactions to return.<br>Used with the offset parameter, this can page the return results.
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
+          description: Allows to filter by transaction status
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: The minimum date-time of transactions to return
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: The maximum date-time of transactions to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  txns:
+                    type: array
+                    maxItems: 100
+                    items:
+                      $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
   /transaction/{regId}/pendingTxns:
     get:
       tags:
@@ -935,163 +1074,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /transaction/{regId}/selectedTxns:
-    get:
-      tags:
-        - Transaction
-        - PullView
-        - NonProduction
-      operationId: getSelectedTxns
-      summary: Retrieve the transactions, for the registry identified by regId and other filtering parameters.
-      description: Retrieve the transactions for the registry identified by regId and other filtering parameters.<br><br>
-        This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
-        and not for registries.
-      parameters:
-        - name: regId
-          description: The identifier of the registry for which transactions are to be retrieved.
-            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 999999999
-          description: The number of items to skip before starting to collect the transactions
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 100
-          description: The number of transactions to return
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
-          description: Allows to filter by transaction status
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-          description: The minimum date-time of transactions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: The maximum date-time of transactions to return
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 100
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /transaction/{regId}/selectedPartyTxns:
-    get:
-      tags:
-        - Transaction
-        - PullView
-        - NonProduction
-      operationId: getSelectedPartyTxns
-      summary: Retrieve the transactions, for the Party owning the registry identified by regId and other filtering parameters.
-      description: Retrieve the transactions for the Party owning the registry identified by regId and other filtering parameters.<br><br>
-        This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
-        and not for registries.
-      parameters:
-        - name: regId
-          description: The identifier of the registry for which transactions are to be retrieved.
-            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 999999999
-          description: The number of items to skip before starting to collect the transactions
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 100
-          description: The number of transactions to return
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
-          description: Allows to filter by transaction status
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-          description: The minimum date-time of transactions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: The maximum date-time of transactions to return
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 100
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
 
   /transaction/validation/{regId}:
     post:
@@ -1490,8 +1472,8 @@ paths:
         - ITMO
         - PullView
       operationId: getITMOs
-      summary: Retrieve all ITMOs registered to the registry identified by regId.
-      description: Retrieve all ITMOs registered to the registry identified by regId.<br>
+      summary: Retrieve all ITMOs registered to the registry, or the registry's Party, identified by regId.
+      description: Retrieve all ITMOs registered to the registry, or the registry's Party, identified by regId.<br>
       parameters:
         - name: regId
           in: path
@@ -1499,6 +1481,12 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [REGISTRY, PARTY]
+          description: Specifies whether to return the registry's ITMOs, or the registry's Party's ITMOs.
       responses:
         '200':
           description: Successful operation
