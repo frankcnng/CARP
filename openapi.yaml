@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: API for International Registry Interoperability (Work In Progress)
+  title: API supporting the communication standards for transactions on ITMOs (Work In Progress)
   description: 
      <b>Introduction</b>
      <br><br>This API is part of the communication standards for transactions on
@@ -9,7 +9,7 @@ info:
      decision 6/CMA.4, annex I, chapter I.B are expected to adhere to this API when they interoperate.
      <br><br><b>Current status</b>
      <br><br>This API is currently in development.
-  version: 0.0.3
+  version: 0.3
   contact: 
     name: UNFCCC secretariat (Voluntary forum of Article 6 registry system administrators and technical experts)
     email: a6rsaf@unfccc.int
