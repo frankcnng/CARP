@@ -9,7 +9,7 @@ info:
      decision 6/CMA.4, annex I, chapter I.B are expected to adhere to this API when they interoperate.
      <br><br><b>Current status</b>
      <br><br>This API is currently in development.
-  version: 0.0.3
+  version: 0.0.4
   contact: 
     name: UNFCCC secretariat (Voluntary forum of Article 6 registry system administrators and technical experts)
     email: a6rsaf@unfccc.int
@@ -1127,6 +1127,57 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
+  /message/{regId}:
+    post:
+      tags:
+        - Message
+      operationId: sendMsg
+      summary: Send a textual message to the interoperability hub
+      description: Send a textual message to the interoperability hub.<br>
+        If the message is sent successfully, the hub responds with a message id
+        and a date-time stamp.
+      parameters:
+        - name: regId
+          in: path
+          description: The identifier of the registry sending the message.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: message
+          schema:
+            type: string
+          description: The content of the message
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msgId:
+                    type: integer
+                    format: uint32
+                    minimum: 1
+                    maximum: 4294967295
+                    example: 87349
+                  timestamp:
+                    type: string
+                    format: date-time
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
   /message/{regId}/selectedMsgs:
     get:
       tags:
@@ -1819,6 +1870,10 @@ components:
           minimum: 1
           maximum: 999999999
           example: 38444
+        isFirstTransfer:
+          type: boolean
+          description: True if this transaction is the first transfer for the ITMOs.<br>
+            ITMOs proposed in this transaction must not have already undergone a first transfer.
         txnType:
           type: integer
           description: The action type code. See Common Nomenclatures for action type codes, and their corresponding values and descriptions.
@@ -2461,6 +2516,9 @@ components:
           items:
             type: string
             maxLength:  255
+        hasBeenFirstTransferred:
+          description: True if these ITMOs have underone a first transfer
+          type: boolean
         lastanyTxnDateTime:
           description:  Date-timestamp of the last attempted transaction.
           type: string
