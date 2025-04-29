@@ -2516,9 +2516,6 @@ components:
           items:
             type: string
             maxLength:  255
-        hasBeenFirstTransferred:
-          description: True if these ITMOs have underone a first transfer
-          type: boolean
         lastanyTxnDateTime:
           description:  Date-timestamp of the last attempted transaction.
           type: string
