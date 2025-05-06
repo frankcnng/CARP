@@ -1904,6 +1904,9 @@ components:
           items:
             type: string
             example: "My favorite transaction"
+        externalReference:
+          type: string
+          example: "External reference information, such as a contract number."
         suppinfo:
           type: string
           example: "Find a good example of suppl. information ..."
