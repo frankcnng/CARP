@@ -1879,7 +1879,11 @@ components:
           description: The action type code. See Common Nomenclatures for action type codes, and their corresponding values and descriptions.
           example: 1
         itmos:
-          $ref: '#/components/schemas/ITMO'  
+          type: array
+          description: ITMOs that are the subject of the transaction.<br>
+            Note that a transaction can contain multiple blocks of ITMOs.
+          items:
+            $ref: '#/components/schemas/ITMO'  
         status:
           type: string
           enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
