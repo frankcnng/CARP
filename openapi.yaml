@@ -1,3 +1,4 @@
+
 openapi: 3.0.3
 info:
   title: API supporting the communication standards for transactions on ITMOs (Work In Progress)
@@ -372,7 +373,7 @@ paths:
           schema:
             type: string
             enum: [REGISTRY, PARTY]
-          description: Specifies whether to return the registry's ITMOs, or the registry's Party's ITMOs.
+          description: Specifies whether to return the registry's accounts, or the registry's Party's accounts.
       responses:
         '200':
           description: Successful operation
@@ -1611,7 +1612,7 @@ paths:
       tags:
         - ITMO
         - Export
-      operationId: exportITMOs
+      operationId: exportAEFHoldings
       summary: Export registry's Party's ITMO holdings in AEF.
       description: Export the ITMOs held by the registry's Party identified by regId in Agreed Electronic Format (AEF) in an Excel file.<br>
       parameters:
@@ -1621,6 +1622,29 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
+        - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [REGISTRY, PARTY]
+          description: Specifies whether to export the registry's ITMO holdings, or the registry's Party's ITMO holdings.<br>
+            Default is PARTY.
+        - in: query
+          name: firstTransferredOnly
+          schema:
+            type: boolean
+          description: Export only ITMOs that have been first transferred.<br>
+            Default is TRUE.
+        - in: query
+          name: cutOffDate
+          schema:
+            type: string
+            format: date-time
+          description: Cut-off date and time of the ITMOs holdings to export<br>
+            The ITMO holdings as the result of all Completed transactions<br>
+            until the cut-off date.<br>
+            If not specified, midnight, December 31st of the year preceding the current year applies<br>
+            (i.e., an AEF export of the previous calendar year is expected)
       responses:
         '200':
           description: An Excel file containing the holdings in AEF.
@@ -1658,25 +1682,32 @@ paths:
           schema:
             $ref: "#/components/schemas/RegistryId"
         - in: query
+          name: mode
+          schema:
+            type: string
+            enum: [REGISTRY, PARTY]
+          description: Specifies whether to export the registry's actions, or the registry's Party's actions.<br>
+            Default is PARTY.
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: The starting date-time of actions to return
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: The ending date of actions to return
+        - in: query
           name: limit
           schema:
             type: integer
             format: int32
             minimum: 1
             maximum: 1000
-          description: The number of actions to return
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date
-          description: The starting date-time of actions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date
-          description: The ending date of actions to return
+          description: The maximum number of actions to return
       responses:
         '200':
           description: An Excel file containing the actions in AEF.
