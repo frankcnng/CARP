@@ -1781,8 +1781,15 @@ components:
       properties:
         registryId:
           $ref: "#/components/schemas/RegistryId"
-        id:
-          $ref: "#/components/schemas/AccountId"
+        accountId:
+          type: string
+          pattern: '^[A-Z]{2}\d{2}[a-zA-Z0-9]{4,30}$'
+          description: Identifier of an Account.<br>
+            IBAN conformant account number:<br>
+            -	Country code (using ISO 3166-1 alpha-2) of the Party holding the account – two letters,<br>
+            -	Check digits (using MOD-97-10 as per ISO/IEC 7064:2003)  – two digits, and<br>
+            -	Basic Bank Account Number (BBAN) – 4 to 30 alphanumeric characters.
+          example: "IE64IRCE92050112345678"
         accountType:
           type: integer
           description: The value of the Account Type.<br>
@@ -1809,15 +1816,6 @@ components:
           format: date-time
           example: "2024-07-21T17:32:28Z"
       additionalProperties: false
-
-    AccountId:
-      type: string
-      pattern: '^[A-Z]{3}\d{6}$'
-      description: Identifier of an Account.<br><br>
-        Consisting of the ISO-3166-1 alpha-3 code of the participating Party as per common nomenclatures,<br>
-        and six digit account number.<br><br>
-        The Party code is required to different between accounts belonging to different Parties within the Article 6.4 mechanism registry.
-      example: "DEU000001"
 
     Contact:
       type: object
