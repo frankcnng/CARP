@@ -1,20 +1,16 @@
-
 openapi: 3.0.3
 info:
-  title: API supporting the communication standards for transactions on ITMOs (Work In Progress)
+  title: API for the Centralized Accounting and Reporting Platform (CARP) (Work In Progress)
   description: 
      <b>Introduction</b>
-     <br><br>This API is part of the communication standards for transactions on
-     Internationally Transferred Mitigation Outcomes (ITMOs) pursuant to decision 6/CMA.4, para. 32.
-     <br><br>Participating Parties opting to apply the guidance referred to in 
-     decision 6/CMA.4, annex I, chapter I.B are expected to adhere to this API when they interoperate.
+     <br><br>The Centralized Accounting and Reporting Platform (CARP) supports and facilitates the submission of reports and the publication of non-confidential information according to decision 2/CMA.3, annex, chapter IV (Reporting).
      <br><br><b>Current status</b>
      <br><br>This API is currently in development.
-  version: 0.0.4
+  version: 0.0.1
   contact: 
-    name: UNFCCC secretariat (Voluntary forum of Article 6 registry system administrators and technical experts)
-    email: a6rsaf@unfccc.int
-    url: https://www.unfccc.int
+    name: UNFCCC secretariat (Centralized Accounting and Reporting Platform (CARP)
+    email: CARP-support@unfccc.int
+    url: https://unfccc.int/process-and-meetings/the-paris-agreement/cooperative-implementation/carp
   license: 
     name: License not applicable
     url: N/A
@@ -26,37 +22,14 @@ servers:
   - url: TBD
     description: Test server (uses test data)
 tags:
-  - name: Status
-    description: Manage the status of the API / server
-  - name: Registry
-    description: Manage participating Party registries, including its contact details.
-  - name: Account
-    description: Manage the account(s) of participating Party registries.
-  - name: Contact
-    description: Manage the contact(s) of the participating Party registries.
-  - name: Transaction
-    description: Manage transactions of participating Party registries
-  - name: Validation
-    description: Manage transaction validations of participating Party registries
-  - name: Message
-    description: Manage messages of participating Party registries
-  - name: Notification
-    description: Manage notifications from and to partitipating Party registries
-  - name: ITMO
-    description: Manage ITMOs of the caller registry
-  - name: Export
-    description: Manage exports of information of the caller registry
-  - name: PullView
-    description: Used by Pull and View interface
-  - name: NonProduction
-    description: Nonproduction or testing feature
-
+  - name: All
+    description: All operations
+  
 paths: 
   /serverStatus:
     get:
       tags:
-        - Status
-        - PullView
+        - All
       operationId: getServerStatus
       summary: Get the current server status and date/time
       description: Get the current server status and date/time
@@ -71,12 +44,11 @@ paths:
                 properties:
                   status:
                     type: string
-                    enum: [Operational, Non-Operational, Transaction Proposals Disallowed]
+                    enum: [Operational, Non-Operational]
                     description: >
                       The operational status of the server:<br>
                       * Operational: all operations are allowed<br>
                       * Non-Operational: no operations are allowed<br>
-                      * Transaction Proposals Disallowed: all operations are allowed, except Transaction Proposals.
                     example: Operational
                   timestamp:
                     type: string
@@ -95,179 +67,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-
-  /registry/{regId}:
-    get:
-      tags: 
-        - Registry
-        - PullView
-      operationId: getRegistry
-      summary: Retrieve the details of the participating Party registry
-      description: Retrieve the details of the participating Party registry corresponding to regId.
-      parameters:
-        - name: regId
-          in: path
-          description: Identifier of the registry corresponding to the participating Party registry
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
+  /authorization/{regId}/registerCooperativeApproachAuth:
     post:
       tags:
-        - Registry
-      operationId: createRegistry
-      summary: Create a new participating Party registry
-      description: Create a new participating Party registry with an identifier of regId.<br>If a registry with the same registry identifier already exists, the operation will be unsuccessful.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the new participating Party registry
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The registry contact list of this registry.<br><br>
-          The contact list array must contain at least two Contacts.
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                contacts:
-                  type: array
-                  minItems: 2
-                  maxItems: 10
-                  items:
-                    $ref: '#/components/schemas/Contact'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/problem:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/problem:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/opStatus/{regId}:
-    get:
-      tags: 
-        - Registry
-      operationId: getRegistryOpStatus
-      summary: Retrieve the operational status of the participating Party registry
-      description: Retrieve the details of the participating Party registry identified by regId.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: Identifier of the registry corresponding to the participating Party registry
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation.
-          content:
-            application/json:
-              schema:
-                type: string
-                enum: [OPERATIONAL, NON-OPERATIONAL, TXNS_DISALLOWED]
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-    post:
-      tags:
-        - Registry
-      operationId: setRegistryOpStatus
-      summary: Set the operational status of the calling registry
-      description: Set the operational status of the calling registry.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the calling registry
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The new operational status of the registry<br><br>
-        required: true
-        content:
-          application/json:
-            schema:
-              type: string
-              enum: [OPERATIONAL, NON-OPERATIONAL, TXNS_DISALLOWED]
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/problem:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/problem:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/insertContact:
-    post:
-      tags:
-        - Registry
-        - Contact
-      operationId: insertContact
-      summary:
-        Insert a contact to a registry's list of contacts
-      description:
-        Insert a contact to a registry.<br><br>
-        The new contact is inserted in the position specified in the contact's order property - current contacts are pushed down.<br><br>
-        If there are already 10 contacts in the list, the operation fails.
-        If there is already a contact with the same email address or the same phone number in the list, the operation fails.
+        - All
+      operationId: registerCooperativeApproachAuth
+      summary: Register authorised cooperative approach,<br>
+        from the registry identified by regId.
+      description: Register authorised cooperative approach, from the registry identified by regId.<br>
+        This will be performed by the secretariat when it registers the CA authorisation with the CARP.<br>
+        This enables the CAs and ITMOs for interoperability.<br>
+        This will create the CooperativeApproachAuthorization and the CooperativeApproach within the International Registry.
       parameters:
         - name: regId
           in: path
@@ -276,413 +86,12 @@ paths:
           schema:
             $ref: "#/components/schemas/RegistryId"
       requestBody:
-        description: The contact to be inserted.
+        description: The cooperative approach authorisation to be registered.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Contact'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/removeContact/{email}:
-    post:
-      tags:
-        - Registry
-        - Contact
-      operationId: removeContact
-      summary:
-        Remove the contact with the corresponding email address from a registry's list of contacts
-      description:
-        Remove a contact from a registry.<br><br>
-        Current contacts behind the one to be removed are moved up in order.<br><br>
-        If there are less than 2 existing contacts, the operation fails.
-        If there is no current contact associated with the provided email adddress, the operation fails.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: email
-          in: path
-          description: The email address of the contact to be removed.
-          required: true
-          schema:
-            type: string
-            example: jhalleux@unfccc.int
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/getAccounts:
-    get:
-      tags:
-        - Registry
-        - Account
-        - PullView
-      operationId: getAccounts
-      summary:
-        Return an array of accounts belonging to the registry, or registry's Party, with identifier regId.
-      description:
-        Return an array of accounts belonging to the registry, or registry's Party, with identifier regId.<br><br>
-        If a registry doesn't have any accounts defined, return an empty array.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the accounts are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: mode
-          schema:
-            type: string
-            enum: [REGISTRY, PARTY]
-          description: Specifies whether to return the registry's accounts, or the registry's Party's accounts.
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  itmos:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/Account'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/insertAccount:
-    post:
-      tags:
-        - Registry
-        - Account
-      operationId: insertAccount
-      summary:
-        Insert an account to a registry's list of accounts
-      description:
-        Insert an account into a registry.<br><br>
-        If an account with the same account number already exists in the registry, the operation fails.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the account is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The account to be inserted.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Account'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/removeAccount/{accountId}:
-    post:
-      tags:
-        - Registry
-        - Account
-      operationId: removeAccount
-      summary:
-        Remove an account from a registry
-      description:
-        Remove an account from a registry.<br><br>
-        Only empty accounts may be removed - if the account currently holds ITMOs, the operation fails.<br>
-        If no account with the provided account exists in the registry, the operation fails.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: accountId
-          in: path
-          description: The accountId to be removed.
-          required: true
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 999999999
-            example: 7564
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/createTestRegistry:
-    post:
-      tags:
-        - Registry
-        - NonProduction
-      operationId: createTestRegistry
-      summary: Create a new test registry
-      description: Create a new test registry with an identifier of regId.<br>If a registry with the same registry identifier already exists, the operation will be unsuccessful.<br>The caller of this operation must be participating Party registry responsible for the test registry, as determined by the authentication mechanism,<br>ie, the apiKey must be assigned to the relevant Party registry.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the new test registry
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The registry contact list of this registry.<br><br>
-          The contact list array must contain at least two Contacts.
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                contacts:
-                  type: array
-                  minItems: 2
-                  maxItems: 10
-                  items:
-                    $ref: '#/components/schemas/Contact'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/problem:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/problem:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/resetTestRegistry:
-    post:
-      tags:
-        - Registry
-        - NonProduction
-      operationId: resetTestRegistry
-      summary:
-        Reset a test registry - this operation is NOT available in any production environment
-      description:
-        For use in test environment(s) to reset and clean up test registries.<br><br>
-        Removes all holdings, transactions, accounts, ... of the registry identified by regId,
-        including all ITMOs issued by the registry located in other test registries and         
-        all transactions to/from the test registry.<br><br>
-        This operation not available in the production environment.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry to be reset
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The registry contact list of this registry.
-          Array must contain at least two Contacts.
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                contacts:
-                  type: array
-                  minItems: 2
-                  maxItems: 10
-                  items:
-                    $ref: '#/components/schemas/Contact'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /registry/{regId}/deleteTestRegistry:
-    post:
-      tags:
-        - Registry
-        - NonProduction
-      operationId: deleteTestRegistry
-      summary:
-        Delete a test registry - this operation is NOT available in any production environment
-      description:
-        For use in test environment(s) to delete a test registries.<br><br>
-        Removes all holdings, transactions, accounts, ... of the registry identified by regId,
-        including all ITMOs issued by the registry located in other test registries and         
-        all transactions to/from the test registry.<br><br>
-        This operation not available in the production environment.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry to be deleted
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The registry contact list of this registry.
-          Array must contain at least two Contacts.
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                contacts:
-                  type: array
-                  minItems: 2
-                  maxItems: 10
-                  items:
-                    $ref: '#/components/schemas/Contact'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Registry'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /transaction/{regId}/propose:
-    post:
-      tags:
-        - Transaction
-      operationId: proposeTxn
-      summary: Propose a new transaction, from the registry identified by regId.
-      description: Propose a new transaction, from the registry identified by regId.<br>
-        If the proposed transaction is valid, it will be added to the pending transactions list,<br>
-        avalable for appropriate registries to process.<br>
-        An transactionId is returned by the operation, so registries can check and augment the status of an transaction.<br><br>
-        If the proposed transaction is not valid, the operation will fail.
-        The incoming payload is the proposed transaction, that also include the ITMOs involved in the transaction.
-        These will be locked for the duration of the transaction.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      requestBody:
-        description: The proposed transaction.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProposedTransaction'
+              $ref: '#/components/schemas/CooperativeApproachAuthorization'
       responses:
         '200':
           description: Successful operation
@@ -690,10 +99,6 @@ paths:
             application/json:
               schema:
                 type: integer
-                format: uint32
-                minimum: 1
-                maximum: 4294967295
-                example: 87349
         '400':
           description: Unsuccessful operation
           content:
@@ -707,102 +112,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /transaction/{regId}/{txnId}:
-    get:
-      tags:
-        - Transaction
-        - PullView
-      operationId: getTxn
-      summary: Retrieve the transaction corresponding to txnId
-      description: Retrieve the transaction corresonding to txnId.
-        The calling registry must have a registry id corresponding to regId,
-        and only only when regId is the fromRegistry or toRegistry will the transaction be returned.
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the registry for which transactions are to be retrieved.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: txnId
-          in: path
-          description: The transaction identifier
-          required: true
-          schema:
-            type: integer
-            format: uint32
-            minimum: 1
-            maximum: 4294967295
-            example: 87349
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  itmos:
-                   type: array
-                   maxItems: 100
-                   items:
-                    $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
+  /authorization/{regId}/registerITMOAuth:
     post:
       tags:
-        - Transaction
-      operationId: processTxn
-      summary: Accept, reject or cancel an transaction
-      description: Accept, reject or cancel an transaction
+        - All
+      operationId: registerITMOAuth
+      summary: Register the authorisation of ITMOs from the registry identified by regId.
+      description: Register authorised ITMOs, from the registry identified by regId.<br>
+        This enables ITMOs for interoperability by to be issued via a Issuance Action Proposal from the registry.<br>
+        Note that this operation does not create ITMOs, in creates an ITMO Authorization,<br>
+        containing an authorized C02 quantity, a cooperative approach id, and an authorization id.<br>
+        When the ITMOs are subsequently issued by the registry, it must be consistent with this information.<br>
+        If the ITMO's cooperative approach id is not found, or is not yet authorised, the operation fails.
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry attempting to process the transaction.
+          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - name: txnId
-          in: path
-          description: The transaction identifier
-          required: true
-          schema:
-            type: integer
-            format: uint32
-            minimum: 1
-            maximum: 4294967295
-            example: 87349
       requestBody:
-        description: The new status of transaction to process.
-          Only the recipient can accept or reject an transaction.
-          Only the proposer can cancel an transaction.
+        description: The ITMOs to be registered.
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  format: enum[ACCEPTED, REJECTED, COMPLETED, TERMINATED]
-                  example: REJECTED
+              $ref: '#/components/schemas/ITMOAuthorization'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
+                type: integer
         '400':
           description: Unsuccessful operation
           content:
@@ -816,560 +158,98 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /transaction/{regId}/txnStatus/{txnId}:
+  /authorization/{regId}/{authId}:
     get:
       tags:
-        - Transaction
-        - PullView
-      operationId: getTxnStatus
-      summary: Retrieve the status of the transaction corresponding to txnId
-      description: Retrieve the status of the transaction corresonding to txnId.
-        The calling registry must have a registry id corresponding to regId,
-        and only only when regId is the fromRegistry or toRegistry will the transaction be returned.
+        - All
+      operationId: getAuthorization
+      summary: Retrieve authorization with identifier authId, registered to the registry identified by regId.
+      description: Retrieve authorization with identifier authId, registered to the registry identified by regId.<br>
+        Depending on what was authorised, different properties in the response will be populated.
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry for which transactions are to be retrieved.
+          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - name: txnId
+        - name: authId
           in: path
-          description: The transaction identifier
+          description: The id of the authorisation to be retrieved.
           required: true
-          schema:
-            type: integer
-            format: uint32
-            minimum: 1
-            maximum: 4294967295
-            example: 87349
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: string
-                enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED]
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /transaction/{regId}/txns:
-    get:
-      tags:
-        - Transaction
-        - PullView
-        - NonProduction
-      operationId: getTxns
-      summary: Retrieve the transactions, for the registry or Party identified by regId and other filtering parameters.
-      description: Retrieve the transactions for the registry or Party identified by regId and other filtering parameters.<br><br>
-        This is provides more powerful filtering function, and is primarily intended for management use,<br><br>
-        and not for registries.
-      parameters:
-        - name: regId
-          description: The identifier of the registry for which transactions are to be retrieved.
-            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: mode
-          schema:
-            type: string
-            enum: [REGISTRY, PARTY]
-          description: Specifies whether to return the registry's transactions, or the registry's Party's transactions.
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 999999999
-          description: The number of items to skip before starting to collect the transactions.<br>Used with the limit parameter, this can page the return results.
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 100
-          description: The number of transactions to return.<br>Used with the offset parameter, this can page the return results.
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [PROPOSED, VALIDATED, INVALIDATED, ACCEPTED, REJECTED, COMPLETED, TERMINATED, ALL]
-          description: Allows to filter by transaction status
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-          description: The minimum date-time of transactions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: The maximum date-time of transactions to return
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 100
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /transaction/{regId}/pendingTxns:
-    get:
-      tags:
-        - Transaction
-      operationId: getPendingTxns
-      summary: Retrieve the transactions that are pending processing by the registry identified by regId
-      description: Retrieve the transactions that are pending processing by the registry identified by regId.<br><br>
-        This operation is used by a registry to process transactions that have not yet been finalized,<br><br>
-        and where the registry is expected to undertake the relevant steps to progress the transaction.<br><br>
-        * If it is a sending registry, complete or terminate the transaction.<br><br>
-        * If it is a receiving registry, accept or reject the transaction.<br><br>
-        This operation can also be used by a registry to query the status of a pending transaction it is already aware of<br><br>
-        * If it is a sending registry, at any point before its finalization.<br><br>
-        * If it is a receiving registry, after it has been validated and before its finalization.<br><br>
-        The list of transactions returned is sorted in descending order or the proposed transaction data time (ie, the oldest transaction is first).<br><br>
-        Another operation (getfinalizedTxns) returns transactions with finalized statuses.
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the registry for which pending transactions are to be retrieved.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 100
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /transaction/{regId}/finalizedTxns:
-    get:
-      tags:
-        - Transaction
-      operationId: getFinalizedTxns
-      summary: Retrieve the finalized transactions for the registry identified by regId and other filtering parameters
-      description: Retrieve the finalized transactions for the registry identified by regId and other filtering parameters.<br><br>
-        finalized transactions where the registry is either the sender, or the receiver are retrieved.<br><br>
-        Another operation (getPendingTxns) returns transactions with not yet finalized statuses.
-      parameters:
-        - name: regId
-          description: The identifier of the registry for which transactions are to be retrieved.
-            Finalized transactions where the registry is either the sender, or the receiver are retrieved.
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 999999999
-          description: The number of items to skip before starting to collect the transactions
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 100
-          description: The number of transactions to return
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [COMPLETED, TERMINATED]
-          description: Allows to filter by transaction status
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-          description: The minimum date-time of transactions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: The maximum date-time of transactions to return
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 100
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-
-  /transaction/validation/{regId}:
-    post:
-      tags:
-        - Transaction
-        - Validation
-      operationId: configureValidation
-      summary: Configure a transaction validation
-      description: Configure a transaction validation - see communication standards.
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the registry attempting to process the transaction.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: validationId
-          schema:
-            type: string
-          description: The identifier of the validation to set - see Communication Standards
-        - in: query
-          name: registryRole
-          schema:
-            type: string
-            enum: [SENDER, RECEIVER, BOTH]
-          description: The registry's role in the transaction to be validated
-        - in: query
-          name: isOn
-          schema:
-            type: boolean
-          description: Whether to turn this validation on
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: string
-                description: returns a message saying validation is configured
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /message/{regId}:
-    post:
-      tags:
-        - Message
-      operationId: sendMsg
-      summary: Send a textual message to the interoperability hub
-      description: Send a textual message to the interoperability hub.<br>
-        If the message is sent successfully, the hub responds with a message id
-        and a date-time stamp.
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the registry sending the message.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: message
-          schema:
-            type: string
-          description: The content of the message
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  msgId:
-                    type: integer
-                    format: uint32
-                    minimum: 1
-                    maximum: 4294967295
-                    example: 87349
-                  timestamp:
-                    type: string
-                    format: date-time
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /message/{regId}/selectedMsgs:
-    get:
-      tags:
-        - Message
-        - PullView
-      operationId: getSelectedMsgs
-      summary: Retrieve the messages, for the registry identified by regId and other filtering parameters.
-      description: Retrieve the messages for the registry identified by regId and other filtering parameters.
-      parameters:
-        - name: regId
-          description: The identifier of the registry for which messages are to be retrieved.
-          in: path
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            format: int32
-            minimum: 0
-            maximum: 999999999
-          description: The number of messages to skip before starting to collect the messages
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 100
-          description: The number of messages to return
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [NEW, PULLED, ALL, DELETED]
-          description: Allows to filter by message status
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-          description: The minimum date-time of messages to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: The maximum date-time of messages to return
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  txns:
-                    type: array
-                    maxItems: 1000
-                    items:
-                      $ref: '#/components/schemas/Message'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /messages/{regId}/updateMsgStatus/{messageId}:
-    post:
-      tags:
-        - ITMO
-        - Notification
-      operationId: updateMsgStatus
-      summary: Update the message status of message identified message Id by the registry identified by regId.
-      description: Update the message status of the message identified by messageId by the registry identified by regId.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the registry updating the message status.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: messageId
-          in: path
-          description: The message identifier
-          required: true
-          schema:
-            type: integer
-            format: uint32
-            minimum: 1
-            maximum: 4294967295
-            example: 87349
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [NEW, PULLED, DELETED]
-          description: The new status of the message
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  notifications:
-                    type: array
-                    maxItems: 200
-                    items:
-                      $ref: '#/components/schemas/Notification'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-
-  /notifications/{regId}/notifyITMOUpdate/{itmoUniqueId}:
-    post:
-      tags:
-        - ITMO
-        - Notification
-      operationId: notifyITMOUpdate
-      summary: A registry of first transferring participating Party<br>
-        sends a notification of an update to the updateable attributes of the ITMO.
-      description: A registry of first transferring participating Party<br>
-        sends a notification of an update to the updateable attributes of the ITMO identified by itmoUniqueId.<br>
-        These are:<br>
-        - authorizationId<br>
-        - vintage.<br>
-        The registry identified by regId is the calling registry,<br>
-        and must be a registry of the first transferring participating Party of the ITMO,<br>
-        otherwise, the operation fails.
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the calling registry and must be a registry of the first transferring Party.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: itmoUniqueId
-          in: path
-          description: The unique identifier of the ITMOs are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/ITMOUniqueId"
-        - name: authorizationId
-          in: query
-          description: the updated value of the authorization identifier.<br>
-            If not provided, the authorization identifier is not changed.
-          required: false
           schema:
             type: string
             example: "GUY 2024-CA1"
-        - name: vintage
-          in: query
-          description: the updated value of the vintage.<br>
-            If not provided, the vintage is not changed.
-          required: false
-          schema:
-            type: integer
-            minimum: 2021
-            maximum: 9999
-            example: 2025
       responses:
         '200':
-          description: Successful operation, the notificationId of the created notification is returned.
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  caAuths:
+                    $ref: '#/components/schemas/CooperativeApproachAuthorization'
+                  itmoAuths:
+                    $ref: '#/components/schemas/ITMOAuthorization'
+                  entityAuths:
+                    $ref: '#/components/schemas/EntityAuthorization'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+    post:
+      tags:
+        - All
+      operationId: updateAuthorization
+      summary: Update an authorization,<br>
+        from the registry identified by regId.
+      description: Update an authorization, identified by authId,<br>
+        from the registry identified by regId.
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
+        - name: authId
+          in: path
+          description: The id of the authorisation to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+      requestBody:
+        description: The cooperative approach authorisation to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                caAuths:
+                  $ref: '#/components/schemas/CooperativeApproachAuthorization'
+                itmoAuths:
+                  $ref: '#/components/schemas/ITMOAuthorization'
+                entityAuths:
+                  $ref: '#/components/schemas/EntityAuthorization'
+      responses:
+        '200':
+          description: Successful operation
           content:
             application/json:
               schema:
                 type: integer
-                format: uint32
-                minimum: 1
-                maximum: 4294967295
-                example: 87349
         '400':
           description: Unsuccessful operation
           content:
@@ -1383,19 +263,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /notifications/{regId}/pendingNotifications:
+  /authorizations/{regId}:
     get:
       tags:
-        - ITMO
-        - Notification
-      operationId: getPendingNotifications
-      summary: Retrieve unacknowledged notifications for the Party owning the registry identified by regId.
-      description: Retrieve unacknowledged notifications for the Party owning the registry identified by regId.<br>
-        Notifications that with a status of ACKNOWLEDGED are not returned.
+        - All
+      operationId: getAuthorizations
+      summary: Retrieve all authorizations registered to the registry identified by regId.
+      description: Retrieve all authorizations registered to the registry identified by regId.<br>
+        This includes cooperative approach authorizations, ITMO authorizations, and entity authorizations.
       parameters:
         - name: regId
           in: path
-          description: The identifier of the registry for which pending notifications for its Party are to be retrieved.
+          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
@@ -1407,11 +286,21 @@ paths:
               schema:
                 type: object
                 properties:
-                  notifications:
+                  caAuths:
                     type: array
-                    maxItems: 200
+                    maxItems: 5000
                     items:
-                      $ref: '#/components/schemas/Notification'
+                      $ref: '#/components/schemas/CooperativeApproachAuthorization'
+                  itmoAuths:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/ITMOAuthorization'
+                  entityAuths:
+                    type: array
+                    maxItems: 5000
+                    items:
+                      $ref: '#/components/schemas/EntityAuthorization'
         '400':
           description: Unsuccessful operation
           content:
@@ -1425,86 +314,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /notifications/{regId}/acknowledgeNotification/{notificationId}:
-    post:
-      tags:
-        - ITMO
-        - Notification
-      operationId: acknowledgeNotification
-      summary: Acknowldge the notification by the Party owning the registry identified by regId.
-      description: Acknowledge the notification by the Party owning the registry identified by regId.<br>
-        with the notification identifier or notificationId.
-      parameters:
-        - name: regId
-          in: path
-          description: The identifier of the registry for which pending notifications for its Party are to be retrieved.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - name: notificationId
-          in: path
-          description: The notification identifier
-          required: true
-          schema:
-            type: integer
-            format: uint32
-            minimum: 1
-            maximum: 4294967295
-            example: 87349
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  notifications:
-                    type: array
-                    maxItems: 200
-                    items:
-                      $ref: '#/components/schemas/Notification'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /itmo/{regId}/{itmoUniqueId}:
+  /cooperativeApproach/{regId}/{caId}:
     get:
       tags:
-        - ITMO
-        - PullView
-      operationId: getITMO
-      summary: Retrieve ITMO with identifier itmoUniqueId, held by the registry identified by regId.
-      description: Retrieve ITMO with identifier itmoUniqueId, held by the registry identified by regId.<br>
+        - All
+      operationId: getCooperativeApproach
+      summary: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.
+      description: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.<br>
       parameters:
         - name: regId
           in: path
-          description: The registry identifier of the participating Party registry for which the ITMOs are to be returned.
+          description: The registry identifier of the participating Party registry for that authorised the cooperative approach.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - name: itmoUniqueId
+        - name: caId
           in: path
-          description: The unique identifier of the ITMOs are to be returned.
+          description: The id of the cooperative approach be retrieved.
           required: true
           schema:
-            $ref: "#/components/schemas/ITMOUniqueId"
+            type: string
+            example: "CA0002"
       responses:
         '200':
           description: Successful operation.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ITMO'
+                $ref: '#/components/schemas/CooperativeApproach'
         '400':
           description: Unsuccessful operation
           content:
@@ -1518,27 +355,70 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /itmos/{regId}:
-    get:
+    post:
       tags:
-        - ITMO
-        - PullView
-      operationId: getITMOs
-      summary: Retrieve all ITMOs registered to the registry, or the registry's Party, identified by regId.
-      description: Retrieve all ITMOs registered to the registry, or the registry's Party, identified by regId.<br>
+        - All
+      operationId: updateCooperativeApproach
+      summary: Update cooperative approach identified by caId,<br>
+        from the registry identified by regId.
+      description: Update cooperative approach identified by caId,<br>
+        from the registry identified by regId,<br>
+        with attributes from the cooperative approach in the requestBody.<br>
       parameters:
         - name: regId
           in: path
-          description: The registry identifier of the participating Party registry for which the ITMOs are to be returned.
+          description: The registry identifier of the participating Party registry that authorised the cooperative approach.
           required: true
           schema:
             $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: mode
+        - name: caId
+          in: path
+          description: The id of the cooperative approach be updated.
+          required: true
           schema:
             type: string
-            enum: [REGISTRY, PARTY]
-          description: Specifies whether to return the registry's ITMOs, or the registry's Party's ITMOs.
+            example: "CA0002"
+      requestBody:
+        description: The cooperative approach authorisation to be registered.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CooperativeApproach'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /cooperativeApproaches/{regId}:
+    get:
+      tags:
+        - All
+      operationId: getCooperativeApproaches
+      summary: Retrieve all cooperative approaches registered to the registry identified by regId.
+      description: Retrieve all cooperative approaches registered to the registry identified by regId.<br>
+      parameters:
+        - name: regId
+          in: path
+          description: The registry identifier of the participating Party registry for which the cooperative approaches are to be returned.
+          required: true
+          schema:
+            $ref: "#/components/schemas/RegistryId"
       responses:
         '200':
           description: Successful operation
@@ -1547,175 +427,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  itmos:
+                  cooperativeApproaches:
                     type: array
                     maxItems: 5000
                     items:
-                      $ref: '#/components/schemas/ITMO'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /itmos/firstTransferringParty/{regId}:
-    get:
-      tags:
-        - ITMO
-        - PullView
-      operationId: getFirstTransferringPartyITMOIds
-      summary: Retrieve all ITMO Ids where the Party owning the registry identified by regId is the first transferring Party.
-      description: Retrieve all ITMO Ids where the Party owning the registry identified by regId is the first transferring Party.<br>
-        Note that only the ITMO ids are returned, the entire ITMO, as the first transferring Party does not need to know which Party or registry is currently holding the ITMO.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the ITMOs are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  itmos:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/ITMOUniqueId'
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /itmos/export/holdings/{regId}:
-    get:
-      tags:
-        - ITMO
-        - Export
-      operationId: exportAEFHoldings
-      summary: Export registry's Party's ITMO holdings in AEF.
-      description: Export the ITMOs held by the registry's Party identified by regId in Agreed Electronic Format (AEF) in an Excel file.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the ITMOs are to be exported.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: mode
-          schema:
-            type: string
-            enum: [REGISTRY, PARTY]
-          description: Specifies whether to export the registry's ITMO holdings, or the registry's Party's ITMO holdings.<br>
-            Default is PARTY.
-        - in: query
-          name: firstTransferredOnly
-          schema:
-            type: boolean
-          description: Export only ITMOs that have been first transferred.<br>
-            Default is TRUE.
-        - in: query
-          name: cutOffDate
-          schema:
-            type: string
-            format: date-time
-          description: Cut-off date and time of the ITMOs holdings to export<br>
-            The ITMO holdings as the result of all Completed transactions<br>
-            until the cut-off date.<br>
-            If not specified, midnight, December 31st of the year preceding the current year applies<br>
-            (i.e., an AEF export of the previous calendar year is expected)
-      responses:
-        '200':
-          description: An Excel file containing the holdings in AEF.
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /itmos/export/actions/{regId}:
-    get:
-      tags:
-        - Transaction
-        - Export
-      operationId: exportActions
-      summary: Export registry's Party's actions in AEF.
-      description: Export the ITMOs held by the registry's Party identified by regId in Agreed Electronic Format (AEF) in an Excel file.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry whose Party's actions are to be exported.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
-        - in: query
-          name: mode
-          schema:
-            type: string
-            enum: [REGISTRY, PARTY]
-          description: Specifies whether to export the registry's actions, or the registry's Party's actions.<br>
-            Default is PARTY.
-        - in: query
-          name: from
-          schema:
-            type: string
-            format: date-time
-          description: The starting date-time of actions to return
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: The ending date of actions to return
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            format: int32
-            minimum: 1
-            maximum: 1000
-          description: The maximum number of actions to return
-      responses:
-        '200':
-          description: An Excel file containing the actions in AEF.
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
+                      $ref: '#/components/schemas/CooperativeApproach'
         '400':
           description: Unsuccessful operation
           content:
@@ -1731,39 +447,6 @@ paths:
 
 components:
   schemas:
-    Registry:
-      type: object
-      required:
-        - id
-        - contacts
-        - operationalStatus
-      properties:
-        id:
-          $ref: "#/components/schemas/RegistryId"
-        contacts:
-          type: array
-          maxItems: 10
-          description: The list of contacts for the registry.<br>
-            The order attribute of a contact determines the order of presentation,<br>
-            and must start with 1, 2, 3 ... , without gaps and sorted ascendingly.<br><br>
-            At least two contacts must be provided (primary and alternate), with order 1 and 2 respectively.
-          items:
-            $ref: "#/components/schemas/Contact"
-        operationalStatus:
-          type: string
-          enum: [OPERATIONAL, NON-OPERATIONAL, TXNS_DISALLOWED]
-          example: OPERATIONAL
-        lastmodifieddatetime:
-          type: string
-          format: date-time
-          description: The date and time of the most recent change to the registry transactions, accounts or holdings.<br>
-            This is used to set the cut-off date during the export.
-          example: "2026-07-21T17:22:28Z"
-        creationdatetime:
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-      additionalProperties: false
 
     RegistryId:
       type: string
@@ -1773,250 +456,13 @@ components:
         and two digit registry serial number.
       example: "DEU00"
 
-    Account:
-      type: object
-      required:
-        - registryId
-        - id
-      properties:
-        registryId:
-          $ref: "#/components/schemas/RegistryId"
-        accountId:
-          type: string
-          pattern: '^[A-Z]{2}\d{2}[a-zA-Z0-9]{4,30}$'
-          description: Identifier of an Account.<br>
-            IBAN conformant account number:<br>
-            -	Country code (using ISO 3166-1 alpha-2) of the Party holding the account – two letters,<br>
-            -	Check digits (using MOD-97-10 as per ISO/IEC 7064:2003)  – two digits, and<br>
-            -	Basic Bank Account Number (BBAN) – 4 to 30 alphanumeric characters.
-          example: "IE64IRCE92050112345678"
-        accountType:
-          type: integer
-          description: The value of the Account Type.<br>
-            Refer to common nomenclatures for defined Account Types and their values.
-          minimum: 100
-          maximum: 999
-        labels:
-          type: array
-          maxItems: 10
-          items:
-            type: string
-            example: "My favorite account"
-        suppinfo:
-          type: string
-          example: "Find a reasonably good example..."
-        lastmodifieddatetime:
-          type: string
-          format: date-time
-          description: The date and time of the last transaction proposed from this account,<br><br>
-            or accepted/rejected/cancelled with this account as recipient
-          example: "2024-07-21T17:32:28Z"
-        creationdatetime:
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-      additionalProperties: false
-
-    Contact:
-      type: object
-      required:
-        - familyName
-        - givenNames
-        - email
-        - phone
-        - role
-        - order
-      properties:
-        familyName:
-          type: string
-          example: "Halleux"
-        givenNames:
-          type: string
-          example: "Jean-Francois"
-        email:
-          type: string
-          example: "jhalleux@unfccc.int"
-        phone:
-          type: string
-          example: "00498151809"
-        role:
-          type: string
-          example: "Alternate registry administrator"
-        order:
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 10
-          example: 3
-      additionalProperties: false
-
-    Transaction:
-      type: object
-      description: A ProposedTransaction that has been given an txnId by the hub after it has been proposed (see ProposedTransaction)
-      required:
-        - txnId
-        - proposedTxn
-      properties:
-        txnId:
-          type: integer
-          format: uint32
-          description: Identifier for the transaction.  TxnIds are unique across the international registry ecosystem.
-          minimum: 0
-          maximum: 4294967295
-          example: 5869444
-        proposedTxn:
-          $ref: '#/components/schemas/ProposedTransaction'
-      additionalProperties: false
-
-    ProposedTransaction:
-      type: object
-      description: A registry proposes an transaction to the hub.<br>
-        Once the hub validates the proposedTxn, it is given an txnId (see Txn schema).<br>
-        An proposed transaction to be performed on a block of ITMOs.<br>
-        An transfer transaction consists of the transfer of at least one ITMO from one account to another account,<br>
-        in the same or in a different registry.<br>
-        An acquisition transaction consits of the acquisition of at least one ITMO from one account to another account,<br>
-        in different registries.<br>
-        An authorisation/issuance/creation transaction must specify the same origin and destination account.<br>
-        All other transaction must specify different origin and destination accounts.
-      required:
-        - fromRegistry
-        - fromAccount
-        - toRegistry
-        - toAccount
-        - txnType
-        - itmos
-      properties:
-        fromRegistry:
-           $ref: "#/components/schemas/RegistryId"
-        fromAccount:
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 999999999
-          example: 7564
-        toRegistry:
-          $ref: "#/components/schemas/RegistryId"
-        toAccount:
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 999999999
-          example: 38444
-        isFirstTransfer:
-          type: boolean
-          description: True if this transaction is the first transfer for the ITMOs.<br>
-            ITMOs proposed in this transaction must not have already undergone a first transfer.
-        txnType:
-          type: integer
-          description: The action type code. See Common Nomenclatures for action type codes, and their corresponding values and descriptions.
-          example: 1
-        itmos:
-          type: array
-          description: ITMOs that are the subject of the transaction.<br>
-            Note that a transaction can contain multiple blocks of ITMOs.
-          items:
-            $ref: '#/components/schemas/ITMO'  
-        status:
-          type: string
-          enum: [PROPOSED, ACCEPTED, REJECTED, CANCELLED]
-          example: ACCEPTED
-        statusdatetime:
-          type: string
-          format: dateTime
-          example: "2024-07-21T17:32:28Z"
-        errors:
-          type: array
-          description: Errors found in this transaction proposal
-          items:
-            $ref: "#/components/schemas/TransactionError"
-        warnings:
-          type: array
-          description: Warnings found in this transaction proposal
-          items:
-            $ref: "#/components/schemas/TransactionWarning"
-        labels:
-          type: array
-          maxItems: 10
-          items:
-            type: string
-            example: "My favorite transaction"
-        externalReference:
-          type: string
-          example: "External reference information, such as a contract number."
-        suppinfo:
-          type: string
-          example: "Find a good example of suppl. information ..."
-        lastmodifieddatetime:
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        creationdatetime: # The date time of the PROPOSED status is always here...
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-      additionalProperties: false
-
-    TransactionError:
-      type: object
-      description: An error that causes a proposed transaction to be invalid.<br>
-        The hub will invalidate the proposed transaction due to this error.
-      required:
-        - errorCode
-        - errorDescription
-        - errorSpecifics
-      properties:
-        errorCode:
-          description: Standard error code for this error.<br>
-            Refer to common nomenclatures.
-          type: integer
-          example: 1
-        errorDescription:
-          description: Standard error description for this error.<br>
-            Refer to common nomenclatures.
-          type: string
-          example: "Receiving ITMOs locked by another transaction."
-        errorSpecifics:
-          description: Specific circumstances for error in this transaction proposal.
-          type: string
-          example: "ITMOs DEU342-5341 are locked by another transaction."
-      additionalProperties: false
-
-    TransactionWarning:
-      type: object
-      description: An warning regarding a proposed transaction<br>
-        that may create inconsistencies in the ITMO ecosystem.<br>
-        The hub will log the warning in the proposed transaction,<br>
-        but will consider the transaction to be valid.<br>
-        It is up to the registries to reject or terminate the transaction.
-      required:
-        - warningCode
-        - warningDescription
-        - warningSpecifics
-      properties:
-        warningCode:
-          description: Standard warning code for this warning.<br>
-            Refer to common nomenclatures.
-          type: integer
-          example: 1
-        warningDescription:
-          description: Standard warning description for this warning.<br>
-            Refer to common nomenclatures.
-          type: string
-          example: "The proposed ITMOs exceed the quantity of CO2 authorised for this cooperative approach."
-        warningSpecifics:
-          description: Specific circumstances for error in this transaction proposal.
-          type: string
-          example: "Proposed issuance of ITMOs BEL342-15341 under CA998 exceed the 10000 tonnes of CO2 authorized for CA998."
-      additionalProperties: false
-
     Authorization:
       type: object
       description: Abstract superclass for authorisations
       required:
         - authorizingPartyId
-        - authorizationRef
-        - authorizationDate
+        - authorisationId
+        - authorisationDate
         - version
         - lastChangeDate
         - startDate
@@ -2030,9 +476,11 @@ components:
             as per common nomenclatures.
           type: string
           example: "BEL"
-        authorizationRef:
-           $ref: '#/components/schemas/AuthorizationRef'
-        authorizationDate:
+        authorisationId:
+          description: Authorization Id as assigned by the participating Party reporting the authorisation.
+          type: string
+          example: "GUY 2024-CA1"
+        authorisationDate:
           description: Datestamp of the authorisation of the cooperative approach.
             A cooperative approach may be authorised multiple times.  Only the latest is valid.
           type: string
@@ -2118,23 +566,6 @@ components:
             maxLength:  255
       additionalProperties: false
 
-    AuthorizationRef:
-      type: object
-      required:
-        - authorizationId
-        - authorizationVersion
-      description: Reference to the current authorization of the ITMO.
-      properties:
-        authorizationId:
-          description: Authorization Id as assigned by the participating Party reporting the authorisation.
-          type: string
-          example: "GUY 2024-CA1"
-        authorizationVersion:
-          description: Version number of the authorization.
-          type: string
-          example: "1.0"
-      additionalProperties: false
-
     CooperativeApproachAuthorization:
       type: object
       required:
@@ -2193,14 +624,14 @@ components:
             maximum: 9999
             example: 2025
         authorizationRegistryId:
-#         description: The registry the participating Party has access to, for tracking and reccording ITMOs.
-          $ref: "#/components/schemas/RegistryId"
+          description: The registry the participating Party has access to, for tracking and reccording ITMOs.
+          #ref: "#/components/schemas/RegistryId"
         underlyingCooperativeApproaches:
           description: Details, including registries and frameworks used by the ITMOs.
           type: array
           items:
-#           description: Relevant registries in any underlying regulations, frameworks, standards, or procedures.
-            $ref: "#/components/schemas/UnderlyingCooperativeApproach"
+            description: Relevant registries in any underlying regulations, frameworks, standards, or procedures.
+            #ref: "#/components/schemas/UnderlyingCooperativeApproach"
       additionalProperties: false
 
     UnderlyingCooperativeApproach:
@@ -2210,8 +641,8 @@ components:
         - approachName
       properties:
         registryId:
-#         description: The identifier of the relavant registry in a underlying approach
-          $ref: "#/components/schemas/RegistryId"
+          description: The identifier of the relavant registry in a underlying approach
+          #ref: "#/components/schemas/RegistryId"
         approachName:
           description: Name of the underlying regulation, framework, standard, or procedure<br>
             under which the relevant registry operates.
@@ -2237,7 +668,6 @@ components:
           items:
             type: string
       additionalProperties: false
-
 
     CooperativeApproach:
       type: object
@@ -2384,257 +814,6 @@ components:
           type: string
           example: ""
       additionalProperties: false
-
-
-    Message:
-      type: object
-      description: A Message to a Party's registry.
-      required:
-        - registryId
-        - messageId
-        - messageText
-        - messageStatus
-        - createdDateTime
-      properties:
-        registryId:
-          $ref: "#/components/schemas/RegistryId"
-        messageId:
-          type: integer
-          format: uint32
-          description: Identifier for the message.<br>
-            Message identifiers for a Party are never reused.
-          minimum: 0
-          maximum: 4294967295
-          example: 5869444
-        messageText:
-          description: The text of the message
-          type: string
-        messageStatus:
-          description: The status of the notification
-          type: string
-          enum: [NEW, PULLED, DELETED]
-        createdDateTime:
-          description:  Date-timestamp of creation of the notification.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        firstRetrievedDateTime:
-          description:  Date-timestamp of first retrieval of the notification.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        lastRetrievedDateTime:
-          description:  Date-timestamp of more recent retrieval of the notification.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-      additionalProperties: false
-
-
-    Notification:
-      type: object
-      description: A Notification to a Party's registry for the Party to acknowledge (through one of its registries).<br>
-        This includes notification of an updated value of attributes of ITMOs held by the Party
-      required:
-        - partyId
-        - notificationId
-        - notificationType
-        - notificationStatus
-        - createdDateTime
-      properties:
-        partyId:
-          description: ISO-3166-1 alpha-3 code of the participating Party being notified,<br>
-            as per common nomenclatures.
-          type: string
-          example: "BEL"
-        notificationId:
-          type: integer
-          format: uint32
-          description: Identifier for the notification.  Notification identifiers for a Party are never reused.
-          minimum: 0
-          maximum: 4294967295
-          example: 5869444
-        notificationStatus:
-          description: The status of the notification
-          type: string
-          enum: [CREATED, RETRIEVED, ACKNOWLEDGED]
-        createdDateTime:
-          description:  Date-timestamp of creation of the notification.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        firstRetrievedDateTime:
-          description:  Date-timestamp of first retrieval of the notification.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        lastRetrievedDateTime:
-          description:  Date-timestamp of more recent retrieval of the notification.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        acknowledgedDateTime:
-          description:  Date-timestamp of acknowledgment of the notification.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        notificationType:
-          description: The type of notification
-          type: string
-          enum: [AUTHIDCHANGE, VINTAGECHANGE]
-        itmoUniqueId:
-#         description: The unique identifier of the ITMO(s) that has been updated.
-          $ref: "#/components/schemas/ITMOUniqueId"
-        newAuthorizationId:
-          description: the updated value of the authorization identifier.<br>
-            If not null, the authorization identifier is not changed.
-          type: string
-          example: "GUY 2024-CA1"
-        newVintage:
-          description: the updated value of the vintage.<br>
-            If not null, the vintage is not changed.
-          type: integer
-          minimum: 2021
-          maximum: 9999
-          example: 2025
-      additionalProperties: false
-
-
-    ITMO:
-      type: object
-      required:
-        # Properties required by decision 6/CMA.4, annex I, para.5, in the order specified in the decision
-        - cooperativeApproachId
-        - authorizationRef
-        - itmoUniqueId
-        - firstTransferringParty
-        - vintage
-        - mitigationOutcomeDocHashes
-        - partyITMORegistry
-      properties:
-        cooperativeApproachId:
-          description: Cooperative approach under which ITMOs were authorised.
-          type: string
-          example: "CA0002"
-        authorizationRef:
-           $ref: '#/components/schemas/AuthorizationRef'
-        itmoUniqueId:
-#         description: The unique identifier of the ITMO(s).
-          $ref: "#/components/schemas/ITMOUniqueId"
-        firstTransferringParty:
-          description: ISO-3166-1 alpha-3 code of participating Party in which the mitigation outcomes occurred as per common nomenclatures.
-            Refer to common nomenclalture for definition of \"First Transfer\".
-          type: string
-          example: "FRA"
-        vintage:
-          description: Year in which mitigation outcome occured
-          type: integer
-          minimum: 2021
-          maximum: 9999
-          example: 2025
-        mitigationOutcomeDocHashes:
-          description: (required by Decision 6/CMA.4, annex I, para.4).<br>
-            ITMOs must be traceable to their mitigation outcomes.<br><br>
-            This array contains the SHA256 hashes of all mitigation outcome documents for this cooperativeApproach.<br><br>
-            The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(cooperativeApproachId, sha256)<br>
-            that will return the URL of the MO document corresponding to the hash.<br><br>
-            This is a subset of the mitigation outcomes of the ITMOs cooperative approach.
-          type: array
-          minItems: 1
-          items:
-            description: SHA256 hash of a single mitigation outcome document
-            type: string
-            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        partyITMORegistry:
-#         description: The participating Party registry that currently owns the ITMO(s).
-          $ref: "#/components/schemas/RegistryId"
-        suppInfo:
-          description: Any supplementary information the current owning Party may need to attach to the ITMOs
-            This should be an append only property.
-            Only the current owning Party should be able append supplementary information.
-          type: array
-          items:
-            type: string
-            maxLength:  255
-        lastanyTxnDateTime:
-          description:  Date-timestamp of the last attempted transaction.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        lastAcceptedTxnDateTime:
-          description:  Date-timestamp of last successful transation.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        modifiedDateTime:
-          description:  Date-timestamp of last modification of any of the ITMO(s) elements.
-            Kept in ITMO instead of relying on hosting system to survive migration across hosting solutions.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-        createdDateTime:
-          description:  Date-timestamp of creation of the ITMO(s).
-            Kept in ITMO instead of relying on hosting system to survive migration across hosting solutions.
-          type: string
-          format: date-time
-          example: "2024-07-21T17:32:28Z"
-      additionalProperties: false
-
-    ITMOUniqueId:
-      type: object
-      required:
-        - originatingPartyRegistryId
-        - firstId
-        - lastId
-      description: The unique identifier of an ITMO.
-      properties:
-        originatingPartyRegistryId:
-#         description: The participating Party registry that issued the ITMO(s).
-          $ref: "#/components/schemas/RegistryId"
-        firstId:
-          description: Identifier of the first ITMO in the block, commencing with firstId, ending with lastId.<br>
-            Blocks from the same originating Party registry cannot overlap.
-          type: integer
-          format: int32
-          example: 1
-        lastId:
-          description: Identifier of the last ITMO in the block, commencing with firstId, ending with lastId.<br>
-            Blocks from the same originating Party registry cannot overlap.
-          # Note: decision 6/CMA.4, annex I, para.5(d) requires a single unique identifier in ITMO identifier,
-          # but as all ITMOs are considered as blocks, the last identifier of the block is required.
-          type: integer
-          format: int32
-          example: 7144
-      additionalProperties: false
-
-
-    AccountITMOAssociation:
-      type: object
-      required:
-        - partyITMORegistry
-        - accountId
-        - itmoId
-      description: An association between an account and an ITMO.<br>
-        Used to find the account holding an ITMO,<br>
-        and the ITMOs contained in an account.<br>
-        This could be implemented as an associative table in a database.
-      properties:
-        partyITMORegistry:
-#         description: The participating Party registry that currently owns the ITMO(s).
-          $ref: "#/components/schemas/RegistryId"
-        accountId:
-          description: the identifier of the account currently holding the ITMOs.
-            The account id must be unique across a registry.
-          type: integer
-          format: int32
-          minimum: 1
-          maximum: 999999999
-          example: 7564
-        itmoId:
-#         description: The unique identifier of the ITMO(s).
-          $ref: "#/components/schemas/ITMOUniqueId"
-      additionalProperties: false
-
 
     Errors:
       type: object
