@@ -123,7 +123,77 @@ paths:
       summary: Submit an Updated Initial Report
       description: Submit an Updated Initial Report
       requestBody:
-        description: the updated initial report submitted
+        description: the document submitted
+        required: true
+        content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /submission/submitAnnualInformation:
+    post:
+      tags:
+        - Submission
+      operationId: submitAnnualInformation
+      summary: Submit Annual Information in AEF
+      description: Submit Annual Information in AEF
+      requestBody:
+        description: the document submitted
+        required: true
+        content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /submission/submitRegularInformation:
+    post:
+      tags:
+        - Submission
+      operationId: submitRegularInformation
+      summary: Submit Regular Information
+      description: Submit Regular Information
+      requestBody:
+        description: the document submitted
         required: true
         content:
             application/octet-stream:
