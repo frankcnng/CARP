@@ -123,7 +123,7 @@ paths:
       summary: Submit an Updated Initial Report
       description: Submit an Updated Initial Report
       requestBody:
-        description: the document submitted
+        description: the updated initial report submitted
         required: true
         content:
             application/octet-stream:
