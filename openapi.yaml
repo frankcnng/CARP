@@ -1,12 +1,17 @@
 openapi: 3.0.3
 info:
-  title: API for the Centralized Accounting and Reporting Platform (CARP) (Work In Progress)
-  description: 
-     <b>Introduction</b>
-     <br><br>The Centralized Accounting and Reporting Platform (CARP) supports and facilitates the submission of reports and the publication of non-confidential information according to decision 2/CMA.3, annex, chapter IV (Reporting).
-     <br><br><b>Current status</b>
-     <br><br>This API is currently in development.
   version: 0.0.1
+  title: >-
+    API for the Centralized Accounting and Reporting Platform (CARP) (Work In
+    Progress)
+  description: >-
+    <b>Introduction</b>
+    <br><br>The Centralized Accounting and Reporting
+    Platform (CARP) supports and facilitates the submission of reports and the
+    publication of non-confidential information according to decision 2/CMA.3,
+    annex, chapter IV (Reporting).
+    <br><br><b>Current status</b>     
+    <br><br>This API is currently in development.
   contact: 
     name: UNFCCC secretariat (Centralized Accounting and Reporting Platform (CARP)
     email: CARP-support@unfccc.int
@@ -17,6 +22,9 @@ info:
   x-audience: external-public
   x-api-id: unused-for-this-api-0
 servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/none-db2/CARP/0.0.1
   - url: TBD
     description: Production server (uses live data !)
   - url: TBD
@@ -24,8 +32,13 @@ servers:
 tags:
   - name: All
     description: All operations
-  
-paths: 
+  - name: Submission
+    description: Submission operations
+  - name: Authorization
+    description: Authorization operations
+  - name: CooperationApproach
+    description: Cooperative Approach operations
+paths:
   /serverStatus:
     get:
       tags:
@@ -67,10 +80,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /authorization/{regId}/registerCooperativeApproachAuth:
+  /submission/submitInitialReport:
     post:
       tags:
-        - All
+        - Submission
+      operationId: submitInitialReport
+      summary: Submit an Initial Report
+      description: Submit an Initial Report
+      requestBody:
+        description: the document submitted
+        required: true
+        content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /submission/submitUpdatedInitialReport:
+    post:
+      tags:
+        - Submission
+      operationId: submitUpdatedInitialReport
+      summary: Submit an Updated Initial Report
+      description: Submit an Updated Initial Report
+      requestBody:
+        description: the document submitted
+        required: true
+        content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorization/registerCooperativeApproachAuth:
+    post:
+      tags:
+        - Authorization
       operationId: registerCooperativeApproachAuth
       summary: Register authorised cooperative approach,<br>
         from the registry identified by regId.
@@ -78,13 +161,6 @@ paths:
         This will be performed by the secretariat when it registers the CA authorisation with the CARP.<br>
         This enables the CAs and ITMOs for interoperability.<br>
         This will create the CooperativeApproachAuthorization and the CooperativeApproach within the International Registry.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The cooperative approach authorisation to be registered.
         required: true
@@ -112,10 +188,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /authorization/{regId}/registerITMOAuth:
+  /authorization/registerITMOAuth:
     post:
       tags:
-        - All
+        - Authorization
       operationId: registerITMOAuth
       summary: Register the authorisation of ITMOs from the registry identified by regId.
       description: Register authorised ITMOs, from the registry identified by regId.<br>
@@ -124,13 +200,6 @@ paths:
         containing an authorized C02 quantity, a cooperative approach id, and an authorization id.<br>
         When the ITMOs are subsequently issued by the registry, it must be consistent with this information.<br>
         If the ITMO's cooperative approach id is not found, or is not yet authorised, the operation fails.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
       requestBody:
         description: The ITMOs to be registered.
         required: true
@@ -158,21 +227,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /authorization/{regId}/{authId}:
+  /authorization/{authId}:
     get:
       tags:
-        - All
+        - Authorization
       operationId: getAuthorization
       summary: Retrieve authorization with identifier authId, registered to the registry identified by regId.
       description: Retrieve authorization with identifier authId, registered to the registry identified by regId.<br>
         Depending on what was authorised, different properties in the response will be populated.
       parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
         - name: authId
           in: path
           description: The id of the authorisation to be retrieved.
@@ -209,19 +272,13 @@ paths:
 
     post:
       tags:
-        - All
+        - Authorization
       operationId: updateAuthorization
       summary: Update an authorization,<br>
         from the registry identified by regId.
       description: Update an authorization, identified by authId,<br>
         from the registry identified by regId.
       parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry in which the contact is to be inserted.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
         - name: authId
           in: path
           description: The id of the authorisation to be retrieved.
@@ -263,21 +320,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /authorizations/{regId}:
+  /authorizations/:
     get:
       tags:
-        - All
+        - Authorization
       operationId: getAuthorizations
       summary: Retrieve all authorizations registered to the registry identified by regId.
       description: Retrieve all authorizations registered to the registry identified by regId.<br>
         This includes cooperative approach authorizations, ITMO authorizations, and entity authorizations.
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the authorizations are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
       responses:
         '200':
           description: Successful operation
@@ -314,20 +364,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /cooperativeApproach/{regId}/{caId}:
+  /cooperativeApproach/{caId}:
     get:
       tags:
-        - All
+        - CooperativeApproach
       operationId: getCooperativeApproach
       summary: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.
       description: Retrieve cooperative approach with identifier caId, registered to the registry identified by regId.<br>
       parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for that authorised the cooperative approach.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
         - name: caId
           in: path
           description: The id of the cooperative approach be retrieved.
@@ -357,7 +401,7 @@ paths:
 
     post:
       tags:
-        - All
+        - CooperativeApproach
       operationId: updateCooperativeApproach
       summary: Update cooperative approach identified by caId,<br>
         from the registry identified by regId.
@@ -365,12 +409,6 @@ paths:
         from the registry identified by regId,<br>
         with attributes from the cooperative approach in the requestBody.<br>
       parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry that authorised the cooperative approach.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
         - name: caId
           in: path
           description: The id of the cooperative approach be updated.
@@ -405,20 +443,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /cooperativeApproaches/{regId}:
+  /cooperativeApproaches/:
     get:
       tags:
-        - All
+        - CooperativeApproach
       operationId: getCooperativeApproaches
       summary: Retrieve all cooperative approaches registered to the registry identified by regId.
       description: Retrieve all cooperative approaches registered to the registry identified by regId.<br>
-      parameters:
-        - name: regId
-          in: path
-          description: The registry identifier of the participating Party registry for which the cooperative approaches are to be returned.
-          required: true
-          schema:
-            $ref: "#/components/schemas/RegistryId"
       responses:
         '200':
           description: Successful operation
