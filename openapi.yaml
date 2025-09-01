@@ -80,21 +80,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /submission/submitInitialReport:
+  /submission/submitReport:
     post:
       tags:
         - Submission
-      operationId: submitInitialReport
-      summary: Submit an Initial Report
-      description: Submit an Initial Report
+      operationId: submitReport
+      summary: Submit a report
+      description: Submit a report document with metadata indicating the type of report.
       requestBody:
-        description: the document submitted
+        description: the multipart form containing the file and the metadata indicating what type of report is submitted.
         required: true
         content:
-            application/octet-stream:
+            multipart/form-data:
               schema:
-                type: string
-                format: binary
+                type: object
+                properties:
+                  file:
+                    type: string
+                    format: binary
+                  submissionType:
+                    type: string
       responses:
         '200':
           description: Successful operation
@@ -115,129 +120,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /submission/submitUpdatedInitialReport:
-    post:
-      tags:
-        - Submission
-      operationId: submitUpdatedInitialReport
-      summary: Submit an Updated Initial Report
-      description: Submit an Updated Initial Report
-      requestBody:
-        description: the document submitted
-        required: true
-        content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /submission/submitAnnualInformation:
-    post:
-      tags:
-        - Submission
-      operationId: submitAnnualInformation
-      summary: Submit Annual Information in AEF
-      description: Submit Annual Information in AEF
-      requestBody:
-        description: the document submitted
-        required: true
-        content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /submission/submitRegularInformation:
-    post:
-      tags:
-        - Submission
-      operationId: submitRegularInformation
-      summary: Submit Regular Information
-      description: Submit Regular Information
-      requestBody:
-        description: the document submitted
-        required: true
-        content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-
-  /authorization/registerCooperativeApproachAuth:
+  /authorization/registerAuthorization:
     post:
       tags:
         - Authorization
-      operationId: registerCooperativeApproachAuth
-      summary: Register authorised cooperative approach,<br>
-        from the registry identified by regId.
-      description: Register authorised cooperative approach, from the registry identified by regId.<br>
+      operationId: registerAuthorization
+      summary: Register authorisation from Party submitting request.
+      description: Register cooperative approach authorization from the Party submitting the request.<br>
         This will be performed by the secretariat when it registers the CA authorisation with the CARP.<br>
         This enables the CAs and ITMOs for interoperability.<br>
-        This will create the CooperativeApproachAuthorization and the CooperativeApproach within the International Registry.
+        This will create the CooperativeApproachAuthorization and the CooperativeApproach within the A6 DB.
       requestBody:
-        description: The cooperative approach authorisation to be registered.
+        description: The authorisation to be registered.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CooperativeApproachAuthorization'
+              $ref: '#/components/schemas/Authorization'
       responses:
         '200':
           description: Successful operation
@@ -258,44 +157,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Errors'
 
-  /authorization/registerITMOAuth:
-    post:
-      tags:
-        - Authorization
-      operationId: registerITMOAuth
-      summary: Register the authorisation of ITMOs from the registry identified by regId.
-      description: Register authorised ITMOs, from the registry identified by regId.<br>
-        This enables ITMOs for interoperability by to be issued via a Issuance Action Proposal from the registry.<br>
-        Note that this operation does not create ITMOs, in creates an ITMO Authorization,<br>
-        containing an authorized C02 quantity, a cooperative approach id, and an authorization id.<br>
-        When the ITMOs are subsequently issued by the registry, it must be consistent with this information.<br>
-        If the ITMO's cooperative approach id is not found, or is not yet authorised, the operation fails.
-      requestBody:
-        description: The ITMOs to be registered.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ITMOAuthorization'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: integer
-        '400':
-          description: Unsuccessful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        default:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Errors'
 
   /authorization/{authId}:
     get:
@@ -322,11 +183,7 @@ paths:
                 type: object
                 properties:
                   caAuths:
-                    $ref: '#/components/schemas/CooperativeApproachAuthorization'
-                  itmoAuths:
-                    $ref: '#/components/schemas/ITMOAuthorization'
-                  entityAuths:
-                    $ref: '#/components/schemas/EntityAuthorization'
+                    $ref: '#/components/schemas/Authorization'
         '400':
           description: Unsuccessful operation
           content:
@@ -351,13 +208,13 @@ paths:
       parameters:
         - name: authId
           in: path
-          description: The id of the authorisation to be retrieved.
+          description: The id of the authorisation to be updated.
           required: true
           schema:
             type: string
             example: "GUY 2024-CA1"
       requestBody:
-        description: The cooperative approach authorisation to be registered.
+        description: The authorisation to be updated.
         required: true
         content:
           application/json:
@@ -365,11 +222,7 @@ paths:
               type: object
               properties:
                 caAuths:
-                  $ref: '#/components/schemas/CooperativeApproachAuthorization'
-                itmoAuths:
-                  $ref: '#/components/schemas/ITMOAuthorization'
-                entityAuths:
-                  $ref: '#/components/schemas/EntityAuthorization'
+                  $ref: '#/components/schemas/Authorization'
       responses:
         '200':
           description: Successful operation
@@ -406,21 +259,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  caAuths:
+                  auths:
                     type: array
                     maxItems: 5000
                     items:
-                      $ref: '#/components/schemas/CooperativeApproachAuthorization'
-                  itmoAuths:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/ITMOAuthorization'
-                  entityAuths:
-                    type: array
-                    maxItems: 5000
-                    items:
-                      $ref: '#/components/schemas/EntityAuthorization'
+                      $ref: '#/components/schemas/Authorization'
         '400':
           description: Unsuccessful operation
           content:
@@ -518,8 +361,8 @@ paths:
       tags:
         - CooperativeApproach
       operationId: getCooperativeApproaches
-      summary: Retrieve all cooperative approaches registered to the registry identified by regId.
-      description: Retrieve all cooperative approaches registered to the registry identified by regId.<br>
+      summary: Retrieve all cooperative approaches registered to the Party making the request.
+      description: Retrieve all cooperative approaches registered to the Party making the request.<br>
       responses:
         '200':
           description: Successful operation
@@ -566,11 +409,11 @@ components:
         - authorisationDate
         - version
         - lastChangeDate
-        - startDate
-        - endDate
-        - isAuthorizationForCA
-        - isAuthorizationForITMOs
-        - isAuthorizationForEntities
+        - authStartDate
+        - authEndDate
+        - isCAAuth
+        - isMOAuth
+        - isEntityAuth
       properties:
         authorizingPartyId:
           description: ISO-3166-1 alpha-3 code of the participating Party reporting this authorization,<br>
@@ -596,35 +439,46 @@ components:
           type: string
           format: date
           example: "2024-07-21"
-        startDate:
+        effectiveChangeDate:
+          description: Date of last change to the authorization.
+          type: string
+          format: date
+          example: "2024-07-21"
+        authStartDate:
           description: start date of the authorization.
           type: string
           format: date
           example: "2024-07-21"
-        endDate:
+        authEndDate:
           description: end date of the authorization.
           type: string
           format: date
           example: "2026-07-21"
-        isAuthorizationForCA:
-          description: Is this authorization for a cooperative approach
-          type: boolean
-        isAuthorizationForITMOs:
-          description: Is this authorization for ITMOs
-          type: boolean
-        isAuthorizationForEntities:
-          description: Is this authorization for a entities
-          type: boolean
-        NDCStartDate:
+        ndcStartDate:
           description: start date of NDC period of the issuing Party.
           type: string
           format: date
           example: "2024-07-21"
-        NDCEndDate:
+        ndcEndDate:
           description: end date of the NDC period of the issuing Party.
           type: string
           format: date
           example: "2026-07-21"
+        isCAAuth:
+          description: Is this authorization for a cooperative approach
+          type: boolean
+        caAuthElements:
+          $ref: '#/components/schemas/CAAuthElements'
+        isMOAuth:
+          description: Is this authorization for Mitigation Outcomes
+          type: boolean
+        moAuthElements:
+          $ref: '#/components/schemas/MOAuthElements'
+        isEntityAuth:
+          description: Is this authorization for a entities
+          type: boolean
+        entityAuthElements:
+          $ref: '#/components/schemas/EntityAuthElements'
         possibleChanges:
           description: Where changes to the authorizaton may occur,<br><br>
             information on the circumstances in which such changes may occur,<br><br>
@@ -667,35 +521,96 @@ components:
             maxLength:  255
       additionalProperties: false
 
-    CooperativeApproachAuthorization:
+    CAAuthElements:
       type: object
       required:
         - authorization
-        - cooperativeApproachAuthorized
+        - cooperativApproachId
+        - metric
+        - sectors
+        - mitigationTypes
+        - activityTypes
       properties:
-        authorization:
-          $ref: '#/components/schemas/Authorization'
-        cooperativeApproachAuthorized:
-           $ref: '#/components/schemas/CooperativeApproach'
+        cooperativeApproachId:
+          description: Identifier of the cooperative approach authorized.
+          type: string
+        metric:
+          description: The metric used to measure the ITMO.<br><br>
+            As defined per common nomenclature - recognised values are \"GHG\" and \"non-GHG\".
+          type: string
+          example: "GHG"
+        nonGHGMetrics:
+          description: The nonGHG metrics used by this cooperative approach
+          type: array
+          items:
+            $ref: '#/components/schemas/NonGHGMetric'
+        sectors:
+          description: One or more sectors where the mitigation outcome will occur as per common nomenclatures based on IPCC guidelines.<br><br>
+            Refer to common nomenclature for recognised values for \"sectors\".
+          type: array
+          items:
+            type: string
+        mitigationTypes:
+          description: The mitigation type(s) covered by the cooperative approach.<br><br>
+            Refer to common nomenclatures for recognised values for  \"mitigationTypes\".
+          type: integer
+          example: 1
+        activityTypes:
+          description: The mitigation activity type(s) from which the ITMOs were generated.<br><br>
+            Refer to common nomenclature for recognised values for \"activityTypes\".
+          type: array
+          items:
+            type: integer
+            example: 1
+        activities:
+          description: More information of the activities
+          type: array
+          items:
+             $ref: '#/components/schemas/ActivityRef'
+        mitigationOutcomeDocHashes:
+          description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.<br><br>
+            This array contains the SHA256 hashes of all mitigation outcome documents for this cooperativeApproach.<br><br>
+            The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(cooperativeApproachId, sha256)
+            that will return the URL of the MO document corresponding to the hash.
+          type: array
+          minItems: 1
+          items:
+            description: SHA256 hash of a single mitigation outcome document
+            type: string
+            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        otherReferences:
+          description: Identification of, or coress-reference to, underlying regulations,<br><br>
+            frameworks, standards, or procedures,<br><br>
+            including any specific methodologies underpinning the cooperative approach.
+          type: array
+          items:
+            type: string
+            example: ""
+           
       additionalProperties: false
 
-    ITMOAuthorization:
+    MOAuthElements:
       type: object
       required:
-        - authorization
         - cooperativeApproachId
         - purposeForAuthorization
         - quantityCO2
         - vintages
       properties:
-        authorization:
-          $ref: '#/components/schemas/Authorization'
         cooperativeApproachId:
           description: Cooperative approaches under Article 6.2.<br><br>
             The format of the string is \"CANNNN\" where the \"CA\" is the fixed prefix, and NNNN is a four-digit integer,<br><br>
             that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
           type: string
           example: "CA0002"
+        firstTransferForOIMP:
+          description: Only for authorisations for use toward OIMP.<br><br>
+            Specifies the first transfer definition used by the Pary pursuant to decision 2/CMA.3, annex, para. 2(b).<br><br>
+            Refer to common nomenclatures for code lookup.
+          type: integer
+          minimum: 2
+          maximum: 4
+          example: 2          
         purposeForAuthorization:
           description: Purpose for authorisation as described by Decision 6/CMA.4 para 17 (j)<br><br>
             Refer to common nomenclatures for code lookup.
@@ -749,15 +664,12 @@ components:
             under which the relevant registry operates.
       additionalProperties: false
 
-    EntityAuthorization:
+    EntityAuthElements:
       type: object
       required:
-        - authorization
         - cooperativeApproachId
         - authorisedEntityIds
       properties:
-        authorization:
-          $ref: '#/components/schemas/Authorization'
         cooperativeApproachId:
           description: the cooperativeApproach for which these entities are authorised.
           type: string
@@ -774,14 +686,13 @@ components:
       type: object
       required:
         - cooperativeApproachId
-        - authorisationId
+        - name
+        - description
+        - authId
         - otherParticipatingParties
         - startDate
         - endDate
-        - metric
-        - sectors
-        - mitigationTypes
-        - activityTypes
+        - expectedMitigationPA
       properties:
         cooperativeApproachId:
           description: Cooperative approaches under Article 6.2.<br><br>
@@ -789,95 +700,78 @@ components:
             that shall be incremented by one for each additional agreed cooperative approach, and added to this common nomenclature.
           type: string
           example: "CA0002"
-        authorisationId:
-          description: Authorization Id as assigned by the Party authorizing this cooperative approach.
+        name:
+          description: Name of the cooperative approach.
           type: string
-          example: "GUY 2024-CA1"
+          example: "Cicada Clean Cooking Zimbabwe"
+        description:
+          description: Description of the cooperative approach<br>
+            2/CMA.3 annex, para 18(g)
+          type: string
+        authId:
+          description: Authorization Id as assigned by the Party authorizing this cooperative approach.<br>
+            2/CMA.3 annex, para 18(g)
+          type: string
+          example: "LOA-00008"
+        startDate:
+          description: start date of the cooperative approach.<br>
+            2/CMA.3 annex, para 18(g)
+          type: string
+          format: date
+          example: "2024-07-21"
+        endDate:
+          description: end date of the cooperative approach.<br>
+            2/CMA.3 annex, para 18(g)
+          type: string
+          format: date
+          example: "2026-07-21"
+        expectedMitigationPA:
+          description: Expected mitigation of GHG per annum.<br>
+            2/CMA.3 annex, para 18(g)
+          type: integer
         otherParticipatingParties:
-          description: Identifiers of other participating Parties covered by authorization of cooperative approach.
+          description: Identifiers of other participating Parties covered by authorization of cooperative approach<br>
+            2/CMA.3 annex, para 18(g)
           type: array
           items:
             description: ISO-3166-1 alpha-3 code of the participating Party as per common nomenclatures.
             type: string
             example: "BEL"
-        startDate:
-          description: start date of the cooperative approach.
-          type: string
-          format: date
-          example: "2024-07-21"
-        endDate:
-          description: end date of the cooperative approach.
-          type: string
-          format: date
-          example: "2026-07-21"
-        firstTransferForOIMP:
-          description: Only for authorisations for use toward OIMP.<br><br>
-            Specifies the first transfer definition used by the Pary pursuant to decision 2/CMA.3, annex, para. 2(b).<br><br>
-            Refer to common nomenclatures for code lookup.
-          type: integer
-          minimum: 2
-          maximum: 4
-          example: 2          
-        metric:
-          description: The metric used to measure the ITMO.<br><br>
-            As defined per common nomenclature - recognised values are \"GHG\" and \"non-GHG\".
-          type: string
-          example: "GHG"
-        nonGHGMetrics:
-          description: The nonGHG metrics used by this cooperative approach
-          type: array
-          items:
-            $ref: '#/components/schemas/NonGHGMetric'
-        sectors:
-          description: One or more sectors where the mitigation outcome will occur as per common nomenclatures based on IPCC guidelines.<br><br>
-            Refer to common nomenclature for recognised values for \"sectors\".
-          type: array
-          items:
-            type: string
-        mitigationTypes:
-          description: The mitigation type(s) covered by the cooperative approach.<br><br>
-            Refer to common nomenclatures for recognised values for  \"mitigationTypes\".
-          type: integer
-          example: 1
-        activityTypes:
-          description: The mitigation activity type(s) from which the ITMOs were generated.<br><br>
-            Refer to common nomenclature for recognised values for \"activityTypes\".
-          type: array
-          items:
-            type: integer
-            example: 1
-        activities:
-          description: More information of the activities
-          type: array
-          items:
-             $ref: '#/components/schemas/ActivityRef'
         authorisedEntityIds:
-          description: Unique identifier of entities that are authorised as per common nomenclatures,<br><br>
-            for this cooperative approach, if applicable.
+          description: Unique identifier of entities that are authorised as per common nomenclatures,<br>for this cooperative approach, if applicable.<br>
+            2/CMA.3 annex, para 18(g)
           type: array
           items:
             type: string
-        mitigationOutcomeDocHashes:
-          description: (required by Decision 6/CMA.4, annex I, para.4). ITMOs must be traceable to their mitigation outcomes.<br><br>
-            This array contains the SHA256 hashes of all mitigation outcome documents for this cooperativeApproach.<br><br>
-            The UNFCCC will store all MO documents, and provide an API getMitigationOutcomeDoc(cooperativeApproachId, sha256)
-            that will return the URL of the MO document corresponding to the hash.
-          type: array
-          minItems: 1
-          items:
-            description: SHA256 hash of a single mitigation outcome document
-            type: string
-            example: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        otherReferences:
-          description: Identification of, or coress-reference to, underlying regulations,<br><br>
-            frameworks, standards, or procedures,<br><br>
-            including any specific methodologies underpinning the cooperative approach.
-          type: array
-          items:
-            type: string
-            example: ""
+        howNoIncreaseInGE:
+          description: How the cooperative approach ensures there is no net increase in global emissions within and between NDC implementation periods.<br>
+            2/CMA.3 annex, para. 18(h)(i)
+        howRobustGovernance:
+          description: How the cooperative approach ensures environmental integrity through robust, transparent governance and the quality of mitigation outcomes.<br>
+            2/CMA.3 annex, para. 18(h)(ii)
+        howMinRiskOfNonPerm:
+          description: How the cooperative approach is minimizing the risk of non-permanence of mitigation across several NDC periods.<br>
+            2/CMA.3 annex, para. 18(h)(iii)
+        howAvoidNegImpact:
+          description: How the cooperative approach minimizes and, where possible, avoids negative environmental, economic and social impacts.<br>
+            2/CMA.3 annex, para. 18(i)(i)
+        HowReflectParis:
+          description: How the cooperative approach reflects the eleventh preambular paragraph of the Paris Agreement.<br>
+            2/CMA.3 annex, para. 18(i)(ii)
+        howConsistentWithSD:
+          description: How the cooperative approach is consistent with the sustainable development objectives of the Party, noting national prerogatives.<br>
+            2/CMA.3 annex, para. 18(i)(iii)
+        howApplySafeguards:
+          description: How how the cooperative approach applies any safeguards and limits set out in further guidance from the CMA.<br>
+            2/CMA.3 annex, para. 18(i)(iv)
+        howContributeToAdapt:
+          description: How the cooperative approach contributes resources for adaptation.<br>
+            2/CMA.3 annex, para. 18(i)(v)
+        howDeliverOMGE:
+          description: How the cooperative approach delivers overall mitigation in global emissions.<br>
+            2/CMA.3 annex, para. 18(i)(vi)
       additionalProperties: false
-
+  
     NonGHGMetric:
       type: object
       required:
