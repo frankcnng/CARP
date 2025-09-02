@@ -392,13 +392,166 @@ paths:
 components:
   schemas:
 
-    RegistryId:
-      type: string
-      pattern: '^[A-Z]{3}\d{2}$'
-      description: Identifier a participating Party registry.<br><br>
-        Consisting of the ISO-3166-1 alpha-3 code of the participating Party as per common nomenclatures,<br><br>
-        and two digit registry serial number.
-      example: "DEU00"
+    MandatedInformation:
+      type: object
+      description: Common information for all submissions.
+        Consider superclass of all submissions.
+      required:
+        - party
+        - date
+      properties:
+        party:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: The ISO-3166-1 alpha-3 code of the participating Party as per common nomenclatures.
+          example: "DEU"
+        date:
+          type: string
+          format: date
+      additionalProperties: false
+
+    InitialReport:
+      type: object
+      description: Initial Report superclass
+      required:
+        - mandatedInformation
+        - ndcStartDate
+        - ndcEndDate
+        - reportNumber
+        - version
+        - cooperativeApproaches
+      properties:
+        mandatedInformation:
+          $ref: '#/components/schemas/MandatedInformation'
+        ndcStartDate:
+          description: start date of NDC period of the issuing Party.
+          type: string
+          format: date
+          example: "2024-07-21"
+        ndcEndDate:
+          description: end date of the NDC period of the issuing Party.
+          type: string
+          format: date
+          example: "2026-07-21"
+        reportNumber:
+          description: report number of NDC period
+          type: integer
+        version:
+          description: version of the document.<br>The version should be formatted as X.Y.<br> Increments to X indicate major changes,<br>while increments to Y denote minor adjustments such as typo corrections.
+          type: string
+          pattern: ([0-9]+[.][0-9]+)
+        cooperativeApproaches:
+          type: array
+          items:
+            $ref: '#/components/schemas/CooperativeApproach'
+      additionalProperties: false
+
+    FirstInitialReport:
+      type: object
+      description: First Initial Report submission
+      required:
+        - InitialReport
+      properties:
+        initialReport:
+          $ref: '#/components/schemas/MandatedInformation'
+        participationResponsibities:
+          $ref: '#/components/schemas/ParticipationResponsibilities'
+        ndcDescription:
+          $ref: '#/components/schemas/NDCDescription'
+        itmoMetricsAndMore:
+          $ref: '#/components/schemas/ITMOMetricsAndMore'
+      additionalProperties: false
+  
+    ParticipationResponsibilities:
+      type: object
+      description: Participant responsibilities from 2_CMA.3 annex, para 4
+      properties:
+        howPartyToPA:
+          type: string
+          description: para 4(a) How the Party ensures that it is a Party to a Paris Agreement.
+        howNDCPrepared:
+          type: string
+          description: para 4(b) How the Party ensures it has prepared, communicated, and is maintaining an NDC.
+        howITMOsAuthorized:
+          type: string
+          description: para 4(c) How the Party ensures it has arrangements in place for authorizing ITMOs towards achievement of NDCs.
+        howITMOsTracked:
+          type: string
+          description: para 4(d) How the Party has arrangements in place that ar consistent with guidance and decisions of the CMA for tracking ITMOs.
+        howProvidedNIV:
+          type: string
+          description: para 4(e) How the Party has provided the most receive national inventory report.
+        howContributeToNDC:
+          type: string
+          description: para 4(f) How the Party's participation contributes to the implementation of its NDC and long-term low-emission development strategy, if it has submitted one, and the long-term goals of the Paris Agreement.
+      additionalProperties: false
+
+    NDCDescription:
+      type: object
+      description: Description of the Party's NDC from 18/CMA.1 annex, para 64
+      properties:
+        targets:
+          type: string
+          description: para 64(a) Target(s) and description, including target type(s).
+        targetYearsAndPeriods:
+          type: string
+          description: para 64(b) Target year(s) or period(s), and whether they are single-year or multi-year target(s).
+        referenceValues:
+          type: string
+          description: para 64(c) Reference point(s), level(s), baseline(s), base year(s) or starting point(s), and their respective value(s).
+        timeFrames:
+          type: string
+          description: para 64(d) Time frame(s) and/or periods for implementation.
+        scopeAndCoverage:
+          type: string
+          description: para 64(e) Scope and coverage, including, as relevant, sectors, categories, activities, sources and sinks, pools and gases.
+        intentionToUse:
+          type: string
+          description: para 64(f) Intention to use cooperative approaches that involve the use of internationally transferred mitigation outcomes.
+        updatesOrClarifications:
+          type: string
+          description: para 64(g) Any updates or clarifications of previously reported information.
+      additionalProperties: false        
+
+    ITMOMetricsAndMore:
+      type: object
+      description: More information required from 2/CMA.3 annex, para 18 (c-f)
+      properties:
+        itmoMetrics:
+          type: string
+          description: para 18(c) ITMO metrics.
+        correspondingAdjustmentsMethod:
+          type: string
+          description: para 18(c) The method for applying corresponding adjustments for multi- or single-year NDCs that will be applied consistently throughout the period of NDC implementation.
+        correspondingAdjustmentAlignment:
+          type: string
+          description: para 18(c) How the method for applying corresponding adjustments aligns with decision 2/CMA.3, annex, paragraph 7.
+        multiYearTrajectoryMethod:
+          type: string
+          description: para 18(c) Describe the method, where theis a multi-year emissions trajectory, trajectories, or budget.
+        ndcQuantificationInTCO2equiv:
+          type: string
+          description: para 18(d) Quantify the Party’s mitigation information in its NDC in t CO2 eq.
+        ndcQuantificationInNonGHG:
+          type: string
+          description: para 18(e) Quantify the NDC, or the portion in the relevant nonGHG indicator, if applicable.
+        otherQuantifications:
+          type: string
+          description: para 18(f) For a first or first updated NDC consisting of policies and measures that is not quantified, quantify the emission level resulting from the policies and measures that are relevant to the implementation of the cooperative approach and its mitigation activities for the categories of anthropogenic emissions by sources and removals by sinks as identified by the host Party, and the time periods covered by the NDC.
+      additionalProperties: false     
+
+    UpdatedInitialReport:
+      type: object
+      description: Updated Initial Report submission
+      required:
+        - InitialReport
+      properties:
+        initialReport:
+          $ref: '#/components/schemas/MandatedInformation'
+        updatedInitialReportNumber:
+          type: integer
+      additionalProperties: false
+
 
     Authorization:
       type: object
@@ -809,6 +962,15 @@ components:
           type: string
           example: ""
       additionalProperties: false
+
+    RegistryId:
+      type: string
+      pattern: '^[A-Z]{3}\d{2}$'
+      description: Identifier a participating Party registry.<br><br>
+        Consisting of the ISO-3166-1 alpha-3 code of the participating Party as per common nomenclatures,<br><br>
+        and two digit registry serial number.
+      example: "DEU00"
+
 
     Errors:
       type: object
