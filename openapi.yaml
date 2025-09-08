@@ -464,7 +464,7 @@ components:
   
     ParticipationResponsibilities:
       type: object
-      description: Participant responsibilities from 2_CMA.3 annex, para 4
+      description: Participant responsibilities from 2/CMA.3 annex, para 4
       properties:
         howPartyToPA:
           type: string
@@ -552,6 +552,104 @@ components:
           type: integer
       additionalProperties: false
 
+    RegularInformation:
+      type: object
+      description: 2/CMA.3 annex, para.21<br>Regular information submitted as an annex to its Biennial Transparency Report by Parites.
+      properties:
+        mandatedInformation:
+          $ref: '#/components/schemas/MandatedInformation'
+        reportYear:
+          type: integer
+          minimum: 2022
+          maximum: 9999
+        generalInformation:
+          $ref: '#/components/schemas/GeneralInformation'
+        cooperativeApproaches:
+          type: array
+          items:
+            $ref: '#/components/schemas/CooperativeApproach'
+        structuredSummary:
+          $ref: '#/components/schemas/StructuredSummary'
+
+    GeneralInformation:
+      type: object
+      description: 2/CMA.3 annex, para.21(a)<br>General information on participation and authorization in cooperative approaches.
+      properties:
+        isPartyToParis:
+          type: boolean
+          description: is a Party to the Paris Agreement
+        isMaintainingNDC:
+          type: boolean
+          description: Has prepared, communicated, and is maintaining an NDC
+        hasArrangementsForITMO4NDC:
+          type: boolean
+          description: Has arrangements in place for authorizing the use of ITMOs towards achievement of NDCs.
+        hasArrangementsForTrackingITMOs:
+          type: boolean
+          description: Has arrangements in place for tracking ITMOs
+        hasProvidedRecentNIR:
+          type: boolean
+          description: Has provided the most recent national inventory report
+        isCA4NDC:
+          type: boolean
+          description: Ensures that its participation in the cooperative approach contributes to the implementation of its NDC and long-term low-emission development strategy
+        updatedInitialReport:
+          $ref: '#/components/schemas/UpdatedInitialReport'
+        updatedAuthInfo:
+          description: 2/CMA.3 annex, para.21(c).<br>Information on the authorization, including information on its authorization(s) of use of ITMOs towards the achievement of NDCs and/or for use for other international mitigation purposes.
+          type: string
+        updatedCorAdjustInfo:
+          description: 2/CMA.3 annex, para.21(d).<br>How the corresponding adjustments were undertaken in the latest reporting period, in particular information that ensures that double-counting was avoided.
+          type: string
+        howUsedITMONotTransferred:
+          description: 2/CMA.3 annex, para.21(e).<br>For the ITMOs that have been used, information on how the ITMOs will not be further transferred, further cancelled, or otherwise used.
+          type: string
+      additionalProperties: false
+
+    StructuredSummary:
+      type: object
+      description: 2/CMA.3 annex, para.23<br>The annual information shall be reported biennially as part of the regular information, through the structured summary, to be included in the BTR.
+      properties:
+        indicators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Indicator'
+        otherInfo:
+          description: Any other information consistent with decisions adapted by the CMA on reporting under Article 6 par.77(d)(ii) of MPGs
+          type: string
+        ndcAchieved:
+          description: yes/no, explanation
+          type: string
+      additionalProperties: false
+
+    Indicator:
+      type: object
+      description: 18/CMA.1 annex, para.77(b-d); 2/CMA.3 annex, para.7(a(i),b), para.23(a-i,k-l)<br>
+        These indicators are described in 2/CMA.3 annex, para.77(a-d), para.23(a-i,k-l), however, they are not coded statically in this schema, and needs to be created on application initialisation.<br>
+        For example, an indicator would be total GHG emissions and removals, corresponding to 18/CMA.1 para.77(b)
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        unit:
+          type: string
+        reference:
+          type: string
+        levels:
+          type: array
+          items:
+            type: string
+        targetLevel:
+          type: string
+        targetYear:
+          type: integer
+          minimum: 2024
+          maximum: 9999
+        progress:
+          type: integer
+          maximum: 100
+      additionalProperties: false
 
     Authorization:
       type: object
@@ -899,30 +997,51 @@ components:
         howNoIncreaseInGE:
           description: How the cooperative approach ensures there is no net increase in global emissions within and between NDC implementation periods.<br>
             2/CMA.3 annex, para. 18(h)(i)
+          type: string
         howRobustGovernance:
           description: How the cooperative approach ensures environmental integrity through robust, transparent governance and the quality of mitigation outcomes.<br>
             2/CMA.3 annex, para. 18(h)(ii)
+          type: string
         howMinRiskOfNonPerm:
           description: How the cooperative approach is minimizing the risk of non-permanence of mitigation across several NDC periods.<br>
             2/CMA.3 annex, para. 18(h)(iii)
+          type: string
         howAvoidNegImpact:
           description: How the cooperative approach minimizes and, where possible, avoids negative environmental, economic and social impacts.<br>
             2/CMA.3 annex, para. 18(i)(i)
+          type: string
         HowReflectParis:
           description: How the cooperative approach reflects the eleventh preambular paragraph of the Paris Agreement.<br>
             2/CMA.3 annex, para. 18(i)(ii)
+          type: string
         howConsistentWithSD:
           description: How the cooperative approach is consistent with the sustainable development objectives of the Party, noting national prerogatives.<br>
             2/CMA.3 annex, para. 18(i)(iii)
+          type: string
         howApplySafeguards:
           description: How how the cooperative approach applies any safeguards and limits set out in further guidance from the CMA.<br>
             2/CMA.3 annex, para. 18(i)(iv)
+          type: string
         howContributeToAdapt:
           description: How the cooperative approach contributes resources for adaptation.<br>
             2/CMA.3 annex, para. 18(i)(v)
+          type: string
         howDeliverOMGE:
           description: How the cooperative approach delivers overall mitigation in global emissions.<br>
             2/CMA.3 annex, para. 18(i)(vi)
+          type: string
+        howMeasured4TCO2:
+          description: When a mitigation outcome is measured and transferred in tCO2eq, the annex to the BTR shall include the description of how each cooperative approach provides for the measurement of its mitigation outcomes in accordance with the methodologies and metrics assessed by the IPCC and adopted by the CMA.<br>
+            2/CMA.3 annex, para. 22(c)
+          type: string
+        howMeasured4NonGHG:
+          description: When a mitigation outcome is measured and first transferred in a non-GHG metric determined by the participating Parties, the annex to the BTR shall include a description of how the cooperative approach ensures that the method for converting the non-GHG metric into tCO2eq is appropriate for the specific non-GHG metric and the mitigation scenario in which it is applied.<br>
+            2/CMA.3 annex, para. 22(d)
+          type: string
+        mitigationCobenefits:
+          description: If applicable, the annex to the BTR shall include for each cooperative approach the description of the measurement of mitigation co-benefits resulting from adaptation actions and/or economic diversification plans.<br>
+            2/CMA.3 annex, para. 22(e)
+          type: string
       additionalProperties: false
   
     NonGHGMetric:
