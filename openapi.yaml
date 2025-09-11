@@ -38,6 +38,8 @@ tags:
     description: Authorization operations
   - name: CooperationApproach
     description: Cooperative Approach operations
+  - name: InteroperabilityHub
+    description: Supports the Interoperability Hub
 paths:
   /serverStatus:
     get:
@@ -264,6 +266,369 @@ paths:
                     maxItems: 5000
                     items:
                       $ref: '#/components/schemas/Authorization'
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/versions/{authId}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizationVersionNumbers
+      summary: Retrieve all version numbers of the authorization identified by authId
+      description: Retrieve all version number of the authorizations identified by authId,<br>
+        including the most recent version.
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation whose version numbers are to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  versionNumbers:
+                    type: array
+                    maxItems: 100
+                    items:
+                      type: string
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/purposes/{authId}/{version}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizationPurposes
+      summary: Retrieve purpose(s) the authorization identified by authId
+      description: Retrieve purpose(s) of the authorizations identified by authId.
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation whose purpose(s) are to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: version
+          in: path
+          description: The version number of the authorisation whose purpose(s) is to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  purposes:
+                    type: array
+                    maxItems: 10
+                    items:
+                      type: string
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/ftDefinition/{authId}/{version}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizationFTDefn
+      summary: Retrieve first transfer definition the authorization identified by authId, if the purpose includes OIMP identified.
+      description: Retrieve first transfer definition of the authorization identified by authId if the purpose includes OIMP
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation whose first transfer definition are to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: version
+          in: path
+          description: The version number of the authorisation whose first transfer definition is to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                description: The code for the first transfer definition used by the Pary pursuant to decision 2/CMA.3, annex, para. 2(b).<br>Refer to common nomenclatures for code lookup.
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/quantity/{authId}/{version}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizedQuantity
+      summary: Retrieve quantity of mitigation outcomes authorized by the authorization identified by authId.
+      description: Retrieve quantity of mitigation outcomes authorized by the authorization identified by authId.
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation for which the quantity of mitigation outcomes authorized is to be returned.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: version
+          in: path
+          description: The version number of the authorisation whose quantity is to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                description: The quantity of mitigation outcomes that have been authorized.
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/startDate/{authId}/{version}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizedStartDate
+      summary: Retrieve start date authorized by the authorization identified by authId.
+      description: Retrieve start date authorized by the authorization identified by authId - authorized mitigation outcomes cannot be registered before this date.
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation for which the start date.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: version
+          in: path
+          description: The version number of the authorisation whose start date is to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date
+                description: The start date that has been authorized.
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/endDate/{authId}/{version}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizedEndDate
+      summary: Retrieve end date authorized by the authorization identified by authId.
+      description: Retrieve end date authorized by the authorization identified by authId - authorized mitigation outcomes cannot be registered after this date.
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation for which the start date.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: version
+          in: path
+          description: The version number of the authorisation whose end date is to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date
+                description: The end date that has been authorized.
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/cooperativeApproach/{authId}/{version}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizedCAId
+      summary: Retrieve cooperativeApproach identifier authorized by the authorization identified by authId.
+      description: Retrieve cooperative approach identifier authorized by the authorization identified by authId.
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation for which the cooperative approach id.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: version
+          in: path
+          description: The version number of the authorisation whose cooperative approach id is to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The cooperative approach identifier of the authorization.
+                example: "CA0002"
+        '400':
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+
+  /authorizations/vintages/{authId}/{version}:
+    get:
+      tags:
+        - Authorization
+        - InteroperabilityHub
+      operationId: getAuthorizedVintageRange
+      summary: Retrieve vintages authorized by the authorization identified by authId.
+      description: Retrieve vintages authorized by the authorization identified by authId.
+      parameters:
+        - name: authId
+          in: path
+          description: The id of the authorisation for which the vintages are retrieved.
+          required: true
+          schema:
+            type: string
+            example: "GUY 2024-CA1"
+        - name: version
+          in: path
+          description: The version number of the authorisation whose vintages are to be retrieved.
+          required: true
+          schema:
+            type: string
+            example: "1.0"
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                description: The vintages authorized.
+                items:
+                  type: integer
+                  minimum: 2021
+                  maximum: 9999
         '400':
           description: Unsuccessful operation
           content:
