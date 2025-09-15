@@ -1,3 +1,4 @@
+
 openapi: 3.0.3
 info:
   version: 0.0.1
@@ -12,11 +13,11 @@ info:
     annex, chapter IV (Reporting).
     <br><br><b>Current status</b>     
     <br><br>This API is currently in development.
-  contact: 
+  contact:
     name: UNFCCC secretariat (Centralized Accounting and Reporting Platform (CARP)
     email: CARP-support@unfccc.int
     url: https://unfccc.int/process-and-meetings/the-paris-agreement/cooperative-implementation/carp
-  license: 
+  license:
     name: License not applicable
     url: N/A
   x-audience: external-public
@@ -38,8 +39,8 @@ tags:
     description: Authorization operations
   - name: CooperativeApproach
     description: Cooperative Approach operations
-  - name: InteroperabilityHub
-    description: Supports the Interoperability Hub
+  - name: Communications Standards
+    description: Supports the Communications Standards
 paths:
   /serverStatus:
     get:
@@ -283,7 +284,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizationVersionNumbers
       summary: Retrieve all version numbers of the authorization identified by authId
       description: Retrieve all version number of the authorizations identified by authId,<br>
@@ -326,7 +327,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizationPurposes
       summary: Retrieve purpose(s) the authorization identified by authId
       description: Retrieve purpose(s) of the authorizations identified by authId.
@@ -375,7 +376,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizationFTDefn
       summary: Retrieve first transfer definition the authorization identified by authId, if the purpose includes OIMP identified.
       description: Retrieve first transfer definition of the authorization identified by authId if the purpose includes OIMP
@@ -419,7 +420,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizedQuantity
       summary: Retrieve quantity of mitigation outcomes authorized by the authorization identified by authId.
       description: Retrieve quantity of mitigation outcomes authorized by the authorization identified by authId.
@@ -463,7 +464,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizedStartDate
       summary: Retrieve start date authorized by the authorization identified by authId.
       description: Retrieve start date authorized by the authorization identified by authId - authorized mitigation outcomes cannot be registered before this date.
@@ -508,7 +509,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizedEndDate
       summary: Retrieve end date authorized by the authorization identified by authId.
       description: Retrieve end date authorized by the authorization identified by authId - authorized mitigation outcomes cannot be registered after this date.
@@ -553,7 +554,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizedCAId
       summary: Retrieve cooperativeApproach identifier authorized by the authorization identified by authId.
       description: Retrieve cooperative approach identifier authorized by the authorization identified by authId.
@@ -598,7 +599,7 @@ paths:
     get:
       tags:
         - Authorization
-        - InteroperabilityHub
+        - Communications Standards
       operationId: getAuthorizedVintageRange
       summary: Retrieve vintages authorized by the authorization identified by authId.
       description: Retrieve vintages authorized by the authorization identified by authId.
@@ -876,7 +877,7 @@ components:
         updatesOrClarifications:
           type: string
           description: para 64(g) Any updates or clarifications of previously reported information.
-      additionalProperties: false        
+      additionalProperties: false
 
     ITMOMetricsAndMore:
       type: object
@@ -903,7 +904,7 @@ components:
         otherQuantifications:
           type: string
           description: para 18(f) For a first or first updated NDC consisting of policies and measures that is not quantified, quantify the emission level resulting from the policies and measures that are relevant to the implementation of the cooperative approach and its mitigation activities for the categories of anthropogenic emissions by sources and removals by sinks as identified by the host Party, and the time periods covered by the NDC.
-      additionalProperties: false     
+      additionalProperties: false
 
     UpdatedInitialReport:
       type: object
@@ -1226,7 +1227,7 @@ components:
           type: integer
           minimum: 2
           maximum: 4
-          example: 2          
+          example: 2
         purposeForAuthorization:
           description: Purpose for authorisation as described by Decision 6/CMA.4 para 17 (j)<br><br>
             Refer to common nomenclatures for code lookup.
@@ -1489,3 +1490,4 @@ components:
 
 security:
   - basicAuth: []
+
