@@ -36,7 +36,7 @@ tags:
     description: Submission operations
   - name: Authorization
     description: Authorization operations
-  - name: CooperationApproach
+  - name: CooperativeApproach
     description: Cooperative Approach operations
   - name: InteroperabilityHub
     description: Supports the Interoperability Hub
